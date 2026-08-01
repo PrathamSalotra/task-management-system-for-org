@@ -1,0 +1,7 @@
+documentation-required/
+node_modules/
+.env
+.env.local
+dist/
+build/
+.next/
