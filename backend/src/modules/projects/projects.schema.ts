@@ -77,3 +77,20 @@ export const updateProjectSchema = z
   );
 
 export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;
+
+export const addProjectMemberSchema = z.object({
+  userId: z
+    .string()
+    .min(1, 'User ID is required')
+    .refine(
+      (val) =>
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+          val
+        ),
+      {
+        message: 'Invalid user ID format',
+      }
+    ),
+});
+
+export type AddProjectMemberInput = z.infer<typeof addProjectMemberSchema>;

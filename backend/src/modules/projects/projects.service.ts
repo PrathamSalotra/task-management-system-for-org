@@ -270,3 +270,133 @@ export async function archiveProject(
 
   return archivedProject;
 }
+
+export async function addProjectMember(
+  projectId: string,
+  targetUserId: string,
+  caller: { id: string; role: Role | string }
+) {
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+  });
+
+  if (!project) {
+    throw new ProjectNotFoundError();
+  }
+
+  if (caller.role !== Role.ADMIN && project.managerId !== caller.id) {
+    throw new ProjectForbiddenError(
+      'Forbidden: Only the owning Project Manager or an Admin can manage project members'
+    );
+  }
+
+  const targetUser = await prisma.user.findUnique({
+    where: { id: targetUserId },
+  });
+
+  if (!targetUser) {
+    throw new Error('User not found');
+  }
+
+  const existingMember = await prisma.projectMember.findUnique({
+    where: {
+      projectId_userId: {
+        projectId,
+        userId: targetUserId,
+      },
+    },
+  });
+
+  if (existingMember) {
+    throw new Error('User is already a member of this project');
+  }
+
+  const member = await prisma.$transaction(async (tx) => {
+    const created = await tx.projectMember.create({
+      data: {
+        projectId,
+        userId: targetUserId,
+      },
+      include: {
+        user: {
+          select: { id: true, name: true, email: true, role: true },
+        },
+      },
+    });
+
+    await tx.auditLog.create({
+      data: {
+        userId: caller.id,
+        action: 'ADD_PROJECT_MEMBER',
+        entityType: 'PROJECT',
+        entityId: projectId,
+        metadata: {
+          addedUserId: targetUserId,
+          addedUserEmail: targetUser.email,
+        },
+      },
+    });
+
+    return created;
+  });
+
+  return member;
+}
+
+export async function removeProjectMember(
+  projectId: string,
+  targetUserId: string,
+  caller: { id: string; role: Role | string }
+) {
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+  });
+
+  if (!project) {
+    throw new ProjectNotFoundError();
+  }
+
+  if (caller.role !== Role.ADMIN && project.managerId !== caller.id) {
+    throw new ProjectForbiddenError(
+      'Forbidden: Only the owning Project Manager or an Admin can manage project members'
+    );
+  }
+
+  const existingMember = await prisma.projectMember.findUnique({
+    where: {
+      projectId_userId: {
+        projectId,
+        userId: targetUserId,
+      },
+    },
+  });
+
+  if (!existingMember) {
+    throw new Error('Member not found in this project');
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.projectMember.delete({
+      where: {
+        projectId_userId: {
+          projectId,
+          userId: targetUserId,
+        },
+      },
+    });
+
+    await tx.auditLog.create({
+      data: {
+        userId: caller.id,
+        action: 'REMOVE_PROJECT_MEMBER',
+        entityType: 'PROJECT',
+        entityId: projectId,
+        metadata: {
+          removedUserId: targetUserId,
+        },
+      },
+    });
+  });
+
+  return { message: 'Member removed from project successfully' };
+}

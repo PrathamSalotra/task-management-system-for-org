@@ -3,6 +3,8 @@ import {
   createProjectHandler,
   updateProjectHandler,
   deleteProjectHandler,
+  addProjectMemberHandler,
+  removeProjectMemberHandler,
   getProjectsHandler,
   getProjectByIdHandler,
 } from './projects.controller';
@@ -18,5 +20,8 @@ router.get('/', getProjectsHandler);
 router.get('/:id', getProjectByIdHandler);
 router.put('/:id', updateProjectHandler);
 router.delete('/:id', deleteProjectHandler);
+
+router.post('/:id/members', addProjectMemberHandler);
+router.delete('/:id/members/:userId', removeProjectMemberHandler);
 
 export default router;
