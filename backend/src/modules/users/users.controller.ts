@@ -1,6 +1,32 @@
 import { Request, Response } from 'express';
 import { updateRoleSchema } from './users.schema';
-import { listUsers, updateUserRole, UserNotFoundError } from './users.service';
+import { listUsers, getUserById, updateUserRole, UserNotFoundError } from './users.service';
+
+export async function getMe(req: Request, res: Response): Promise<void> {
+  if (!req.user || !req.user.id) {
+    res.status(401).json({
+      error: 'Authentication required',
+    });
+    return;
+  }
+
+  try {
+    const user = await getUserById(req.user.id);
+    res.status(200).json(user);
+  } catch (err: any) {
+    if (err instanceof UserNotFoundError) {
+      res.status(404).json({
+        error: err.message,
+      });
+      return;
+    }
+
+    console.error('Error in getMe:', err);
+    res.status(500).json({
+      error: 'Internal server error',
+    });
+  }
+}
 
 export async function getUsers(_req: Request, res: Response): Promise<void> {
   try {

@@ -57,6 +57,15 @@ export async function login(req: Request, res: Response): Promise<void> {
 
   try {
     const result = await loginUser(validationResult.data);
+
+    res.cookie('refreshToken', result.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     res.status(200).json(result);
   } catch (err: any) {
     if (err instanceof InvalidCredentialsError) {
@@ -74,7 +83,10 @@ export async function login(req: Request, res: Response): Promise<void> {
 }
 
 export async function refresh(req: Request, res: Response): Promise<void> {
-  const validationResult = refreshSchema.safeParse(req.body);
+  const payload = {
+    refreshToken: req.body?.refreshToken || req.cookies?.refreshToken,
+  };
+  const validationResult = refreshSchema.safeParse(payload);
 
   if (!validationResult.success) {
     res.status(400).json({
@@ -86,6 +98,15 @@ export async function refresh(req: Request, res: Response): Promise<void> {
 
   try {
     const result = await refreshUser(validationResult.data);
+
+    res.cookie('refreshToken', result.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     res.status(200).json(result);
   } catch (err: any) {
     if (err instanceof InvalidRefreshTokenError) {
@@ -103,7 +124,10 @@ export async function refresh(req: Request, res: Response): Promise<void> {
 }
 
 export async function logout(req: Request, res: Response): Promise<void> {
-  const validationResult = logoutSchema.safeParse(req.body);
+  const payload = {
+    refreshToken: req.body?.refreshToken || req.cookies?.refreshToken,
+  };
+  const validationResult = logoutSchema.safeParse(payload);
 
   if (!validationResult.success) {
     res.status(400).json({
@@ -115,6 +139,9 @@ export async function logout(req: Request, res: Response): Promise<void> {
 
   try {
     const result = await logoutUser(validationResult.data);
+
+    res.clearCookie('refreshToken', { path: '/' });
+
     res.status(200).json(result);
   } catch (err: any) {
     console.error('Error in user logout:', err);

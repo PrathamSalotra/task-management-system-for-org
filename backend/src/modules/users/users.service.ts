@@ -26,6 +26,19 @@ export async function listUsers() {
   return users;
 }
 
+export async function getUserById(userId: string) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: USER_PUBLIC_SELECT,
+  });
+
+  if (!user) {
+    throw new UserNotFoundError();
+  }
+
+  return user;
+}
+
 export async function updateUserRole(
   targetUserId: string,
   newRole: Role,

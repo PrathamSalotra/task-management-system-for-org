@@ -1,9 +1,11 @@
 import { Router } from 'express';
-import { getUsers, updateRole } from './users.controller';
+import { getUsers, getMe, updateRole } from './users.controller';
 import { authenticateJWT } from '../../middleware/auth.middleware';
 import { rbacGuard } from '../../middleware/rbac.middleware';
 
 const router = Router();
+
+router.get('/me', authenticateJWT, getMe);
 
 router.use(authenticateJWT, rbacGuard);
 

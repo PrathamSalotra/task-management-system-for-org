@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 export default function HomePage() {
   return (
@@ -7,11 +8,27 @@ export default function HomePage() {
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none animate-pulse" />
       <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
 
+      {/* Top Header Link */}
+      <div className="absolute top-6 right-6 z-20 flex items-center gap-3">
+        <Link
+          href="/login"
+          className="px-4 py-2 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-300 text-sm font-medium border border-slate-800 transition-colors"
+        >
+          Sign In
+        </Link>
+        <Link
+          href="/register"
+          className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors shadow-md shadow-indigo-500/20"
+        >
+          Get Started
+        </Link>
+      </div>
+
       <div className="max-w-4xl w-full mx-auto text-center relative z-10 space-y-8">
         {/* Status Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-sm font-medium backdrop-blur-md shadow-sm">
           <span className="w-2 h-2 rounded-full bg-indigo-500 animate-ping" />
-          <span>System Status: Frontend Skeleton Ready</span>
+          <span>System Status: Frontend Auth Ready</span>
         </div>
 
         {/* Heading */}
@@ -63,18 +80,20 @@ export default function HomePage() {
 
         {/* Interactive Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-          <button
+          <Link
+            href="/dashboard"
             id="explore-dashboard-btn"
-            className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+            className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 text-center"
           >
             Explore Dashboard
-          </button>
-          <button
-            id="view-documentation-btn"
-            className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-800/80 text-slate-300 font-medium border border-slate-800 transition-all duration-200"
+          </Link>
+          <Link
+            href="/register"
+            id="create-account-btn"
+            className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-800/80 text-slate-300 font-medium border border-slate-800 transition-all duration-200 text-center"
           >
-            View Specification
-          </button>
+            Create an Account
+          </Link>
         </div>
       </div>
     </main>
