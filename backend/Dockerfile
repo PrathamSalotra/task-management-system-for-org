@@ -9,6 +9,7 @@ RUN npm config set fetch-retries 5 && \
     npm install --no-audit --no-fund
 
 COPY . .
+RUN npx prisma generate
 
 EXPOSE 4000
 
