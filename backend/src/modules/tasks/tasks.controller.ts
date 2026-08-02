@@ -4,6 +4,7 @@ import {
   createTask,
   listTasks,
   updateTask,
+  deleteTask,
   TaskNotFoundError,
   TaskForbiddenError,
   AssigneeNotMemberError,
@@ -202,6 +203,52 @@ export async function updateTaskHandler(
     }
 
     console.error('Error in updateTaskHandler:', err);
+    res.status(500).json({
+      error: 'Internal server error',
+    });
+  }
+}
+
+export async function deleteTaskHandler(
+  req: Request,
+  res: Response
+): Promise<void> {
+  if (!req.user || !req.user.id || !req.user.role) {
+    res.status(401).json({
+      error: 'Authentication required',
+    });
+    return;
+  }
+
+  const taskId = req.params.id;
+  if (!taskId) {
+    res.status(400).json({
+      error: 'Task ID is required',
+    });
+    return;
+  }
+
+  try {
+    const deletedTask = await deleteTask(taskId, {
+      id: req.user.id,
+      role: req.user.role,
+    });
+    res.status(200).json(deletedTask);
+  } catch (err: any) {
+    if (err instanceof TaskNotFoundError) {
+      res.status(404).json({
+        error: err.message,
+      });
+      return;
+    }
+    if (err instanceof TaskForbiddenError) {
+      res.status(403).json({
+        error: err.message,
+      });
+      return;
+    }
+
+    console.error('Error in deleteTaskHandler:', err);
     res.status(500).json({
       error: 'Internal server error',
     });

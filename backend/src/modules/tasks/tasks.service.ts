@@ -363,3 +363,65 @@ export async function updateTask(
 
   return updatedTask;
 }
+
+export async function deleteTask(
+  taskId: string,
+  caller: { id: string; role: Role | string }
+) {
+  const task = await prisma.task.findUnique({
+    where: { id: taskId },
+    include: {
+      project: {
+        select: { id: true, managerId: true },
+      },
+    },
+  });
+
+  if (!task) {
+    throw new TaskNotFoundError();
+  }
+
+  const isPmOrAdmin =
+    caller.role === Role.ADMIN || task.project.managerId === caller.id;
+
+  if (!isPmOrAdmin) {
+    throw new TaskForbiddenError(
+      'Forbidden: Only the owning Project Manager or an Admin can delete tasks'
+    );
+  }
+
+  const deletedTask = await prisma.$transaction(async (tx) => {
+    await tx.comment.deleteMany({
+      where: { taskId },
+    });
+
+    await tx.attachment.deleteMany({
+      where: { taskId },
+    });
+
+    const res = await tx.task.delete({
+      where: { id: taskId },
+    });
+
+    await tx.auditLog.create({
+      data: {
+        userId: caller.id,
+        action: 'DELETE_TASK',
+        entityType: 'TASK',
+        entityId: taskId,
+        metadata: {
+          projectId: task.projectId,
+          title: task.title,
+          status: task.status,
+          priority: task.priority,
+          assigneeId: task.assigneeId,
+          deletedBy: caller.id,
+        },
+      },
+    });
+
+    return res;
+  });
+
+  return deletedTask;
+}
