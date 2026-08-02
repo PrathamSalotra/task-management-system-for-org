@@ -425,3 +425,109 @@ export async function deleteTask(
 
   return deletedTask;
 }
+
+async function verifyTaskAccess(
+  taskId: string,
+  caller: { id: string; role: Role | string }
+) {
+  const task = await prisma.task.findUnique({
+    where: { id: taskId },
+    include: {
+      project: {
+        select: {
+          id: true,
+          managerId: true,
+          members: {
+            select: { userId: true },
+          },
+        },
+      },
+    },
+  });
+
+  if (!task) {
+    throw new TaskNotFoundError();
+  }
+
+  const isAdmin = caller.role === Role.ADMIN;
+  const isManager = task.project.managerId === caller.id;
+  const isMember = task.project.members.some((m) => m.userId === caller.id);
+
+  if (!isAdmin && !isManager && !isMember) {
+    throw new TaskForbiddenError(
+      'Forbidden: Only project members can access comments on this task'
+    );
+  }
+
+  return task;
+}
+
+export async function addComment(
+  taskId: string,
+  content: string,
+  caller: { id: string; role: Role | string }
+) {
+  const task = await verifyTaskAccess(taskId, caller);
+
+  const comment = await prisma.$transaction(async (tx) => {
+    const newComment = await tx.comment.create({
+      data: {
+        taskId,
+        userId: caller.id,
+        content,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+          },
+        },
+      },
+    });
+
+    await tx.auditLog.create({
+      data: {
+        userId: caller.id,
+        action: 'CREATE_COMMENT',
+        entityType: 'TASK',
+        entityId: taskId,
+        metadata: {
+          commentId: newComment.id,
+          projectId: task.projectId,
+          content: content.substring(0, 50),
+        },
+      },
+    });
+
+    return newComment;
+  });
+
+  return comment;
+}
+
+export async function listComments(
+  taskId: string,
+  caller: { id: string; role: Role | string }
+) {
+  await verifyTaskAccess(taskId, caller);
+
+  const comments = await prisma.comment.findMany({
+    where: { taskId },
+    orderBy: { createdAt: 'asc' },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+        },
+      },
+    },
+  });
+
+  return comments;
+}
