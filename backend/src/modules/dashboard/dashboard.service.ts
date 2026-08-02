@@ -6,6 +6,13 @@ import {
   TaskPriority,
 } from '../../generated/prisma/client';
 
+export class DashboardForbiddenError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'DashboardForbiddenError';
+  }
+}
+
 export interface DashboardOverviewResult {
   projectProgress: Array<{
     projectId: string;
@@ -46,6 +53,71 @@ export interface DashboardOverviewResult {
     total: number;
     completionPercentage: number;
   };
+  teamPerformance?: Array<{
+    userId: string;
+    name: string;
+    email: string;
+    completedTasks: number;
+    overdueTasks: number;
+  }>;
+}
+
+function computeTeamPerformance(projects: any[]) {
+  const memberMap = new Map<
+    string,
+    {
+      userId: string;
+      name: string;
+      email: string;
+      completedTasks: number;
+      overdueTasks: number;
+    }
+  >();
+
+  const now = new Date();
+
+  for (const project of projects) {
+    if (project.members) {
+      for (const member of project.members) {
+        if (member.user && !memberMap.has(member.user.id)) {
+          memberMap.set(member.user.id, {
+            userId: member.user.id,
+            name: member.user.name,
+            email: member.user.email,
+            completedTasks: 0,
+            overdueTasks: 0,
+          });
+        }
+      }
+    }
+
+    for (const task of project.tasks) {
+      if (task.assignee) {
+        if (!memberMap.has(task.assignee.id)) {
+          memberMap.set(task.assignee.id, {
+            userId: task.assignee.id,
+            name: task.assignee.name,
+            email: task.assignee.email,
+            completedTasks: 0,
+            overdueTasks: 0,
+          });
+        }
+        const memberStats = memberMap.get(task.assignee.id)!;
+        if (task.status === TaskStatus.COMPLETED) {
+          memberStats.completedTasks++;
+        } else if (
+          task.dueDate &&
+          new Date(task.dueDate).getTime() < now.getTime()
+        ) {
+          memberStats.overdueTasks++;
+        }
+      }
+    }
+  }
+
+  return Array.from(memberMap.values()).sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
 }
 
 export async function getDashboardOverview(caller: {
@@ -71,6 +143,17 @@ export async function getDashboardOverview(caller: {
     select: {
       id: true,
       name: true,
+      members: {
+        select: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      },
       tasks: {
         select: {
           id: true,
@@ -182,10 +265,72 @@ export async function getDashboardOverview(caller: {
     completionPercentage,
   };
 
-  return {
+  const result: DashboardOverviewResult = {
     projectProgress,
     taskStats,
     upcomingDeadlines: upcomingDeadlines.slice(0, 20),
     completionBreakdown,
   };
+
+  if (caller.role === Role.PROJECT_MANAGER || caller.role === Role.ADMIN) {
+    result.teamPerformance = computeTeamPerformance(projects);
+  }
+
+  return result;
+}
+
+export async function getTeamPerformance(caller: {
+  id: string;
+  role: Role | string;
+}) {
+  if (caller.role === Role.TEAM_MEMBER) {
+    throw new DashboardForbiddenError(
+      'Forbidden: Requires PROJECT_MANAGER or ADMIN role'
+    );
+  }
+
+  const whereProject: any = {
+    status: { not: ProjectStatus.ARCHIVED },
+  };
+
+  if (caller.role === Role.PROJECT_MANAGER) {
+    whereProject.managerId = caller.id;
+  }
+
+  const projects = await prisma.project.findMany({
+    where: whereProject,
+    select: {
+      id: true,
+      name: true,
+      members: {
+        select: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      },
+      tasks: {
+        select: {
+          id: true,
+          title: true,
+          status: true,
+          priority: true,
+          dueDate: true,
+          assignee: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return computeTeamPerformance(projects);
 }
