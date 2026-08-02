@@ -1,5 +1,5 @@
 import { prisma } from '../../prisma/client';
-import { CreateTaskInput } from './tasks.schema';
+import { CreateTaskInput, UpdateTaskInput } from './tasks.schema';
 import {
   Role,
   TaskPriority,
@@ -233,7 +233,7 @@ export async function listTasks(
 
   const totalPages = Math.ceil(total / pageSize);
 
-  return {
+    return {
     data,
     meta: {
       page,
@@ -242,4 +242,124 @@ export async function listTasks(
       totalPages,
     },
   };
+}
+
+export async function updateTask(
+  taskId: string,
+  input: UpdateTaskInput,
+  caller: { id: string; role: Role | string }
+) {
+  const targetAssigneeId =
+    input.assigneeId !== undefined ? input.assigneeId : input.assignee_id;
+  const targetDueDate =
+    input.dueDate !== undefined ? input.dueDate : input.due_date;
+
+  const task = await prisma.task.findUnique({
+    where: { id: taskId },
+    include: {
+      project: {
+        include: {
+          members: {
+            select: { userId: true },
+          },
+        },
+      },
+    },
+  });
+
+  if (!task) {
+    throw new TaskNotFoundError();
+  }
+
+  const isEditingDetails =
+    input.title !== undefined ||
+    input.description !== undefined ||
+    input.priority !== undefined ||
+    targetDueDate !== undefined ||
+    targetAssigneeId !== undefined;
+
+  const isEditingStatus = input.status !== undefined;
+
+  if (!isEditingDetails && !isEditingStatus) {
+    return task;
+  }
+
+  if (isEditingDetails) {
+    const isPmOrAdmin =
+      caller.role === Role.ADMIN || task.project.managerId === caller.id;
+    if (!isPmOrAdmin) {
+      throw new TaskForbiddenError(
+        'Forbidden: Only the owning Project Manager or an Admin can edit task details'
+      );
+    }
+  } else if (isEditingStatus) {
+    const isAssignee = task.assigneeId === caller.id;
+    const isPmOrAdmin =
+      caller.role === Role.ADMIN || task.project.managerId === caller.id;
+    if (!isAssignee && !isPmOrAdmin) {
+      throw new TaskForbiddenError(
+        'Forbidden: You are not permitted to change the status of this task'
+      );
+    }
+  }
+
+  if (targetAssigneeId) {
+    const isMember = task.project.members.some(
+      (m) => m.userId === targetAssigneeId
+    );
+    const isManager = task.project.managerId === targetAssigneeId;
+
+    if (!isMember && !isManager) {
+      throw new AssigneeNotMemberError(
+        'Assignee is not a member of the project'
+      );
+    }
+  }
+
+  const data: Prisma.TaskUncheckedUpdateInput = {};
+  if (input.title !== undefined) data.title = input.title;
+  if (input.description !== undefined) data.description = input.description;
+  if (input.priority !== undefined) data.priority = input.priority;
+  if (input.status !== undefined) data.status = input.status;
+  if (targetAssigneeId !== undefined) data.assigneeId = targetAssigneeId;
+  if (targetDueDate !== undefined) {
+    data.dueDate = targetDueDate ? new Date(targetDueDate) : null;
+  }
+
+  const updatedTask = await prisma.$transaction(async (tx) => {
+    const res = await tx.task.update({
+      where: { id: taskId },
+      data,
+      include: {
+        assignee: {
+          select: { id: true, name: true, email: true },
+        },
+        project: {
+          select: { id: true, name: true },
+        },
+      },
+    });
+
+    await tx.auditLog.create({
+      data: {
+        userId: caller.id,
+        action: isEditingDetails ? 'UPDATE_TASK' : 'UPDATE_TASK_STATUS',
+        entityType: 'TASK',
+        entityId: res.id,
+        metadata: {
+          projectId: task.projectId,
+          updatedFields: Object.keys(data),
+          title: res.title,
+          priority: res.priority,
+          status: res.status,
+          assigneeId: res.assigneeId,
+          dueDate: res.dueDate,
+        },
+      },
+    });
+
+    return res;
+  });
+
+  return updatedTask;
 }

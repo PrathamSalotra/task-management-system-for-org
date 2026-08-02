@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
-import { createTaskSchema } from './tasks.schema';
+import { createTaskSchema, updateTaskSchema } from './tasks.schema';
 import {
   createTask,
   listTasks,
+  updateTask,
   TaskNotFoundError,
   TaskForbiddenError,
   AssigneeNotMemberError,
@@ -133,6 +134,74 @@ export async function listTasksHandler(
     }
 
     console.error('Error in listTasksHandler:', err);
+    res.status(500).json({
+      error: 'Internal server error',
+    });
+  }
+}
+
+export async function updateTaskHandler(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const validationResult = updateTaskSchema.safeParse(req.body);
+  if (!validationResult.success) {
+    res.status(400).json({
+      error: 'Validation error',
+      details: validationResult.error.issues,
+    });
+    return;
+  }
+
+  if (!req.user || !req.user.id || !req.user.role) {
+    res.status(401).json({
+      error: 'Authentication required',
+    });
+    return;
+  }
+
+  const taskId = req.params.id;
+  if (!taskId) {
+    res.status(400).json({
+      error: 'Task ID is required',
+    });
+    return;
+  }
+
+  try {
+    const updatedTask = await updateTask(
+      taskId,
+      validationResult.data,
+      {
+        id: req.user.id,
+        role: req.user.role,
+      }
+    );
+    res.status(200).json(updatedTask);
+  } catch (err: any) {
+    if (err instanceof TaskNotFoundError) {
+      res.status(404).json({
+        error: err.message,
+      });
+      return;
+    }
+    if (err instanceof TaskForbiddenError) {
+      res.status(403).json({
+        error: err.message,
+      });
+      return;
+    }
+    if (
+      err instanceof AssigneeNotMemberError ||
+      (err.message && err.message.includes('Assignee is not a member'))
+    ) {
+      res.status(400).json({
+        error: err.message,
+      });
+      return;
+    }
+
+    console.error('Error in updateTaskHandler:', err);
     res.status(500).json({
       error: 'Internal server error',
     });
