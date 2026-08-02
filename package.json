@@ -1,0 +1,9 @@
+{
+  "name": "task-management-system",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "studio": "npx prisma studio --schema=backend/prisma/schema.prisma",
+    "dev": "docker compose up -d"
+  }
+}
