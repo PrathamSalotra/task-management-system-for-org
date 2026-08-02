@@ -43,19 +43,20 @@ enum TaskStatus {
 }
 
 model User {
-  id           String   @id @default(uuid()) @db.Uuid
-  name         String   @db.VarChar(120)
-  email        String   @unique @db.VarChar(255)
-  passwordHash String   @map("password_hash") @db.VarChar(255)
-  role         Role     @default(TEAM_MEMBER)
-  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(6)
-  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  id              String          @id @default(uuid()) @db.Uuid
+  name            String          @db.VarChar(120)
+  email           String          @unique @db.VarChar(255)
+  passwordHash    String          @map("password_hash") @db.VarChar(255)
+  role            Role            @default(TEAM_MEMBER)
+  createdAt       DateTime        @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
 
   managedProjects Project[]       @relation("ProjectManager")
   projectMembers  ProjectMember[]
   assignedTasks   Task[]          @relation("TaskAssignee")
   comments        Comment[]       @relation("CommentAuthor")
   attachments     Attachment[]    @relation("AttachmentUploader")
+  auditLogs       AuditLog[]      @relation("AuditLogAuthor")
 
   @@map("users")
 }
@@ -108,6 +109,10 @@ model Task {
   comments    Comment[]
   attachments Attachment[]
 
+  @@index([projectId])
+  @@index([assigneeId])
+  @@index([status])
+  @@index([dueDate])
   @@map("tasks")
 }
 
@@ -137,4 +142,19 @@ model Attachment {
   uploadedBy User @relation("AttachmentUploader", fields: [uploadedById], references: [id])
 
   @@map("attachments")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  action     String   @db.VarChar(50)
+  entityType String   @map("entity_type") @db.VarChar(50)
+  entityId   String   @map("entity_id") @db.Uuid
+  metadata   Json?    @db.JsonB
+  timestamp  DateTime @default(now()) @db.Timestamp(6)
+
+  user User @relation("AuditLogAuthor", fields: [userId], references: [id])
+
+  @@index([entityType, entityId])
+  @@map("audit_logs")
 }
