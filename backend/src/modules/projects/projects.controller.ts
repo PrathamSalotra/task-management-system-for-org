@@ -3,6 +3,7 @@ import { createProjectSchema, updateProjectSchema } from './projects.schema';
 import {
   createProject,
   updateProject,
+  archiveProject,
   listProjects,
   getProjectById,
   ProjectNotFoundError,
@@ -161,6 +162,44 @@ export async function getProjectByIdHandler(
     }
 
     console.error('Error in getProjectByIdHandler:', err);
+    res.status(500).json({
+      error: 'Internal server error',
+    });
+  }
+}
+
+export async function deleteProjectHandler(
+  req: Request,
+  res: Response
+): Promise<void> {
+  if (!req.user || !req.user.id || !req.user.role) {
+    res.status(401).json({
+      error: 'Authentication required',
+    });
+    return;
+  }
+
+  try {
+    const archivedProject = await archiveProject(req.params.id, {
+      id: req.user.id,
+      role: req.user.role,
+    });
+    res.status(200).json(archivedProject);
+  } catch (err: any) {
+    if (err instanceof ProjectNotFoundError) {
+      res.status(404).json({
+        error: err.message,
+      });
+      return;
+    }
+    if (err instanceof ProjectForbiddenError) {
+      res.status(403).json({
+        error: err.message,
+      });
+      return;
+    }
+
+    console.error('Error in deleteProjectHandler:', err);
     res.status(500).json({
       error: 'Internal server error',
     });

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   createProjectHandler,
   updateProjectHandler,
+  deleteProjectHandler,
   getProjectsHandler,
   getProjectByIdHandler,
 } from './projects.controller';
@@ -16,5 +17,6 @@ router.post('/', createProjectHandler);
 router.get('/', getProjectsHandler);
 router.get('/:id', getProjectByIdHandler);
 router.put('/:id', updateProjectHandler);
+router.delete('/:id', deleteProjectHandler);
 
 export default router;

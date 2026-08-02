@@ -219,3 +219,54 @@ export async function getProjectById(
 
   return project;
 }
+
+export async function archiveProject(
+  projectId: string,
+  user: { id: string; role: Role | string }
+) {
+  const existingProject = await prisma.project.findUnique({
+    where: { id: projectId },
+  });
+
+  if (!existingProject) {
+    throw new ProjectNotFoundError();
+  }
+
+  if (user.role !== Role.ADMIN && existingProject.managerId !== user.id) {
+    throw new ProjectForbiddenError(
+      'Forbidden: Only the owning Project Manager or an Admin can archive this project'
+    );
+  }
+
+  const archivedProject = await prisma.$transaction(async (tx) => {
+    const proj = await tx.project.update({
+      where: { id: projectId },
+      data: { status: ProjectStatus.ARCHIVED },
+      include: {
+        manager: {
+          select: { id: true, name: true, email: true },
+        },
+        _count: {
+          select: { members: true, tasks: true },
+        },
+      },
+    });
+
+    await tx.auditLog.create({
+      data: {
+        userId: user.id,
+        action: 'ARCHIVE_PROJECT',
+        entityType: 'PROJECT',
+        entityId: projectId,
+        metadata: {
+          previousStatus: existingProject.status,
+          newStatus: proj.status,
+        },
+      },
+    });
+
+    return proj;
+  });
+
+  return archivedProject;
+}
