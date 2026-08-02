@@ -26,6 +26,22 @@ enum ProjectStatus {
   @@map("project_status")
 }
 
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+
+  @@map("task_priority")
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  COMPLETED
+
+  @@map("task_status")
+}
+
 model User {
   id           String   @id @default(uuid()) @db.Uuid
   name         String   @db.VarChar(120)
@@ -37,6 +53,9 @@ model User {
 
   managedProjects Project[]       @relation("ProjectManager")
   projectMembers  ProjectMember[]
+  assignedTasks   Task[]          @relation("TaskAssignee")
+  comments        Comment[]       @relation("CommentAuthor")
+  attachments     Attachment[]    @relation("AttachmentUploader")
 
   @@map("users")
 }
@@ -54,6 +73,7 @@ model Project {
 
   manager User            @relation("ProjectManager", fields: [managerId], references: [id])
   members ProjectMember[]
+  tasks   Task[]
 
   @@map("projects")
 }
@@ -69,4 +89,52 @@ model ProjectMember {
 
   @@unique([projectId, userId])
   @@map("project_members")
+}
+
+model Task {
+  id          String       @id @default(uuid()) @db.Uuid
+  projectId   String       @map("project_id") @db.Uuid
+  title       String       @db.VarChar(200)
+  description String?      @db.Text
+  priority    TaskPriority @default(MEDIUM)
+  status      TaskStatus   @default(TODO)
+  assigneeId  String?      @map("assignee_id") @db.Uuid
+  dueDate     DateTime?    @map("due_date") @db.Date
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt   DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  project     Project      @relation(fields: [projectId], references: [id])
+  assignee    User?        @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  comments    Comment[]
+  attachments Attachment[]
+
+  @@map("tasks")
+}
+
+model Comment {
+  id        String   @id @default(uuid()) @db.Uuid
+  taskId    String   @map("task_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  content   String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  task Task @relation(fields: [taskId], references: [id])
+  user User @relation("CommentAuthor", fields: [userId], references: [id])
+
+  @@map("comments")
+}
+
+model Attachment {
+  id            String   @id @default(uuid()) @db.Uuid
+  taskId        String   @map("task_id") @db.Uuid
+  fileName      String   @map("file_name") @db.VarChar(255)
+  fileUrl       String   @map("file_url") @db.Text
+  fileSizeBytes Int      @map("file_size_bytes")
+  uploadedById  String   @map("uploaded_by") @db.Uuid
+  uploadedAt    DateTime @default(now()) @map("uploaded_at") @db.Timestamp(6)
+
+  task       Task @relation(fields: [taskId], references: [id])
+  uploadedBy User @relation("AttachmentUploader", fields: [uploadedById], references: [id])
+
+  @@map("attachments")
 }
