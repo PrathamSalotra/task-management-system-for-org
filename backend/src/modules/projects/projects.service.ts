@@ -1,5 +1,22 @@
 import { prisma } from '../../prisma/client';
 import { CreateProjectInput } from './projects.schema';
+import { Role, ProjectStatus, Prisma } from '../../generated/prisma/client';
+
+export class ProjectNotFoundError extends Error {
+  constructor(message = 'Project not found') {
+    super(message);
+    this.name = 'ProjectNotFoundError';
+  }
+}
+
+export class ProjectForbiddenError extends Error {
+  constructor(
+    message = 'Forbidden: Insufficient permissions to access this project'
+  ) {
+    super(message);
+    this.name = 'ProjectForbiddenError';
+  }
+}
 
 export async function createProject(
   input: CreateProjectInput,
@@ -37,6 +54,86 @@ export async function createProject(
 
     return createdProject;
   });
+
+  return project;
+}
+
+export async function listProjects(
+  user: { id: string; role: Role | string },
+  includeArchived = false
+) {
+  const where: Prisma.ProjectWhereInput = {};
+
+  if (!includeArchived) {
+    where.status = { not: ProjectStatus.ARCHIVED };
+  }
+
+  if (user.role === Role.PROJECT_MANAGER) {
+    where.OR = [
+      { managerId: user.id },
+      { members: { some: { userId: user.id } } },
+    ];
+  } else if (user.role === Role.TEAM_MEMBER) {
+    where.members = { some: { userId: user.id } };
+  }
+
+  const projects = await prisma.project.findMany({
+    where,
+    include: {
+      manager: {
+        select: { id: true, name: true, email: true },
+      },
+      _count: {
+        select: { members: true, tasks: true },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+
+  return projects;
+}
+
+export async function getProjectById(
+  projectId: string,
+  user: { id: string; role: Role | string }
+) {
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    include: {
+      manager: {
+        select: { id: true, name: true, email: true },
+      },
+      members: {
+        select: {
+          id: true,
+          joinedAt: true,
+          user: {
+            select: { id: true, name: true, email: true, role: true },
+          },
+        },
+      },
+      _count: {
+        select: { tasks: true },
+      },
+    },
+  });
+
+  if (!project) {
+    throw new ProjectNotFoundError();
+  }
+
+  if (user.role === Role.PROJECT_MANAGER) {
+    const isOwner = project.managerId === user.id;
+    const isMember = project.members.some((m) => m.user.id === user.id);
+    if (!isOwner && !isMember) {
+      throw new ProjectForbiddenError();
+    }
+  } else if (user.role === Role.TEAM_MEMBER) {
+    const isMember = project.members.some((m) => m.user.id === user.id);
+    if (!isMember) {
+      throw new ProjectForbiddenError();
+    }
+  }
 
   return project;
 }
