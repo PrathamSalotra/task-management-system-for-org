@@ -2,11 +2,15 @@ import { Request, Response } from 'express';
 import { createTaskSchema } from './tasks.schema';
 import {
   createTask,
+  listTasks,
   TaskNotFoundError,
   TaskForbiddenError,
   AssigneeNotMemberError,
 } from './tasks.service';
-import { ProjectNotFoundError } from '../projects/projects.service';
+import {
+  ProjectNotFoundError,
+  ProjectForbiddenError,
+} from '../projects/projects.service';
 
 export async function createTaskHandler(
   req: Request,
@@ -76,6 +80,59 @@ export async function createTaskHandler(
     }
 
     console.error('Error in createTaskHandler:', err);
+    res.status(500).json({
+      error: 'Internal server error',
+    });
+  }
+}
+
+export async function listTasksHandler(
+  req: Request,
+  res: Response
+): Promise<void> {
+  if (!req.user || !req.user.id || !req.user.role) {
+    res.status(401).json({
+      error: 'Authentication required',
+    });
+    return;
+  }
+
+  const projectId =
+    req.params.id ||
+    (req.query.projectId as string) ||
+    (req.query.project_id as string);
+  if (!projectId) {
+    res.status(400).json({
+      error: 'Project ID is required',
+    });
+    return;
+  }
+
+  try {
+    const result = await listTasks(
+      projectId,
+      {
+        id: req.user.id,
+        role: req.user.role,
+      },
+      req.query as any
+    );
+    res.status(200).json(result);
+  } catch (err: any) {
+    if (err instanceof ProjectNotFoundError) {
+      res.status(404).json({
+        error: err.message || 'Project not found',
+      });
+      return;
+    }
+    if (err instanceof ProjectForbiddenError) {
+      res.status(403).json({
+        error: err.message || 'Forbidden',
+      });
+      return;
+    }
+
+    console.error('Error in listTasksHandler:', err);
     res.status(500).json({
       error: 'Internal server error',
     });

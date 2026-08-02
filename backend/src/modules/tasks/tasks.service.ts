@@ -1,7 +1,15 @@
 import { prisma } from '../../prisma/client';
 import { CreateTaskInput } from './tasks.schema';
-import { Role, TaskPriority, TaskStatus } from '../../generated/prisma/client';
-import { ProjectNotFoundError } from '../projects/projects.service';
+import {
+  Role,
+  TaskPriority,
+  TaskStatus,
+  Prisma,
+} from '../../generated/prisma/client';
+import {
+  ProjectNotFoundError,
+  ProjectForbiddenError,
+} from '../projects/projects.service';
 
 export class TaskNotFoundError extends Error {
   constructor(message = 'Task not found') {
@@ -109,4 +117,129 @@ export async function createTask(
   });
 
   return task;
+}
+
+export async function listTasks(
+  projectId: string,
+  caller: { id: string; role: Role | string },
+  query: {
+    status?: string;
+    priority?: string;
+    assignee?: string;
+    assigneeId?: string;
+    dueDate?: string;
+    due_date?: string;
+    search?: string;
+    page?: string;
+    pageSize?: string;
+    limit?: string;
+  }
+) {
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    include: {
+      members: {
+        select: { userId: true },
+      },
+    },
+  });
+
+  if (!project) {
+    throw new ProjectNotFoundError();
+  }
+
+  if (caller.role === Role.PROJECT_MANAGER) {
+    const isOwner = project.managerId === caller.id;
+    const isMember = project.members.some((m) => m.userId === caller.id);
+    if (!isOwner && !isMember) {
+      throw new ProjectForbiddenError();
+    }
+  } else if (caller.role === Role.TEAM_MEMBER) {
+    const isMember = project.members.some((m) => m.userId === caller.id);
+    if (!isMember) {
+      throw new ProjectForbiddenError();
+    }
+  }
+
+  const where: Prisma.TaskWhereInput = {
+    projectId,
+  };
+
+  if (query.status) {
+    const statusUpper = query.status.toUpperCase() as TaskStatus;
+    if (Object.values(TaskStatus).includes(statusUpper)) {
+      where.status = statusUpper;
+    }
+  }
+
+  if (query.priority) {
+    const priorityUpper = query.priority.toUpperCase() as TaskPriority;
+    if (Object.values(TaskPriority).includes(priorityUpper)) {
+      where.priority = priorityUpper;
+    }
+  }
+
+  const assigneeVal = query.assignee || query.assigneeId;
+  if (assigneeVal) {
+    if (
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        assigneeVal
+      )
+    ) {
+      where.assigneeId = assigneeVal;
+    } else {
+      where.assignee = {
+        OR: [
+          { name: { contains: assigneeVal, mode: 'insensitive' } },
+          { email: { contains: assigneeVal, mode: 'insensitive' } },
+        ],
+      };
+    }
+  }
+
+  const dueDateVal = query.due_date || query.dueDate;
+  if (dueDateVal && !isNaN(Date.parse(dueDateVal))) {
+    where.dueDate = new Date(dueDateVal);
+  }
+
+  if (query.search) {
+    where.OR = [
+      { title: { contains: query.search, mode: 'insensitive' } },
+      { description: { contains: query.search, mode: 'insensitive' } },
+    ];
+  }
+
+  const page = Math.max(1, parseInt(query.page || '1', 10) || 1);
+  const pageSize = Math.max(
+    1,
+    parseInt(query.pageSize || query.limit || '20', 10) || 20
+  );
+  const skip = (page - 1) * pageSize;
+
+  const [total, data] = await prisma.$transaction([
+    prisma.task.count({ where }),
+    prisma.task.findMany({
+      where,
+      skip,
+      take: pageSize,
+      include: {
+        assignee: {
+          select: { id: true, name: true, email: true },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    }),
+  ]);
+
+  const totalPages = Math.ceil(total / pageSize);
+
+  return {
+    data,
+    meta: {
+      page,
+      pageSize,
+      total,
+      totalPages,
+    },
+  };
 }

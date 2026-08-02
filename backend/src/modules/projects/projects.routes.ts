@@ -10,7 +10,10 @@ import {
 } from './projects.controller';
 import { authenticateJWT } from '../../middleware/auth.middleware';
 import { rbacGuard } from '../../middleware/rbac.middleware';
-import { createTaskHandler } from '../tasks/tasks.controller';
+import {
+  createTaskHandler,
+  listTasksHandler,
+} from '../tasks/tasks.controller';
 
 const router = Router();
 
@@ -26,5 +29,6 @@ router.post('/:id/members', addProjectMemberHandler);
 router.delete('/:id/members/:userId', removeProjectMemberHandler);
 
 router.post('/:id/tasks', createTaskHandler);
+router.get('/:id/tasks', listTasksHandler);
 
 export default router;
