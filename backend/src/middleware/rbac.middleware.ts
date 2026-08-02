@@ -85,7 +85,7 @@ export function rbacGuard(
     return;
   }
 
-  const pathToCheck = req.path || req.originalUrl;
+  const pathToCheck = (req.originalUrl || req.path).split('?')[0];
   const methodToCheck = req.method.toUpperCase();
 
   const matchingRule = permissionRules.find((rule) => {
