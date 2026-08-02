@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   createProjectHandler,
+  updateProjectHandler,
   getProjectsHandler,
   getProjectByIdHandler,
 } from './projects.controller';
@@ -14,5 +15,6 @@ router.use(authenticateJWT, rbacGuard);
 router.post('/', createProjectHandler);
 router.get('/', getProjectsHandler);
 router.get('/:id', getProjectByIdHandler);
+router.put('/:id', updateProjectHandler);
 
 export default router;

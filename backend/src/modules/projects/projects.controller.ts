@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
-import { createProjectSchema } from './projects.schema';
+import { createProjectSchema, updateProjectSchema } from './projects.schema';
 import {
   createProject,
+  updateProject,
   listProjects,
   getProjectById,
   ProjectNotFoundError,
@@ -34,6 +35,67 @@ export async function createProjectHandler(
     res.status(201).json(project);
   } catch (err: any) {
     console.error('Error in createProjectHandler:', err);
+    res.status(500).json({
+      error: 'Internal server error',
+    });
+  }
+}
+
+export async function updateProjectHandler(
+  req: Request,
+  res: Response
+): Promise<void> {
+  const validationResult = updateProjectSchema.safeParse(req.body);
+
+  if (!validationResult.success) {
+    res.status(400).json({
+      error: 'Validation error',
+      details: validationResult.error.issues,
+    });
+    return;
+  }
+
+  if (!req.user || !req.user.id || !req.user.role) {
+    res.status(401).json({
+      error: 'Authentication required',
+    });
+    return;
+  }
+
+  try {
+    const updatedProject = await updateProject(
+      req.params.id,
+      validationResult.data,
+      {
+        id: req.user.id,
+        role: req.user.role,
+      }
+    );
+    res.status(200).json(updatedProject);
+  } catch (err: any) {
+    if (err instanceof ProjectNotFoundError) {
+      res.status(404).json({
+        error: err.message,
+      });
+      return;
+    }
+    if (err instanceof ProjectForbiddenError) {
+      res.status(403).json({
+        error: err.message,
+      });
+      return;
+    }
+    if (
+      err.message &&
+      err.message.includes('Deadline cannot be earlier than start date')
+    ) {
+      res.status(400).json({
+        error: err.message,
+      });
+      return;
+    }
+
+    console.error('Error in updateProjectHandler:', err);
     res.status(500).json({
       error: 'Internal server error',
     });

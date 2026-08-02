@@ -1,5 +1,5 @@
 import { prisma } from '../../prisma/client';
-import { CreateProjectInput } from './projects.schema';
+import { CreateProjectInput, UpdateProjectInput } from './projects.schema';
 import { Role, ProjectStatus, Prisma } from '../../generated/prisma/client';
 
 export class ProjectNotFoundError extends Error {
@@ -56,6 +56,88 @@ export async function createProject(
   });
 
   return project;
+}
+
+export async function updateProject(
+  projectId: string,
+  input: UpdateProjectInput,
+  user: { id: string; role: Role | string }
+) {
+  const existingProject = await prisma.project.findUnique({
+    where: { id: projectId },
+  });
+
+  if (!existingProject) {
+    throw new ProjectNotFoundError();
+  }
+
+  if (user.role !== Role.ADMIN && existingProject.managerId !== user.id) {
+    throw new ProjectForbiddenError(
+      'Forbidden: Only the owning Project Manager or an Admin can update this project'
+    );
+  }
+
+  const startDate = input.startDate
+    ? new Date(input.startDate)
+    : existingProject.startDate;
+  const deadline = input.deadline
+    ? new Date(input.deadline)
+    : existingProject.deadline;
+
+  if (deadline < startDate) {
+    throw new Error('Deadline cannot be earlier than start date');
+  }
+
+  const data: Prisma.ProjectUpdateInput = {};
+  if (input.name !== undefined) data.name = input.name;
+  if (input.description !== undefined) data.description = input.description;
+  if (input.startDate !== undefined) data.startDate = new Date(input.startDate);
+  if (input.deadline !== undefined) data.deadline = new Date(input.deadline);
+  if (input.status !== undefined) data.status = input.status;
+
+  const updatedProject = await prisma.$transaction(async (tx) => {
+    const proj = await tx.project.update({
+      where: { id: projectId },
+      data,
+      include: {
+        manager: {
+          select: { id: true, name: true, email: true },
+        },
+        _count: {
+          select: { members: true, tasks: true },
+        },
+      },
+    });
+
+    await tx.auditLog.create({
+      data: {
+        userId: user.id,
+        action: 'UPDATE_PROJECT',
+        entityType: 'PROJECT',
+        entityId: projectId,
+        metadata: {
+          oldData: {
+            name: existingProject.name,
+            description: existingProject.description,
+            startDate: existingProject.startDate,
+            deadline: existingProject.deadline,
+            status: existingProject.status,
+          },
+          newData: {
+            name: proj.name,
+            description: proj.description,
+            startDate: proj.startDate,
+            deadline: proj.deadline,
+            status: proj.status,
+          },
+        },
+      },
+    });
+
+    return proj;
+  });
+
+  return updatedProject;
 }
 
 export async function listProjects(
