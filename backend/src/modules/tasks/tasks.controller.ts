@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import fs from 'fs';
 import {
   createTaskSchema,
   updateTaskSchema,
@@ -11,6 +12,8 @@ import {
   deleteTask,
   addComment,
   listComments,
+  addAttachment,
+  listAttachments,
   TaskNotFoundError,
   TaskForbiddenError,
   AssigneeNotMemberError,
@@ -357,6 +360,123 @@ export async function listCommentsHandler(
     }
 
     console.error('Error in listCommentsHandler:', err);
+    res.status(500).json({
+      error: 'Internal server error',
+    });
+  }
+}
+
+export async function addAttachmentHandler(
+  req: Request,
+  res: Response
+): Promise<void> {
+  if (!req.user || !req.user.id || !req.user.role) {
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    res.status(401).json({
+      error: 'Authentication required',
+    });
+    return;
+  }
+
+  const taskId = req.params.id;
+  if (!taskId) {
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+    res.status(400).json({
+      error: 'Task ID is required',
+    });
+    return;
+  }
+
+  if (!req.file) {
+    res.status(400).json({
+      error: 'No file uploaded. Please include a file in the "file" field.',
+    });
+    return;
+  }
+
+  try {
+    const attachment = await addAttachment(
+      taskId,
+      {
+        originalname: req.file.originalname,
+        filename: req.file.filename,
+        size: req.file.size,
+      },
+      {
+        id: req.user.id,
+        role: req.user.role,
+      }
+    );
+    res.status(201).json(attachment);
+  } catch (err: any) {
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
+    }
+
+    if (err instanceof TaskNotFoundError) {
+      res.status(404).json({
+        error: err.message,
+      });
+      return;
+    }
+    if (err instanceof TaskForbiddenError) {
+      res.status(403).json({
+        error: err.message,
+      });
+      return;
+    }
+
+    console.error('Error in addAttachmentHandler:', err);
+    res.status(500).json({
+      error: 'Internal server error',
+    });
+  }
+}
+
+export async function listAttachmentsHandler(
+  req: Request,
+  res: Response
+): Promise<void> {
+  if (!req.user || !req.user.id || !req.user.role) {
+    res.status(401).json({
+      error: 'Authentication required',
+    });
+    return;
+  }
+
+  const taskId = req.params.id;
+  if (!taskId) {
+    res.status(400).json({
+      error: 'Task ID is required',
+    });
+    return;
+  }
+
+  try {
+    const attachments = await listAttachments(taskId, {
+      id: req.user.id,
+      role: req.user.role,
+    });
+    res.status(200).json(attachments);
+  } catch (err: any) {
+    if (err instanceof TaskNotFoundError) {
+      res.status(404).json({
+        error: err.message,
+      });
+      return;
+    }
+    if (err instanceof TaskForbiddenError) {
+      res.status(403).json({
+        error: err.message,
+      });
+      return;
+    }
+
+    console.error('Error in listAttachmentsHandler:', err);
     res.status(500).json({
       error: 'Internal server error',
     });

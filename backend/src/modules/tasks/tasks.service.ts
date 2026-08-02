@@ -531,3 +531,82 @@ export async function listComments(
 
   return comments;
 }
+
+export async function addAttachment(
+  taskId: string,
+  file: {
+    originalname: string;
+    filename: string;
+    size: number;
+  },
+  caller: { id: string; role: Role | string }
+) {
+  const task = await verifyTaskAccess(taskId, caller);
+
+  const fileUrl = `/uploads/${file.filename}`;
+
+  const attachment = await prisma.$transaction(async (tx) => {
+    const newAttachment = await tx.attachment.create({
+      data: {
+        taskId,
+        fileName: file.originalname,
+        fileUrl,
+        fileSizeBytes: file.size,
+        uploadedById: caller.id,
+      },
+      include: {
+        uploadedBy: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+          },
+        },
+      },
+    });
+
+    await tx.auditLog.create({
+      data: {
+        userId: caller.id,
+        action: 'CREATE_ATTACHMENT',
+        entityType: 'TASK',
+        entityId: taskId,
+        metadata: {
+          attachmentId: newAttachment.id,
+          projectId: task.projectId,
+          fileName: file.originalname,
+          fileSizeBytes: file.size,
+        },
+      },
+    });
+
+    return newAttachment;
+  });
+
+  return attachment;
+}
+
+export async function listAttachments(
+  taskId: string,
+  caller: { id: string; role: Role | string }
+) {
+  await verifyTaskAccess(taskId, caller);
+
+  const attachments = await prisma.attachment.findMany({
+    where: { taskId },
+    orderBy: { uploadedAt: 'desc' },
+    include: {
+      uploadedBy: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+        },
+      },
+    },
+  });
+
+  return attachments;
+}
