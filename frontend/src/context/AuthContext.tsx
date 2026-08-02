@@ -9,6 +9,7 @@ import React, {
   ReactNode,
 } from 'react';
 import { useRouter } from 'next/navigation';
+import { setClientToken } from '../lib/api/client';
 
 export interface User {
   id: string;
@@ -46,6 +47,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    setClientToken(accessToken);
+  }, [accessToken]);
 
   const fetchCurrentUser = useCallback(async (token: string): Promise<User | null> => {
     try {
