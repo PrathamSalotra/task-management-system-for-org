@@ -40,3 +40,10 @@ export async function getMeApi(): Promise<User> {
     method: 'GET',
   });
 }
+
+export async function getUsersApi(): Promise<User[]> {
+  const res = await apiRequest<any>('/users', {
+    method: 'GET',
+  });
+  return Array.isArray(res) ? res : (res.data || []);
+}

@@ -7,6 +7,8 @@ import {
   createProjectApi,
   updateProjectApi,
   deleteProjectApi,
+  addProjectMemberApi,
+  removeProjectMemberApi,
   GetProjectsParams,
   CreateProjectPayload,
   UpdateProjectPayload,
@@ -53,6 +55,28 @@ export function useDeleteProject() {
   return useMutation({
     mutationFn: (id: string) => deleteProjectApi(id),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+    },
+  });
+}
+
+export function useAddProjectMember(projectId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (userId: string) => addProjectMemberApi(projectId, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['project', projectId] });
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+    },
+  });
+}
+
+export function useRemoveProjectMember(projectId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (userId: string) => removeProjectMemberApi(projectId, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['project', projectId] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
     },
   });

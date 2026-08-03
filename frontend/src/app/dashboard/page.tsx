@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import { useProjects, useCreateProject } from '../../hooks';
 import { useUIStore } from '../../store/useUIStore';
+import { Navbar } from '../../components/Navbar';
 
 export default function DashboardPage() {
   const { user, accessToken, isLoading, isAuthenticated, logout, apiFetch } =
@@ -77,34 +78,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0d14] text-white flex flex-col">
-      {/* Top Navigation Bar */}
-      <header className="border-b border-slate-800/80 bg-slate-900/40 backdrop-blur-xl px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold">
-            T
-          </div>
-          <span className="text-lg font-bold tracking-tight">
-            Agile Workspace
-          </span>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <div className="text-right hidden sm:block">
-            <div className="text-sm font-semibold">{user?.name}</div>
-            <div className="text-xs text-slate-400">{user?.email}</div>
-          </div>
-          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 uppercase tracking-wider">
-            {user?.role}
-          </span>
-          <button
-            id="logout-btn"
-            onClick={logout}
-            className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium transition-colors border border-slate-700"
-          >
-            Sign Out
-          </button>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-6xl w-full mx-auto p-6 md:p-10 space-y-8">

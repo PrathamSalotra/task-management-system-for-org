@@ -188,6 +188,8 @@ export async function getProjectById(
       members: {
         select: {
           id: true,
+          projectId: true,
+          userId: true,
           joinedAt: true,
           user: {
             select: { id: true, name: true, email: true, role: true },

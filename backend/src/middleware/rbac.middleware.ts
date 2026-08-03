@@ -12,7 +12,7 @@ export const permissionRules: PermissionRule[] = [
   {
     method: 'GET',
     path: /^\/api\/v1\/users(?:\/.*)?$/,
-    allowedRoles: [Role.ADMIN],
+    allowedRoles: [Role.ADMIN, Role.PROJECT_MANAGER, Role.TEAM_MEMBER],
   },
   {
     method: 'PUT',
