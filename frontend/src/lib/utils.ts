@@ -1,4 +1,4 @@
-export function formatDate(dateStr?: string | Date): string {
+export function formatDate(dateStr?: string | Date | null): string {
   if (!dateStr) return 'No Date';
   try {
     const date = typeof dateStr === 'string' ? new Date(dateStr) : dateStr;
@@ -138,4 +138,11 @@ export function getPriorityBadgeStyle(priority?: string): {
         label: priority || 'Normal',
       };
   }
+}
+
+export function formatFileSize(bytes?: number): string {
+  if (bytes === undefined || bytes === null || isNaN(bytes)) return '0 B';
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }

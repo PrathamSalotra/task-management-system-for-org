@@ -25,12 +25,14 @@ export interface Project {
   name: string;
   description?: string | null;
   managerId: string;
+  ownerId?: string;
   startDate: string;
   deadline: string;
   status: ProjectStatus;
   createdAt: string;
   updatedAt?: string;
   manager?: User;
+  owner?: User;
   members?: ProjectMember[];
 }
 

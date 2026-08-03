@@ -98,3 +98,11 @@ export async function uploadTaskAttachmentApi(
     body: formData,
   });
 }
+
+export async function getTaskAttachmentsApi(
+  taskId: string
+): Promise<Attachment[]> {
+  return apiRequest<Attachment[]>(`/tasks/${taskId}/attachments`, {
+    method: 'GET',
+  });
+}

@@ -8,6 +8,8 @@ import {
   deleteTaskApi,
   getTaskCommentsApi,
   createTaskCommentApi,
+  getTaskAttachmentsApi,
+  uploadTaskAttachmentApi,
   GetTasksParams,
   CreateTaskPayload,
   UpdateTaskPayload,
@@ -76,6 +78,24 @@ export function useCreateComment(taskId: string) {
     mutationFn: (content: string) => createTaskCommentApi(taskId, content),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['comments', taskId] });
+    },
+  });
+}
+
+export function useTaskAttachments(taskId: string) {
+  return useQuery({
+    queryKey: ['attachments', taskId],
+    queryFn: () => getTaskAttachmentsApi(taskId),
+    enabled: !!taskId,
+  });
+}
+
+export function useUploadAttachment(taskId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (file: File) => uploadTaskAttachmentApi(taskId, file),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['attachments', taskId] });
     },
   });
 }

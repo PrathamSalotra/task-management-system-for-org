@@ -14,6 +14,7 @@ import {
   getAvatarInitials,
 } from '../lib/utils';
 import { Project, Task, TaskStatus, TaskPriority } from '../lib/api/types';
+import { TaskDetailModal } from './TaskDetailModal';
 
 interface TaskBoardProps {
   project: Project;
@@ -27,6 +28,8 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
   const [search, setSearch] = useState('');
   const [priorityFilter, setPriorityFilter] = useState<string>('');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [selectedTaskForDetail, setSelectedTaskForDetail] =
+    useState<Task | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Form State for new task
@@ -414,6 +417,15 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                               </span>
                             )}
                           </div>
+
+                          {/* Discussion & Files Button */}
+                          <button
+                            onClick={() => setSelectedTaskForDetail(task)}
+                            className="w-full mt-2 py-1.5 px-3 rounded-lg bg-slate-950/80 hover:bg-indigo-500/10 border border-slate-800 hover:border-indigo-500/40 text-indigo-400 hover:text-indigo-300 text-xs font-semibold flex items-center justify-center gap-2 transition-all"
+                          >
+                            <span>💬</span>
+                            <span>Discussion & Files</span>
+                          </button>
                         </div>
                       );
                     })
@@ -456,6 +468,13 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                           {task.description}
                         </span>
                       )}
+                      <button
+                        onClick={() => setSelectedTaskForDetail(task)}
+                        className="mt-1.5 px-2.5 py-1 rounded-lg bg-slate-950/80 hover:bg-indigo-500/10 border border-slate-800 hover:border-indigo-500/40 text-indigo-400 text-xs font-semibold flex items-center gap-1.5 transition-all"
+                      >
+                        <span>💬</span>
+                        <span>Discussion & Files</span>
+                      </button>
                     </td>
 
                     {/* Assignee Cell */}
@@ -660,6 +679,14 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Task Detail Modal (Comments & Attachments) */}
+      {selectedTaskForDetail && (
+        <TaskDetailModal
+          task={selectedTaskForDetail}
+          onClose={() => setSelectedTaskForDetail(null)}
+        />
       )}
     </div>
   );
