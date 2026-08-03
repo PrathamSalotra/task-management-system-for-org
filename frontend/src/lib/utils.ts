@@ -19,6 +19,13 @@ export function getStatusBadgeStyle(status?: string): {
   label: string;
 } {
   switch (status?.toUpperCase()) {
+    case 'ACTIVE':
+      return {
+        bg: 'bg-emerald-500/10',
+        text: 'text-emerald-400',
+        border: 'border-emerald-500/20',
+        label: 'Active',
+      };
     case 'PLANNED':
       return {
         bg: 'bg-blue-500/10',

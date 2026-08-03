@@ -32,6 +32,7 @@ export default function ProjectsPage() {
   const projectsQuery = useProjects({
     search: search || undefined,
     status: selectedStatus || undefined,
+    includeArchived: selectedStatus === 'ARCHIVED' || selectedStatus === '',
     pageSize: 50,
   });
 
@@ -86,15 +87,27 @@ export default function ProjectsPage() {
     );
   }
 
-  const projects: Project[] =
+  const rawProjects: Project[] =
     (projectsQuery.data && 'data' in projectsQuery.data
       ? projectsQuery.data.data
       : (projectsQuery.data as unknown as Project[])) || [];
 
+  const projects = rawProjects.filter((project) => {
+    if (selectedStatus && project.status !== selectedStatus) {
+      return false;
+    }
+    if (search && search.trim() !== '') {
+      const term = search.trim().toLowerCase();
+      const matchName = project.name.toLowerCase().includes(term);
+      const matchDesc = project.description?.toLowerCase().includes(term) || false;
+      if (!matchName && !matchDesc) return false;
+    }
+    return true;
+  });
+
   const statuses = [
     { label: 'All Statuses', value: '' },
-    { label: 'Planned', value: 'PLANNED' },
-    { label: 'In Progress', value: 'IN_PROGRESS' },
+    { label: 'Active', value: 'ACTIVE' },
     { label: 'Completed', value: 'COMPLETED' },
     { label: 'Archived', value: 'ARCHIVED' },
   ];

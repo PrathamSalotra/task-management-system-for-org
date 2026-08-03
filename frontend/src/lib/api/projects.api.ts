@@ -4,6 +4,7 @@ import { Project, ProjectMember, PaginatedResponse } from './types';
 export interface GetProjectsParams {
   search?: string;
   status?: string;
+  includeArchived?: boolean;
   page?: number;
   pageSize?: number;
 }
@@ -14,6 +15,7 @@ export async function getProjectsApi(
   const query = new URLSearchParams();
   if (params.search) query.set('search', params.search);
   if (params.status) query.set('status', params.status);
+  if (params.includeArchived) query.set('includeArchived', 'true');
   if (params.page) query.set('page', params.page.toString());
   if (params.pageSize) query.set('pageSize', params.pageSize.toString());
 

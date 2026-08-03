@@ -142,21 +142,53 @@ export async function updateProject(
 
 export async function listProjects(
   user: { id: string; role: Role | string },
-  includeArchived = false
+  optionsOrIncludeArchived:
+    | boolean
+    | {
+        includeArchived?: boolean;
+        search?: string;
+        status?: string;
+      } = {}
 ) {
-  const where: Prisma.ProjectWhereInput = {};
+  const options =
+    typeof optionsOrIncludeArchived === 'boolean'
+      ? { includeArchived: optionsOrIncludeArchived }
+      : optionsOrIncludeArchived;
 
-  if (!includeArchived) {
-    where.status = { not: ProjectStatus.ARCHIVED };
+  const where: Prisma.ProjectWhereInput = {};
+  const andConditions: Prisma.ProjectWhereInput[] = [];
+
+  if (options.status && options.status.trim() !== '') {
+    andConditions.push({ status: options.status.trim() as ProjectStatus });
+  } else if (!options.includeArchived) {
+    andConditions.push({ status: { not: ProjectStatus.ARCHIVED } });
+  }
+
+  if (options.search && options.search.trim() !== '') {
+    const term = options.search.trim();
+    andConditions.push({
+      OR: [
+        { name: { contains: term, mode: 'insensitive' } },
+        { description: { contains: term, mode: 'insensitive' } },
+      ],
+    });
   }
 
   if (user.role === Role.PROJECT_MANAGER) {
-    where.OR = [
-      { managerId: user.id },
-      { members: { some: { userId: user.id } } },
-    ];
+    andConditions.push({
+      OR: [
+        { managerId: user.id },
+        { members: { some: { userId: user.id } } },
+      ],
+    });
   } else if (user.role === Role.TEAM_MEMBER) {
-    where.members = { some: { userId: user.id } };
+    andConditions.push({
+      members: { some: { userId: user.id } },
+    });
+  }
+
+  if (andConditions.length > 0) {
+    where.AND = andConditions;
   }
 
   const projects = await prisma.project.findMany({

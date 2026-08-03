@@ -121,11 +121,13 @@ export async function getProjectsHandler(
   }
 
   const includeArchived = req.query.includeArchived === 'true';
+  const search = typeof req.query.search === 'string' ? req.query.search : undefined;
+  const status = typeof req.query.status === 'string' ? req.query.status : undefined;
 
   try {
     const projects = await listProjects(
       { id: req.user.id, role: req.user.role },
-      includeArchived
+      { includeArchived, search, status }
     );
     res.status(200).json(projects);
   } catch (err: any) {
