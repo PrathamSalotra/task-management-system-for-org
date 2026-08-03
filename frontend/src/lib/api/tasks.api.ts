@@ -31,6 +31,12 @@ export async function getProjectTasksApi(
   });
 }
 
+export async function getTaskByIdApi(taskId: string): Promise<Task> {
+  return apiRequest<Task>(`/tasks/${taskId}`, {
+    method: 'GET',
+  });
+}
+
 export interface CreateTaskPayload {
   title: string;
   description?: string;

@@ -23,7 +23,7 @@ export function useProjects(params: GetProjectsParams = {}) {
 
 export function useProject(id: string) {
   return useQuery({
-    queryKey: ['project', id],
+    queryKey: ['projects', id],
     queryFn: () => getProjectByIdApi(id),
     enabled: !!id,
   });
@@ -33,8 +33,13 @@ export function useCreateProject() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: CreateProjectPayload) => createProjectApi(data),
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+      if (data?.id) {
+        queryClient.invalidateQueries({ queryKey: ['projects', data.id] });
+        queryClient.invalidateQueries({ queryKey: ['project', data.id] });
+      }
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 }
@@ -45,7 +50,9 @@ export function useUpdateProject(id: string) {
     mutationFn: (data: UpdateProjectPayload) => updateProjectApi(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['projects', id] });
       queryClient.invalidateQueries({ queryKey: ['project', id] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 }
@@ -54,8 +61,11 @@ export function useDeleteProject() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteProjectApi(id),
-    onSuccess: () => {
+    onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['projects', id] });
+      queryClient.invalidateQueries({ queryKey: ['project', id] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 }
@@ -65,8 +75,11 @@ export function useAddProjectMember(projectId: string) {
   return useMutation({
     mutationFn: (userId: string) => addProjectMemberApi(projectId, userId),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects', projectId] });
       queryClient.invalidateQueries({ queryKey: ['project', projectId] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 }
@@ -76,8 +89,11 @@ export function useRemoveProjectMember(projectId: string) {
   return useMutation({
     mutationFn: (userId: string) => removeProjectMemberApi(projectId, userId),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects', projectId] });
       queryClient.invalidateQueries({ queryKey: ['project', projectId] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
     },
   });
 }
