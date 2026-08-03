@@ -14,7 +14,7 @@ import { TaskStatus, TaskPriority } from '../lib/api/types';
 
 export function DashboardOverview() {
   const { user } = useAuth();
-  const { data: overview, isLoading, isError, error, refetch, isRefetching } =
+  const { data: overview, isLoading, isError, error, refetch } =
     useDashboardOverview();
 
   const isPmOrAdmin =
@@ -144,7 +144,7 @@ export function DashboardOverview() {
 
       {/* 2. Progress Bars Per Project */}
       <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/80 backdrop-blur-xl space-y-5">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h2 className="text-lg font-bold text-white flex items-center gap-2">
               <span>📊</span>
@@ -154,13 +154,6 @@ export function DashboardOverview() {
               Task completion progress across all active projects
             </p>
           </div>
-          <button
-            onClick={() => refetch()}
-            disabled={isRefetching}
-            className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors border border-slate-700 disabled:opacity-50"
-          >
-            {isRefetching ? 'Refreshing...' : '🔄 Refresh Data'}
-          </button>
         </div>
 
         {projectProgress.length === 0 ? (

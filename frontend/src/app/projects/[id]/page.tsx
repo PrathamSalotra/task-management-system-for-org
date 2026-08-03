@@ -144,7 +144,7 @@ export default function ProjectDetailPage() {
     <div className="min-h-screen bg-[#0a0d14] text-white flex flex-col">
       <Navbar />
 
-      <main className="flex-1 max-w-6xl w-full mx-auto p-6 md:p-10 space-y-8">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 md:px-10 py-6 md:py-10 space-y-8">
         {/* Top Navigation & Status Toast */}
         <div className="flex items-center justify-between">
           <Link
