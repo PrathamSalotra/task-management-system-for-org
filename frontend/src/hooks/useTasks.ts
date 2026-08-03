@@ -41,6 +41,17 @@ export function useUpdateTask(id: string, projectId: string) {
   });
 }
 
+export function useUpdateProjectTask(projectId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ taskId, data }: { taskId: string; data: UpdateTaskPayload }) =>
+      updateTaskApi(taskId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks', projectId] });
+    },
+  });
+}
+
 export function useDeleteTask(projectId: string) {
   const queryClient = useQueryClient();
   return useMutation({

@@ -12,6 +12,7 @@ import {
   useUsers,
 } from '../../../hooks';
 import { Navbar } from '../../../components/Navbar';
+import { TaskBoard } from '../../../components/TaskBoard';
 import {
   formatDate,
   getStatusBadgeStyle,
@@ -386,6 +387,11 @@ export default function ProjectDetailPage() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Task Board Section */}
+        <div className="pt-6 border-t border-slate-800/80">
+          <TaskBoard project={project} canManageProject={canManageProject} />
         </div>
       </main>
     </div>
