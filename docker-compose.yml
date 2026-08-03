@@ -21,6 +21,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     restart: unless-stopped
+    command: sh -c "npx prisma generate && npx prisma db push && npm run dev"
     ports:
       - "4000:4000"
     environment:
@@ -49,7 +50,6 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
-      - /app/.next
     depends_on:
       - api
 
