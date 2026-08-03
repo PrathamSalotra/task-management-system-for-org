@@ -48,6 +48,8 @@ export interface Task {
   createdAt: string;
   updatedAt?: string;
   assignee?: User | null;
+  projectName?: string;
+  project?: { name: string };
   _count?: {
     comments: number;
     attachments: number;
@@ -100,7 +102,8 @@ export interface ProjectProgress {
   projectName: string;
   totalTasks: number;
   completedTasks: number;
-  percentage: number;
+  percentage?: number;
+  completionPercentage?: number;
 }
 
 export interface TaskStats {
@@ -119,6 +122,8 @@ export interface TeamMemberPerformance {
 export interface CompletionBreakdown {
   completed: number;
   pending: number;
+  total?: number;
+  completionPercentage?: number;
 }
 
 export interface DashboardOverviewResult {
