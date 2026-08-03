@@ -5,6 +5,8 @@
   "scripts": {
     "studio": "npx prisma studio --schema=backend/prisma/schema.prisma",
     "dev": "docker compose up -d",
-    "test": "npm --prefix backend test"
+    "test": "npm --prefix backend test",
+    "test:frontend": "npm --prefix frontend test",
+    "test:all": "npm --prefix backend test && npm --prefix frontend test"
   }
 }
