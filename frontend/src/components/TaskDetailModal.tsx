@@ -23,6 +23,15 @@ interface TaskDetailModalProps {
   onClose: () => void;
 }
 
+function getAttachmentUrl(url?: string): string {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+  return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
+}
+
 export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
   const { user } = useAuth();
   const isPmOrAdmin =
@@ -377,7 +386,7 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
                         </div>
                       </div>
                       <a
-                        href={file.fileUrl}
+                        href={getAttachmentUrl(file.fileUrl)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-indigo-400 font-semibold text-xs transition-colors shrink-0"
