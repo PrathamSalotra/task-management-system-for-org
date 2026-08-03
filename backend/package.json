@@ -10,7 +10,7 @@
     "studio": "prisma studio",
     "lint": "eslint .",
     "format": "prettier --write \"src/**/*.ts\"",
-    "test": "jest"
+    "test": "jest --runInBand"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.1",
@@ -36,6 +36,7 @@
     "@types/multer": "^2.2.0",
     "@types/node": "^20.14.10",
     "@types/pg": "^8.20.3",
+    "@types/supertest": "^7.2.1",
     "eslint": "^9.9.0",
     "eslint-config-prettier": "^9.1.0",
     "globals": "^15.9.0",
@@ -43,6 +44,7 @@
     "jest-mock-extended": "^4.0.1",
     "prettier": "^3.3.3",
     "prisma": "^7.9.1",
+    "supertest": "^7.2.2",
     "ts-jest": "^29.4.12",
     "ts-node": "^10.9.2",
     "tsx": "^4.16.2",
