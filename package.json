@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "studio": "npx prisma studio --schema=backend/prisma/schema.prisma",
-    "dev": "docker compose up -d"
+    "dev": "docker compose up -d",
+    "test": "npm --prefix backend test"
   }
 }
