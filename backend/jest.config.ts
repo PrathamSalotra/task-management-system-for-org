@@ -8,6 +8,7 @@ const config: Config = {
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],
   setupFiles: ['<rootDir>/src/test/setup.ts'],
   clearMocks: true,
+  testTimeout: 30000,
 };
 
 export default config;

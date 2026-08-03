@@ -8,6 +8,8 @@ import usersRoutes from './modules/users/users.routes';
 import projectsRoutes from './modules/projects/projects.routes';
 import tasksRoutes from './modules/tasks/tasks.routes';
 import dashboardRoutes from './modules/dashboard/dashboard.routes';
+import swaggerUi from 'swagger-ui-express';
+import { getSwaggerSpec } from './config/swagger';
 
 const app = express();
 
@@ -21,12 +23,39 @@ app.use(express.json());
 app.use(cookieParser());
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
+app.use('/api-docs', swaggerUi.serve, (_req: Request, res: Response, next: any) => {
+  return swaggerUi.setup(getSwaggerSpec())(_req, res, next);
+});
+app.get('/api-docs.json', (_req: Request, res: Response) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(getSwaggerSpec());
+});
+
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', usersRoutes);
 app.use('/api/v1/projects', projectsRoutes);
 app.use('/api/v1/tasks', tasksRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
 
+/**
+ * @openapi
+ * /health:
+ *   get:
+ *     summary: Health check endpoint
+ *     tags: [System]
+ *     security: []
+ *     responses:
+ *       200:
+ *         description: Server is healthy
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: ok
+ */
 app.get('/health', (_req: Request, res: Response) => {
   res.status(200).json({ status: 'ok' });
 });

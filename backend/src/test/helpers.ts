@@ -63,5 +63,4 @@ export function authHeader(user: { id: string; role: Role | string }) {
 
 export async function disconnectPrisma() {
   await prisma.$disconnect();
-  await pool.end();
 }

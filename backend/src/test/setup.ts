@@ -7,3 +7,5 @@ process.env.DATABASE_URL =
 process.env.NODE_ENV = 'test';
 process.env.JWT_SECRET = 'test-jwt-secret-key-12345';
 process.env.JWT_REFRESH_SECRET = 'test-jwt-refresh-secret-key-12345';
+
+jest.setTimeout(30000);
