@@ -305,6 +305,70 @@ export async function archiveProject(
   return archivedProject;
 }
 
+export async function deleteProjectPermanently(
+  projectId: string,
+  user: { id: string; role: Role | string }
+) {
+  const existingProject = await prisma.project.findUnique({
+    where: { id: projectId },
+  });
+
+  if (!existingProject) {
+    throw new ProjectNotFoundError();
+  }
+
+  if (user.role !== Role.ADMIN && existingProject.managerId !== user.id) {
+    throw new ProjectForbiddenError(
+      'Forbidden: Only the owning Project Manager or an Admin can permanently delete this project'
+    );
+  }
+
+  const result = await prisma.$transaction(async (tx) => {
+    // Find all tasks in project to delete their comments and attachments
+    const tasks = await tx.task.findMany({
+      where: { projectId },
+      select: { id: true },
+    });
+    const taskIds = tasks.map((t) => t.id);
+
+    if (taskIds.length > 0) {
+      await tx.comment.deleteMany({
+        where: { taskId: { in: taskIds } },
+      });
+      await tx.attachment.deleteMany({
+        where: { taskId: { in: taskIds } },
+      });
+      await tx.task.deleteMany({
+        where: { projectId },
+      });
+    }
+
+    await tx.projectMember.deleteMany({
+      where: { projectId },
+    });
+
+    const deletedProject = await tx.project.delete({
+      where: { id: projectId },
+    });
+
+    await tx.auditLog.create({
+      data: {
+        userId: user.id,
+        action: 'DELETE_PROJECT_PERMANENTLY',
+        entityType: 'PROJECT',
+        entityId: projectId,
+        metadata: {
+          name: existingProject.name,
+        },
+      },
+    });
+
+    return deletedProject;
+  });
+
+  return result;
+}
+
 export async function addProjectMember(
   projectId: string,
   targetUserId: string,

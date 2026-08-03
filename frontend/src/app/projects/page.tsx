@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
-import { useProjects, useCreateProject } from '../../hooks';
+import { useProjects, useCreateProject, useDeleteProject } from '../../hooks';
 import { Navbar } from '../../components/Navbar';
 import { formatDate, getStatusBadgeStyle } from '../../lib/utils';
 import { Project } from '../../lib/api/types';
@@ -37,6 +37,7 @@ export default function ProjectsPage() {
   });
 
   const createProjectMutation = useCreateProject();
+  const deleteProjectMutation = useDeleteProject();
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -46,6 +47,26 @@ export default function ProjectsPage() {
 
   const canManageProjects =
     user?.role === 'ADMIN' || user?.role === 'PROJECT_MANAGER';
+
+  const handleDeleteProject = async (
+    e: React.MouseEvent,
+    projectId: string,
+    projectName: string
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (
+      window.confirm(
+        `Are you sure you want to PERMANENTLY delete project "${projectName}" along with all of its tasks, comments, attachments, and members?\n\nThis action cannot be undone.`
+      )
+    ) {
+      try {
+        await deleteProjectMutation.mutateAsync(projectId);
+      } catch (err: any) {
+        alert(err.message || 'Failed to delete project.');
+      }
+    }
+  };
 
   const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -274,13 +295,28 @@ export default function ProjectsPage() {
                       </div>
                     </div>
 
-                    <Link
-                      href={`/projects/${project.id}`}
-                      className="w-full mt-2 py-2.5 rounded-xl bg-slate-800/80 hover:bg-indigo-500/10 text-slate-300 hover:text-indigo-400 text-xs font-semibold transition-all border border-slate-700/80 hover:border-indigo-500/30 flex items-center justify-center gap-1.5 group-hover:border-indigo-500/30"
-                    >
-                      <span>View Project & Team</span>
-                      <span>→</span>
-                    </Link>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Link
+                        href={`/projects/${project.id}`}
+                        className="flex-1 py-2.5 rounded-xl bg-slate-800/80 hover:bg-indigo-500/10 text-slate-300 hover:text-indigo-400 text-xs font-semibold transition-all border border-slate-700/80 hover:border-indigo-500/30 flex items-center justify-center gap-1.5 group-hover:border-indigo-500/30"
+                      >
+                        <span>View Project & Team</span>
+                        <span>→</span>
+                      </Link>
+
+                      {canManageProjects && (
+                        <button
+                          onClick={(e) =>
+                            handleDeleteProject(e, project.id, project.name)
+                          }
+                          disabled={deleteProjectMutation.isPending}
+                          className="px-3 py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/30 text-xs font-bold transition-all shrink-0"
+                          title="Permanently Delete Project"
+                        >
+                          🗑️
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
@@ -333,7 +369,7 @@ export default function ProjectsPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-xs text-slate-300 font-medium">
                         {project.owner?.name || 'Assigned PM'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right">
+                      <td className="px-6 py-4 whitespace-nowrap text-right space-x-2">
                         <Link
                           href={`/projects/${project.id}`}
                           className="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-indigo-500/10 text-slate-300 hover:text-indigo-400 text-xs font-semibold transition-all border border-slate-700 hover:border-indigo-500/30 inline-flex items-center gap-1"
@@ -341,6 +377,18 @@ export default function ProjectsPage() {
                           <span>Details</span>
                           <span>→</span>
                         </Link>
+                        {canManageProjects && (
+                          <button
+                            onClick={(e) =>
+                              handleDeleteProject(e, project.id, project.name)
+                            }
+                            disabled={deleteProjectMutation.isPending}
+                            className="px-2.5 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/30 text-xs font-bold transition-all inline-flex items-center gap-1"
+                            title="Permanently Delete Project"
+                          >
+                            <span>🗑️ Delete</span>
+                          </button>
+                        )}
                       </td>
                     </tr>
                   );

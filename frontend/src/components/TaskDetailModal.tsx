@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import {
   useTaskComments,
   useCreateComment,
   useTaskAttachments,
   useUploadAttachment,
+  useDeleteTask,
 } from '../hooks/useTasks';
 import {
   formatDate,
@@ -22,6 +24,11 @@ interface TaskDetailModalProps {
 }
 
 export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
+  const { user } = useAuth();
+  const isPmOrAdmin =
+    user?.role === 'ADMIN' || user?.role === 'PROJECT_MANAGER';
+  const deleteTaskMutation = useDeleteTask(task.projectId);
+
   const [activeTab, setActiveTab] = useState<'comments' | 'attachments'>(
     'comments'
   );
@@ -54,6 +61,21 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
   const showToast = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 3500);
+  };
+
+  const handleDeleteTask = async () => {
+    if (
+      window.confirm(
+        `Are you sure you want to PERMANENTLY delete task "${task.title}" along with its comments and attachments?\n\nThis action cannot be undone.`
+      )
+    ) {
+      try {
+        await deleteTaskMutation.mutateAsync(task.id);
+        onClose();
+      } catch (err: any) {
+        alert(err.message || 'Failed to delete task.');
+      }
+    }
   };
 
   const handlePostComment = async (e: React.FormEvent) => {
@@ -121,13 +143,26 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
                 ID: {task.id.substring(0, 8)}...
               </p>
             </div>
-            <button
-              onClick={onClose}
-              className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors font-bold"
-              aria-label="Close modal"
-            >
-              ✕
-            </button>
+            <div className="flex items-center gap-2">
+              {isPmOrAdmin && (
+                <button
+                  onClick={handleDeleteTask}
+                  disabled={deleteTaskMutation.isPending}
+                  className="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/30 text-xs font-bold transition-all flex items-center gap-1"
+                  title="Permanently Delete Task"
+                >
+                  <span>🗑️</span>
+                  <span>{deleteTaskMutation.isPending ? 'Deleting...' : 'Delete Task'}</span>
+                </button>
+              )}
+              <button
+                onClick={onClose}
+                className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors font-bold"
+                aria-label="Close modal"
+              >
+                ✕
+              </button>
+            </div>
           </div>
 
           {/* Badges Row */}

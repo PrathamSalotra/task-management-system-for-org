@@ -6,6 +6,7 @@ import {
   useProjectTasks,
   useCreateTask,
   useUpdateProjectTask,
+  useDeleteTask,
 } from '../hooks/useTasks';
 import {
   formatDate,
@@ -53,6 +54,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
 
   const createTaskMutation = useCreateTask();
   const updateTaskMutation = useUpdateProjectTask(project.id);
+  const deleteTaskMutation = useDeleteTask(project.id);
 
   const tasks: Task[] =
     (tasksResponse && 'data' in tasksResponse
@@ -153,6 +155,21 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
       showToast('Assignee updated successfully');
     } catch (err: any) {
       alert(`Error updating assignee: ${err.message || 'Permission denied'}`);
+    }
+  };
+
+  const handleDeleteTask = async (task: Task) => {
+    if (
+      window.confirm(
+        `Are you sure you want to PERMANENTLY delete task "${task.title}" along with its comments and attachments?\n\nThis action cannot be undone.`
+      )
+    ) {
+      try {
+        await deleteTaskMutation.mutateAsync(task.id);
+        showToast('Task permanently deleted');
+      } catch (err: any) {
+        alert(err.message || 'Failed to delete task.');
+      }
     }
   };
 
@@ -416,14 +433,27 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                             )}
                           </div>
 
-                          {/* Discussion & Files Button */}
-                          <button
-                            onClick={() => setSelectedTaskForDetail(task)}
-                            className="w-full mt-2 py-1.5 px-3 rounded-lg bg-slate-950/80 hover:bg-indigo-500/10 border border-slate-800 hover:border-indigo-500/40 text-indigo-400 hover:text-indigo-300 text-xs font-semibold flex items-center justify-center gap-2 transition-all"
-                          >
-                            <span>💬</span>
-                            <span>Discussion & Files</span>
-                          </button>
+                          {/* Discussion & Files Button + Delete Task */}
+                          <div className="flex items-center gap-1.5 mt-2">
+                            <button
+                              onClick={() => setSelectedTaskForDetail(task)}
+                              className="flex-1 py-1.5 px-3 rounded-lg bg-slate-950/80 hover:bg-indigo-500/10 border border-slate-800 hover:border-indigo-500/40 text-indigo-400 hover:text-indigo-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
+                            >
+                              <span>💬</span>
+                              <span>Discussion & Files</span>
+                            </button>
+
+                            {canEditDetails && (
+                              <button
+                                onClick={() => handleDeleteTask(task)}
+                                disabled={deleteTaskMutation.isPending}
+                                className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-xs font-bold transition-colors shrink-0"
+                                title="Permanently Delete Task"
+                              >
+                                🗑️
+                              </button>
+                            )}
+                          </div>
                         </div>
                       );
                     })
@@ -466,13 +496,26 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                           {task.description}
                         </span>
                       )}
-                      <button
-                        onClick={() => setSelectedTaskForDetail(task)}
-                        className="mt-1.5 px-2.5 py-1 rounded-lg bg-slate-950/80 hover:bg-indigo-500/10 border border-slate-800 hover:border-indigo-500/40 text-indigo-400 text-xs font-semibold flex items-center gap-1.5 transition-all"
-                      >
-                        <span>💬</span>
-                        <span>Discussion & Files</span>
-                      </button>
+                      <div className="flex items-center gap-2 mt-1.5">
+                        <button
+                          onClick={() => setSelectedTaskForDetail(task)}
+                          className="px-2.5 py-1 rounded-lg bg-slate-950/80 hover:bg-indigo-500/10 border border-slate-800 hover:border-indigo-500/40 text-indigo-400 text-xs font-semibold flex items-center gap-1.5 transition-all"
+                        >
+                          <span>💬</span>
+                          <span>Discussion & Files</span>
+                        </button>
+
+                        {canEditDetails && (
+                          <button
+                            onClick={() => handleDeleteTask(task)}
+                            disabled={deleteTaskMutation.isPending}
+                            className="px-2 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-xs font-bold transition-colors"
+                            title="Permanently Delete Task"
+                          >
+                            🗑️ Delete
+                          </button>
+                        )}
+                      </div>
                     </td>
 
                     {/* Assignee Cell */}

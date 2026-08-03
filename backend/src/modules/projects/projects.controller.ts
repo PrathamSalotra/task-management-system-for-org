@@ -8,6 +8,7 @@ import {
   createProject,
   updateProject,
   archiveProject,
+  deleteProjectPermanently,
   addProjectMember,
   removeProjectMember,
   listProjects,
@@ -188,11 +189,15 @@ export async function deleteProjectHandler(
   }
 
   try {
-    const archivedProject = await archiveProject(req.params.id, {
+    const deletedProject = await deleteProjectPermanently(req.params.id, {
       id: req.user.id,
       role: req.user.role,
     });
-    res.status(200).json(archivedProject);
+    res.status(200).json({
+      success: true,
+      message: 'Project permanently deleted',
+      data: deletedProject,
+    });
   } catch (err: any) {
     if (err instanceof ProjectNotFoundError) {
       res.status(404).json({

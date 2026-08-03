@@ -7,6 +7,7 @@ import { useAuth } from '../../../context/AuthContext';
 import {
   useProject,
   useUpdateProject,
+  useDeleteProject,
   useAddProjectMember,
   useRemoveProjectMember,
   useUsers,
@@ -29,6 +30,7 @@ export default function ProjectDetailPage() {
   const { data: allUsers } = useUsers();
 
   const updateProjectMutation = useUpdateProject(projectId);
+  const deleteProjectMutation = useDeleteProject();
   const addMemberMutation = useAddProjectMember(projectId);
   const removeMemberMutation = useRemoveProjectMember(projectId);
 
@@ -52,6 +54,22 @@ export default function ProjectDetailPage() {
       setTimeout(() => setStatusMessage(null), 3000);
     } catch (err: any) {
       alert(`Failed to update status: ${err.message || 'Unknown error'}`);
+    }
+  };
+
+  const handleDeleteProject = async () => {
+    if (!project) return;
+    if (
+      window.confirm(
+        `Are you sure you want to PERMANENTLY delete project "${project.name}" along with all of its tasks, comments, attachments, and members?\n\nThis action cannot be undone.`
+      )
+    ) {
+      try {
+        await deleteProjectMutation.mutateAsync(project.id);
+        router.push('/projects');
+      } catch (err: any) {
+        alert(err.message || 'Failed to delete project.');
+      }
     }
   };
 
@@ -184,22 +202,38 @@ export default function ProjectDetailPage() {
               </p>
             </div>
 
-            {/* PM Status Changer */}
+            {/* PM Status Changer & Delete Project */}
             {canManageProject && (
               <div className="flex flex-col items-start md:items-end gap-1.5 shrink-0">
                 <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                  Update Status
+                  Project Actions
                 </label>
-                <select
-                  value={project.status}
-                  onChange={(e) => handleStatusChange(e.target.value)}
-                  disabled={updateProjectMutation.isPending}
-                  className="bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white font-semibold focus:outline-none focus:border-indigo-500 transition-colors cursor-pointer"
-                >
-                  <option value="ACTIVE">Active</option>
-                  <option value="COMPLETED">Completed</option>
-                  <option value="ARCHIVED">Archived</option>
-                </select>
+                <div className="flex items-center gap-2">
+                  <select
+                    value={project.status}
+                    onChange={(e) => handleStatusChange(e.target.value)}
+                    disabled={updateProjectMutation.isPending}
+                    className="bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white font-semibold focus:outline-none focus:border-indigo-500 transition-colors cursor-pointer"
+                  >
+                    <option value="ACTIVE">Active</option>
+                    <option value="COMPLETED">Completed</option>
+                    <option value="ARCHIVED">Archived</option>
+                  </select>
+
+                  <button
+                    onClick={handleDeleteProject}
+                    disabled={deleteProjectMutation.isPending}
+                    className="px-3.5 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 text-xs font-bold border border-red-500/30 transition-all flex items-center gap-1.5 shadow-sm shrink-0"
+                    title="Permanently Delete Project"
+                  >
+                    <span>🗑️</span>
+                    <span>
+                      {deleteProjectMutation.isPending
+                        ? 'Deleting...'
+                        : 'Delete Project'}
+                    </span>
+                  </button>
+                </div>
               </div>
             )}
           </div>
