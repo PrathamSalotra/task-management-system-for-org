@@ -43,9 +43,7 @@ export default function ProjectDetailPage() {
   }, [authLoading, isAuthenticated, router]);
 
   const canManageProject =
-    user?.role === 'ADMIN' ||
-    user?.role === 'PROJECT_MANAGER' ||
-    project?.ownerId === user?.id;
+    user?.role === 'ADMIN' || user?.role === 'PROJECT_MANAGER';
 
   const handleStatusChange = async (newStatus: string) => {
     try {

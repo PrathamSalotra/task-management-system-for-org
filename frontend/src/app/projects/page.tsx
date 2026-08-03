@@ -144,9 +144,9 @@ export default function ProjectsPage() {
 
         {/* Filter and View Controls Bar */}
         <div className="p-4 rounded-2xl bg-slate-900/50 border border-slate-800/80 backdrop-blur-xl flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full md:w-auto">
             {/* Search Input */}
-            <div className="relative flex-1 md:w-72">
+            <div className="relative w-full sm:w-72">
               <input
                 type="text"
                 placeholder="Search projects..."
@@ -157,7 +157,7 @@ export default function ProjectsPage() {
             </div>
 
             {/* Status Pill Selectors */}
-            <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
+            <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
               {statuses.map((status) => {
                 const active = selectedStatus === status.value;
                 return (

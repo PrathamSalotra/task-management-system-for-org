@@ -61,9 +61,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
 
   // Determine who can edit task details (Title, Priority, Assignee, DueDate) -> PM/Admin
   const canEditDetails =
-    user?.role === 'ADMIN' ||
-    user?.role === 'PROJECT_MANAGER' ||
-    project.managerId === user?.id;
+    user?.role === 'ADMIN' || user?.role === 'PROJECT_MANAGER';
 
   // Compile list of available assignees for this project (PM + Project Members)
   const memberAssignees = (project.members || []).map((m) => {
