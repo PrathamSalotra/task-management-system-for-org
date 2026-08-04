@@ -189,4 +189,31 @@ describe('TaskBoard Component Status-Change Tests', () => {
       expect(screen.getByText(/Task moved to COMPLETED/i)).toBeInTheDocument();
     });
   });
+
+  it('renders date-grouped list view with collapsible section headers and status filter tabs (Step UI.5)', async () => {
+    render(<TaskBoard project={mockProject} canManageProject={true} />);
+
+    // Switch to List View
+    const listButton = screen.getByText('List View');
+    fireEvent.click(listButton);
+
+    // Verify task title is rendered in List View
+    expect(screen.getByText('Fix UI Bugs')).toBeInTheDocument();
+
+    // Verify Status Filter Tabs exist
+    expect(screen.getByText('All Tasks')).toBeInTheDocument();
+    expect(screen.getAllByText('To Do').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('In Progress').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Completed').length).toBeGreaterThan(0);
+
+    // Verify collapsing section header
+    const hideButton = screen.getByText('Hide tasks');
+    fireEvent.click(hideButton);
+    expect(screen.getByText('Show tasks')).toBeInTheDocument();
+    expect(screen.queryByText('Fix UI Bugs')).not.toBeInTheDocument();
+
+    // Verify expanding section header restores task
+    fireEvent.click(screen.getByText('Show tasks'));
+    expect(screen.getByText('Fix UI Bugs')).toBeInTheDocument();
+  });
 });

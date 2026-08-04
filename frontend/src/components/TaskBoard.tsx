@@ -41,6 +41,48 @@ function getPriorityBadgeClass(priority: string) {
   }
 }
 
+interface DateGroup {
+  key: string;
+  label: string;
+  dateVal: number;
+  tasks: Task[];
+}
+
+function getDateGroupKey(dueDate?: string | null): string {
+  if (!dueDate) return 'no-date';
+  return new Date(dueDate).toISOString().split('T')[0];
+}
+
+function getDateGroupLabel(dueDate?: string | null): string {
+  if (!dueDate) return 'No Due Date';
+  const date = new Date(dueDate);
+  const today = new Date();
+  const tomorrow = new Date();
+  tomorrow.setDate(today.getDate() + 1);
+
+  if (date.toDateString() === today.toDateString()) {
+    return 'Today';
+  }
+  if (date.toDateString() === tomorrow.toDateString()) {
+    return 'Tomorrow';
+  }
+  return formatDate(dueDate);
+}
+
+function getDateGroups(tasks: Task[]): DateGroup[] {
+  const map = new Map<string, DateGroup>();
+  tasks.forEach((task) => {
+    const key = getDateGroupKey(task.dueDate);
+    const label = getDateGroupLabel(task.dueDate);
+    const dateVal = task.dueDate ? new Date(task.dueDate).getTime() : Infinity;
+    if (!map.has(key)) {
+      map.set(key, { key, label, dateVal, tasks: [] });
+    }
+    map.get(key)!.tasks.push(task);
+  });
+  return Array.from(map.values()).sort((a, b) => a.dateVal - b.dateVal);
+}
+
 interface TaskBoardProps {
   project: Project;
   canManageProject: boolean;
@@ -52,6 +94,10 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
   const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
   const [search, setSearch] = useState('');
   const [priorityFilter, setPriorityFilter] = useState<string>('');
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [collapsedGroups, setCollapsedGroups] = useState<
+    Record<string, boolean>
+  >({});
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedTaskForDetail, setSelectedTaskForDetail] =
     useState<Task | null>(null);
@@ -67,11 +113,19 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
   );
   const [formError, setFormError] = useState<string | null>(null);
 
+  // Unfiltered (by status) tasks for tab badge counts
+  const { data: allTasksResponse } = useProjectTasks(project.id, {
+    search: search || undefined,
+    priority: priorityFilter || undefined,
+    pageSize: 100,
+  });
+
   const { data: tasksResponse, isLoading, isError } = useProjectTasks(
     project.id,
     {
       search: search || undefined,
       priority: priorityFilter || undefined,
+      status: statusFilter || undefined,
       pageSize: 100,
     }
   );
@@ -80,10 +134,36 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
   const updateTaskMutation = useUpdateProjectTask(project.id);
   const deleteTaskMutation = useDeleteTask(project.id);
 
+  const allTasks: Task[] =
+    (allTasksResponse && 'data' in allTasksResponse
+      ? allTasksResponse.data
+      : (allTasksResponse as unknown as Task[])) || [];
+
   const tasks: Task[] =
     (tasksResponse && 'data' in tasksResponse
       ? tasksResponse.data
       : (tasksResponse as unknown as Task[])) || [];
+
+  const statusTabs = [
+    { key: '', label: 'All Tasks', count: allTasks.length },
+    {
+      key: 'TODO',
+      label: 'To Do',
+      count: allTasks.filter((t) => t.status === 'TODO').length,
+    },
+    {
+      key: 'IN_PROGRESS',
+      label: 'In Progress',
+      count: allTasks.filter((t) => t.status === 'IN_PROGRESS').length,
+    },
+    {
+      key: 'COMPLETED',
+      label: 'Completed',
+      count: allTasks.filter((t) => t.status === 'COMPLETED').length,
+    },
+  ];
+
+  const sortedDateGroups = getDateGroups(tasks);
 
   // Determine who can edit task details (Title, Priority, Assignee, DueDate) -> PM/Admin
   const canEditDetails =
@@ -236,6 +316,36 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
             </button>
           )}
         </div>
+      </div>
+
+      {/* Status Filter Tabs (Step UI.5) */}
+      <div className="flex items-center gap-4 sm:gap-8 border-b border-slate-800/80 overflow-x-auto">
+        {statusTabs.map((tab) => {
+          const isActive = statusFilter === tab.key;
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setStatusFilter(tab.key)}
+              className={`pb-3 text-xs font-semibold flex items-center gap-2 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+                isActive
+                  ? 'border-indigo-500 text-white font-bold'
+                  : 'border-transparent text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <span>{tab.label}</span>
+              <span
+                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                  isActive
+                    ? 'bg-indigo-500/20 text-indigo-400'
+                    : 'bg-slate-800 text-slate-400'
+                }`}
+              >
+                {tab.count}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Filter and View Switcher Bar */}
@@ -486,141 +596,202 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
           })}
         </div>
       ) : (
-        /* List View */
-        <div className="overflow-x-auto rounded-2xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-xl">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-slate-800 text-slate-400 text-xs uppercase tracking-wider bg-slate-950/60">
-                <th className="px-6 py-4 font-semibold">Task Title</th>
-                <th className="px-6 py-4 font-semibold">Assignee</th>
-                <th className="px-6 py-4 font-semibold">Priority</th>
-                <th className="px-6 py-4 font-semibold">Status</th>
-                <th className="px-6 py-4 font-semibold">Due Date</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/60 text-sm">
-              {tasks.map((task) => {
-                const isAssignee = task.assigneeId === user?.id;
-                const canChangeStatus = canEditDetails || isAssignee;
-
-                return (
-                  <tr
-                    key={task.id}
-                    className="hover:bg-slate-800/40 transition-colors"
+        /* List View (Step UI.5 Restyle) */
+        <div className="space-y-6">
+          {sortedDateGroups.length === 0 ? (
+            <div className="p-12 text-center rounded-2xl bg-slate-900/40 border border-slate-800/80 backdrop-blur-xl">
+              <p className="text-slate-400 text-sm font-medium">
+                No tasks found matching your filters.
+              </p>
+            </div>
+          ) : (
+            sortedDateGroups.map((group) => {
+              const isCollapsed = Boolean(collapsedGroups[group.key]);
+              return (
+                <div key={group.key} className="space-y-2.5">
+                  {/* Collapsible Date Section Header */}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCollapsedGroups((prev) => ({
+                        ...prev,
+                        [group.key]: !prev[group.key],
+                      }))
+                    }
+                    className="w-full flex items-center justify-between py-2.5 px-4 bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800/80 rounded-xl transition-all cursor-pointer text-left backdrop-blur-xl"
                   >
-                    <td className="px-6 py-4">
-                      <span className="font-bold text-white block">
-                        {task.title}
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-xs text-slate-400 font-bold">
+                        {isCollapsed ? '▶' : '▼'}
                       </span>
-                      {task.description && (
-                        <span className="text-xs text-slate-500 block truncate max-w-xs mt-0.5">
-                          {task.description}
-                        </span>
-                      )}
-                      <div className="flex items-center gap-2 mt-1.5">
-                        <button
-                          onClick={() => setSelectedTaskForDetail(task)}
-                          className="px-2.5 py-1 rounded-lg bg-slate-950/80 hover:bg-indigo-500/10 border border-slate-800 hover:border-indigo-500/40 text-indigo-400 text-xs font-semibold flex items-center gap-1.5 transition-all"
-                        >
-                          <span>💬</span>
-                          <span>Discussion & Files</span>
-                        </button>
+                      <span className="text-xs font-bold uppercase tracking-wider text-white">
+                        {group.label}
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-300">
+                        {group.tasks.length}
+                      </span>
+                    </div>
+                    <span className="text-xs text-slate-500 font-medium">
+                      {isCollapsed ? 'Show tasks' : 'Hide tasks'}
+                    </span>
+                  </button>
 
-                        {canEditDetails && (
-                          <button
-                            onClick={() => handleDeleteTask(task)}
-                            disabled={deleteTaskMutation.isPending}
-                            className="px-2 py-1 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-xs font-bold transition-colors"
-                            title="Permanently Delete Task"
+                  {/* Group Tasks List */}
+                  {!isCollapsed && (
+                    <div className="space-y-2 pl-1 sm:pl-3">
+                      {group.tasks.map((task) => {
+                        const isAssignee = task.assigneeId === user?.id;
+                        const canChangeStatus = canEditDetails || isAssignee;
+
+                        return (
+                          <div
+                            key={task.id}
+                            className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl bg-slate-900/40 border border-slate-800/80 hover:bg-slate-800/50 transition-all backdrop-blur-xl"
                           >
-                            🗑️ Delete
-                          </button>
-                        )}
-                      </div>
-                    </td>
+                            {/* Left: Rounded Checkbox + Bold Title + Subtitle */}
+                            <div className="flex items-start md:items-center gap-3.5 min-w-0 flex-1">
+                              <input
+                                type="checkbox"
+                                checked={task.status === 'COMPLETED'}
+                                readOnly
+                                className="mt-1 md:mt-0 w-4 h-4 rounded text-indigo-600 bg-slate-950 border-slate-700 cursor-default focus:ring-0"
+                                title="Task completion status (read-only)"
+                              />
+                              <div className="min-w-0 flex-1">
+                                <span className="font-bold text-white text-sm block truncate">
+                                  {task.title}
+                                </span>
+                                <span className="text-xs text-slate-400 block truncate mt-0.5">
+                                  {task.projectName ||
+                                    (task.assignee
+                                      ? task.assignee.name
+                                      : 'Unassigned')}
+                                  {task.description
+                                    ? ` • ${task.description}`
+                                    : ''}
+                                </span>
+                              </div>
+                            </div>
 
-                    {/* Assignee Cell */}
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {canEditDetails ? (
-                        <select
-                          value={task.assigneeId || ''}
-                          onChange={(e) =>
-                            handleAssigneeChange(task.id, e.target.value)
-                          }
-                          disabled={updateTaskMutation.isPending}
-                          className="bg-slate-950 text-slate-300 text-xs rounded-lg px-2.5 py-1 border border-slate-800 focus:outline-none focus:border-indigo-500"
-                        >
-                          <option value="">Unassigned</option>
-                          {memberAssignees.map((m) => (
-                            <option key={m.id} value={m.id}>
-                              {m.name}
-                            </option>
-                          ))}
-                        </select>
-                      ) : (
-                        <span className="text-slate-300 text-xs font-medium">
-                          {task.assignee?.name || 'Unassigned'}
-                        </span>
-                      )}
-                    </td>
+                            {/* Right: Priority, Assignee, StatusPill (right-aligned), Discussion, Delete */}
+                            <div className="flex flex-wrap items-center gap-2 md:gap-3 shrink-0 self-end md:self-auto">
+                              {/* Priority */}
+                              {canEditDetails ? (
+                                <select
+                                  value={task.priority}
+                                  onChange={(e) =>
+                                    handlePriorityChange(
+                                      task.id,
+                                      e.target.value
+                                    )
+                                  }
+                                  disabled={updateTaskMutation.isPending}
+                                  className={`text-xs font-semibold uppercase rounded-pill px-2.5 py-1 border-none ${getPriorityBadgeClass(
+                                    task.priority
+                                  )} focus:outline-none cursor-pointer`}
+                                >
+                                  <option value="LOW">Low</option>
+                                  <option value="MEDIUM">Medium</option>
+                                  <option value="HIGH">High</option>
+                                </select>
+                              ) : (
+                                <PriorityBadge priority={task.priority} />
+                              )}
 
-                    {/* Priority Cell */}
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {canEditDetails ? (
-                        <select
-                          value={task.priority}
-                          onChange={(e) =>
-                            handlePriorityChange(task.id, e.target.value)
-                          }
-                          disabled={updateTaskMutation.isPending}
-                          className={`text-xs font-semibold uppercase rounded-pill px-2.5 py-1 border-none ${getPriorityBadgeClass(
-                            task.priority
-                          )} focus:outline-none cursor-pointer`}
-                        >
-                          <option value="LOW">Low</option>
-                          <option value="MEDIUM">Medium</option>
-                          <option value="HIGH">High</option>
-                        </select>
-                      ) : (
-                        <PriorityBadge priority={task.priority} />
-                      )}
-                    </td>
+                              {/* Assignee */}
+                              {canEditDetails ? (
+                                <select
+                                  value={task.assigneeId || ''}
+                                  onChange={(e) =>
+                                    handleAssigneeChange(
+                                      task.id,
+                                      e.target.value
+                                    )
+                                  }
+                                  disabled={updateTaskMutation.isPending}
+                                  className="bg-slate-950 text-slate-300 text-xs rounded-lg px-2.5 py-1 border border-slate-800 focus:outline-none focus:border-indigo-500 cursor-pointer"
+                                >
+                                  <option value="">Unassigned</option>
+                                  {memberAssignees.map((m) => (
+                                    <option key={m.id} value={m.id}>
+                                      {m.name}
+                                    </option>
+                                  ))}
+                                </select>
+                              ) : (
+                                <span className="text-slate-300 text-xs font-medium px-2 py-1 bg-slate-950/60 rounded-lg border border-slate-800/60">
+                                  {task.assignee?.name || 'Unassigned'}
+                                </span>
+                              )}
 
-                    {/* Status Cell */}
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {canChangeStatus ? (
-                        <select
-                          value={task.status}
-                          onChange={(e) =>
-                            handleStatusChange(task.id, e.target.value)
-                          }
-                          disabled={updateTaskMutation.isPending}
-                          className={`rounded-pill px-2.5 py-1 text-xs font-semibold border-none ${getStatusBadgeClass(
-                            task.status
-                          )} focus:outline-none cursor-pointer`}
-                        >
-                          <option value="TODO">To Do</option>
-                          <option value="IN_PROGRESS">In Progress</option>
-                          <option value="COMPLETED">Completed</option>
-                        </select>
-                      ) : (
-                        <span
-                          className="inline-flex items-center gap-1 cursor-not-allowed text-xs"
-                          title="Only the assigned member or PM can update status"
-                        >
-                          🔒 <StatusPill status={task.status} />
-                        </span>
-                      )}
-                    </td>
+                              {/* Status Control / StatusPill right-aligned */}
+                              {canChangeStatus ? (
+                                <select
+                                  value={task.status}
+                                  onChange={(e) =>
+                                    handleStatusChange(
+                                      task.id,
+                                      e.target.value
+                                    )
+                                  }
+                                  disabled={updateTaskMutation.isPending}
+                                  className={`rounded-pill px-2.5 py-1 text-xs font-semibold border-none ${getStatusBadgeClass(
+                                    task.status
+                                  )} focus:outline-none cursor-pointer`}
+                                >
+                                  <option value="TODO">To Do</option>
+                                  <option value="IN_PROGRESS">
+                                    In Progress
+                                  </option>
+                                  <option value="COMPLETED">Completed</option>
+                                </select>
+                              ) : (
+                                <span
+                                  className="inline-flex items-center gap-1 cursor-not-allowed text-xs"
+                                  title="Only the assigned member or PM can update status"
+                                >
+                                  🔒 <StatusPill status={task.status} />
+                                </span>
+                              )}
 
-                    <td className="px-6 py-4 whitespace-nowrap text-xs text-slate-400">
-                      {formatDate(task.dueDate)}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                              {/* Discussion & Files Button */}
+                              <button
+                                onClick={() =>
+                                  setSelectedTaskForDetail(task)
+                                }
+                                className="px-2.5 py-1 rounded-lg bg-slate-950/80 hover:bg-indigo-500/10 border border-slate-800 hover:border-indigo-500/40 text-indigo-400 text-xs font-semibold flex items-center gap-1.5 transition-all"
+                                title="Discussion & Files"
+                              >
+                                <span>💬</span>
+                                <span>
+                                  {task._count?.comments || 0}{' '}
+                                  {task._count?.comments === 1
+                                    ? 'msg'
+                                    : 'msgs'}
+                                </span>
+                              </button>
+
+                              {/* Delete Button (PM / Admin only) */}
+                              {canEditDetails && (
+                                <button
+                                  onClick={() => handleDeleteTask(task)}
+                                  disabled={deleteTaskMutation.isPending}
+                                  className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-xs font-bold transition-colors shrink-0"
+                                  title="Permanently Delete Task"
+                                >
+                                  🗑️
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })
+          )}
         </div>
       )}
 
