@@ -337,7 +337,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
               key={tab.key}
               type="button"
               onClick={() => setStatusFilter(tab.key)}
-              className={`pb-3 text-xs font-semibold flex items-center gap-2 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+              className={`py-3 min-h-[44px] text-xs font-semibold flex items-center gap-2 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
                 isActive
                   ? 'border-indigo-500 text-white font-bold'
                   : 'border-transparent text-slate-400 hover:text-slate-200'

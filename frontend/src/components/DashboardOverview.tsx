@@ -87,7 +87,7 @@ export function DashboardOverview() {
   return (
     <div className="space-y-8">
       {/* 1. Top Bar: Overall Summary Banner */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="p-5 rounded-2xl bg-slate-900/50 border border-slate-800/80 backdrop-blur-xl flex items-center justify-between">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">

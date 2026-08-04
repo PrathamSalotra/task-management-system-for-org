@@ -208,7 +208,7 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
         <div className="flex items-center border-b border-slate-800 bg-slate-950/40 px-4 sm:px-6 overflow-x-auto">
           <button
             onClick={() => setActiveTab('comments')}
-            className={`py-3 px-4 text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
+            className={`py-3 px-4 min-h-[44px] text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
               activeTab === 'comments'
                 ? 'border-indigo-500 text-indigo-400'
                 : 'border-transparent text-slate-400 hover:text-white'
@@ -221,7 +221,7 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
           </button>
           <button
             onClick={() => setActiveTab('attachments')}
-            className={`py-3 px-4 text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
+            className={`py-3 px-4 min-h-[44px] text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
               activeTab === 'attachments'
                 ? 'border-indigo-500 text-indigo-400'
                 : 'border-transparent text-slate-400 hover:text-white'

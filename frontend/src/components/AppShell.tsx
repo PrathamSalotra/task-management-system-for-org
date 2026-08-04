@@ -149,7 +149,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
           <button
             onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-            className="p-2 text-text-secondary hover:text-text-primary rounded-lg border border-border-subtle"
+            className="p-2.5 text-text-secondary hover:text-text-primary rounded-xl border border-border-subtle bg-surface-muted hover:bg-surface transition-colors flex items-center justify-center min-w-[44px] min-h-[44px]"
             aria-label="Toggle Sidebar"
           >
             {isMobileSidebarOpen ? (
@@ -160,14 +160,44 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </button>
         </div>
 
-        {/* Persistent Left Sidebar Region (~260-280px) */}
+        {/* Mobile Drawer Backdrop Overlay */}
+        {isMobileSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden animate-fadeIn"
+            onClick={() => setIsMobileSidebarOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+
+        {/* Persistent Left Sidebar Region (Desktop) / Toggleable Drawer (Mobile) */}
         <aside
           className={`${
-            isMobileSidebarOpen ? 'flex' : 'hidden'
-          } md:flex w-full md:w-[270px] lg:w-[280px] shrink-0 border-b md:border-b-0 md:border-r border-border-subtle bg-surface-card p-6 flex-col justify-between`}
+            isMobileSidebarOpen
+              ? 'fixed inset-y-0 left-0 z-50 flex w-[280px] shadow-2xl animate-slideRight'
+              : 'hidden'
+          } md:static md:z-auto md:flex md:w-[270px] lg:w-[280px] shrink-0 md:border-r border-border-subtle bg-surface-card p-6 flex-col justify-between max-h-screen overflow-y-auto`}
         >
           <div className="space-y-6 overflow-y-auto pr-1">
-            {/* Brand Title Area */}
+            {/* Mobile-only Header with Close Button inside Drawer */}
+            <div className="md:hidden flex items-center justify-between pb-4 border-b border-border-subtle">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-xl bg-accent text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                  AW
+                </div>
+                <span className="font-bold text-lg tracking-tight text-text-primary">
+                  Agile Workspace
+                </span>
+              </div>
+              <button
+                onClick={() => setIsMobileSidebarOpen(false)}
+                className="p-2.5 rounded-xl text-text-secondary hover:text-text-primary bg-surface-muted hover:bg-surface border border-border-subtle transition-colors flex items-center justify-center min-w-[44px] min-h-[44px]"
+                aria-label="Close Sidebar"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Brand Title Area (Desktop) */}
             <Link
               href="/dashboard"
               className="hidden md:flex items-center gap-3 group focus:outline-none"
@@ -192,7 +222,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     key={item.name}
                     href={item.href}
                     onClick={() => setIsMobileSidebarOpen(false)}
-                    className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm transition-all ${
+                    className={`flex items-center gap-3 px-3.5 py-3 md:py-2.5 rounded-xl text-sm transition-all min-h-[44px] ${
                       item.isActive
                         ? 'bg-accent/10 text-accent font-semibold shadow-sm'
                         : 'text-text-secondary hover:text-text-primary hover:bg-surface-muted font-medium'
@@ -217,7 +247,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         key={item.name}
                         href={item.href}
                         onClick={() => setIsMobileSidebarOpen(false)}
-                        className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm transition-all ${
+                        className={`flex items-center gap-3 px-3.5 py-3 md:py-2.5 rounded-xl text-sm transition-all min-h-[44px] ${
                           item.isActive
                             ? 'bg-accent/10 text-accent font-semibold shadow-sm'
                             : 'text-text-secondary hover:text-text-primary hover:bg-surface-muted font-medium'
@@ -250,7 +280,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         key={proj.id}
                         href={`/projects/${proj.id}`}
                         onClick={() => setIsMobileSidebarOpen(false)}
-                        className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-all ${
+                        className={`flex items-center gap-2.5 px-3 py-3 md:py-2 rounded-xl text-sm transition-all min-h-[44px] ${
                           isProjActive
                             ? 'bg-accent/10 text-accent font-semibold'
                             : 'text-text-secondary hover:text-text-primary hover:bg-surface-muted font-medium'
@@ -277,7 +307,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 variant="primary"
                 onClick={() => setIsCreateModalOpen(true)}
                 icon={<Plus className="w-4 h-4" />}
-                className="w-full"
+                className="w-full min-h-[44px]"
               >
                 New Project
               </Button>
@@ -295,8 +325,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </div>
                 <button
                   onClick={logout}
-                  className="p-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-muted border border-border-subtle transition-colors shrink-0"
+                  className="p-2.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-muted border border-border-subtle transition-colors shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center"
                   title="Log Out"
+                  aria-label="Log Out"
                 >
                   <LogOut className="w-4 h-4" />
                 </button>
@@ -306,7 +337,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </aside>
 
         {/* Main Content Region */}
-        <main className="flex-1 flex flex-col min-w-0 bg-surface-card overflow-y-auto">
+        <main className="flex-1 flex flex-col min-w-0 bg-surface-card overflow-x-hidden overflow-y-auto">
           {children}
         </main>
       </div>
