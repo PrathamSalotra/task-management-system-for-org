@@ -49,16 +49,16 @@ export default function DashboardPage() {
     <AppShell>
       <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 md:px-10 py-6 md:py-10 space-y-8">
         {/* Welcome Banner */}
-        <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-indigo-900/30 via-purple-900/20 to-slate-900/40 border border-indigo-500/20 backdrop-blur-xl shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="p-6 sm:p-8 rounded-2xl bg-surface-card border border-border-subtle shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold mb-3">
-              <span className="w-2 h-2 rounded-full bg-indigo-400 animate-ping" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-xs font-semibold mb-3">
+              <span className="w-2 h-2 rounded-full bg-indigo-500 animate-ping" />
               <span>Phase 5 — Executive Analytics & Team Workload</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
+            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-text-primary">
               Welcome back, {user?.name}!
             </h1>
-            <p className="text-slate-400 text-sm mt-1 max-w-xl">
+            <p className="text-text-secondary text-sm mt-1 max-w-xl">
               Track real-time project progress, task status breakdowns, upcoming deadlines, and team workload.
             </p>
           </div>
@@ -67,7 +67,7 @@ export default function DashboardPage() {
             <button
               onClick={handleCreateSampleProject}
               disabled={createProjectMutation.isPending}
-              className="px-4 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold border border-slate-700 transition-colors disabled:opacity-50"
+              className="px-4 py-2.5 rounded-xl bg-surface-muted hover:bg-surface text-text-primary text-xs font-semibold border border-border-subtle transition-colors disabled:opacity-50 shadow-sm"
             >
               {createProjectMutation.isPending
                 ? 'Creating...'
@@ -75,7 +75,7 @@ export default function DashboardPage() {
             </button>
             <Link
               href="/projects"
-              className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-colors shadow-lg shadow-indigo-600/20"
+              className="px-4 py-2.5 rounded-xl bg-accent hover:bg-accent-hover text-white text-xs font-semibold transition-colors shadow-sm"
             >
               All Projects →
             </Link>
