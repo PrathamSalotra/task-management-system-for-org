@@ -42,46 +42,46 @@ export default function LoginPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0a0d14] flex items-center justify-center">
+      <div className="min-h-screen bg-canvas flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-slate-400 text-sm">Checking authentication...</p>
+          <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin" />
+          <p className="text-text-secondary text-sm font-medium">Checking authentication...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen relative overflow-hidden bg-[#0a0d14] flex flex-col items-center justify-center p-6">
-      {/* Background Glow */}
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none animate-pulse" />
-      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
+    <main className="min-h-screen bg-canvas flex flex-col items-center justify-center p-6 relative overflow-hidden">
+      {/* Subtle Aesthetic Glows */}
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-accent/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-md w-full relative z-10">
         {/* Brand Header */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-block mb-3">
-            <span className="text-sm font-semibold tracking-wider uppercase px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-accent/10 text-accent border border-accent/20 text-xs font-semibold tracking-wider uppercase shadow-sm">
               Agile Workspace
             </span>
           </Link>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-3xl font-extrabold text-text-primary tracking-tight">
             Welcome Back
           </h1>
-          <p className="text-slate-400 text-sm mt-1">
+          <p className="text-text-secondary text-sm mt-1">
             Sign in to access your enterprise task boards
           </p>
         </div>
 
-        {/* Card Form */}
-        <div className="p-8 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl shadow-2xl space-y-6">
+        {/* Centered Surface Card */}
+        <div className="p-8 sm:p-10 rounded-[20px] bg-surface border border-border-subtle shadow-[0_8px_30px_rgb(0,0,0,0.06)] space-y-6 transition-all">
           {formError && (
             <div
               id="login-error-banner"
-              className="p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm flex items-center gap-2"
+              className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-sm flex items-start gap-3 shadow-sm transition-all"
             >
-              <span>⚠️</span>
-              <span>{formError}</span>
+              <span className="text-base leading-none">⚠️</span>
+              <span className="font-medium leading-snug">{formError}</span>
             </div>
           )}
 
@@ -89,7 +89,7 @@ export default function LoginPage() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2"
+                className="block text-xs font-bold text-text-primary uppercase tracking-wider mb-2"
               >
                 Email Address
               </label>
@@ -100,14 +100,14 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@company.com"
                 required
-                className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all"
+                className="w-full px-4 py-3.5 rounded-xl bg-surface-muted border border-border-subtle text-text-primary placeholder-text-secondary/60 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all text-sm"
               />
             </div>
 
             <div>
               <label
                 htmlFor="password"
-                className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2"
+                className="block text-xs font-bold text-text-primary uppercase tracking-wider mb-2"
               >
                 Password
               </label>
@@ -118,7 +118,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="w-full px-4 py-3 rounded-xl bg-slate-950/60 border border-slate-800 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all"
+                className="w-full px-4 py-3.5 rounded-xl bg-surface-muted border border-border-subtle text-text-primary placeholder-text-secondary/60 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all text-sm"
               />
             </div>
 
@@ -126,12 +126,12 @@ export default function LoginPage() {
               id="login-submit-btn"
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="w-full py-3.5 px-6 rounded-full bg-accent hover:bg-accent-hover text-white font-semibold text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center gap-2">
                   <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Signing in...
+                  <span>Signing in...</span>
                 </span>
               ) : (
                 'Sign In'
@@ -139,11 +139,11 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="pt-2 border-t border-slate-800/80 text-center text-sm text-slate-400">
+          <div className="pt-4 border-t border-border-subtle text-center text-sm text-text-secondary">
             Don&apos;t have an account?{' '}
             <Link
               href="/register"
-              className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
+              className="text-accent hover:text-accent-hover font-semibold transition-colors ml-1"
             >
               Create an account
             </Link>
@@ -153,3 +153,4 @@ export default function LoginPage() {
     </main>
   );
 }
+
