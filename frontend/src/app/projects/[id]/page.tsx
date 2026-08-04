@@ -295,52 +295,61 @@ export default function ProjectDetailPage() {
                   return (
                     <div
                       key={member.id || member.userId}
-                      className="p-4 rounded-2xl bg-surface-card border border-border-subtle shadow-sm flex items-center justify-between gap-4 hover:border-indigo-300 transition-colors"
+                      className="p-4 sm:p-5 rounded-2xl bg-surface-card border border-border-subtle shadow-sm flex items-start gap-3.5 hover:border-indigo-300 transition-colors overflow-hidden"
                     >
-                      <div className="flex items-center gap-3.5">
-                        <Avatar
-                          name={member.user?.name || `User (${member.userId.substring(0, 8)})`}
-                          size="md"
-                          title={member.user?.email || member.user?.name}
-                        />
+                      <Avatar
+                        name={member.user?.name || `User (${member.userId.substring(0, 8)})`}
+                        size="md"
+                        title={member.user?.email || member.user?.name}
+                        className="shrink-0 mt-0.5"
+                      />
+                      <div className="min-w-0 flex-1 space-y-2.5">
                         <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-text-primary text-sm">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span
+                              className="font-bold text-text-primary text-sm truncate max-w-full"
+                              title={member.user?.name || `User (${member.userId.substring(0, 8)})`}
+                            >
                               {member.user?.name || `User (${member.userId.substring(0, 8)})`}
                             </span>
                             {isOwner && (
-                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30 uppercase">
+                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30 uppercase shrink-0">
                                 Owner / PM
                               </span>
                             )}
                           </div>
-                          <span className="text-xs text-text-secondary">
+                          <span
+                            className="text-xs text-text-secondary truncate block mt-0.5"
+                            title={member.user?.email || 'Member'}
+                          >
                             {member.user?.email || 'Member'}
                           </span>
                         </div>
-                      </div>
 
-                      <div className="flex items-center gap-3">
-                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-surface-muted text-text-secondary border border-border-subtle uppercase tracking-wider">
-                          {member.user?.role || 'MEMBER'}
-                        </span>
+                        {/* Designation & Remove Button below the email in symmetry */}
+                        <div className="flex items-center justify-between gap-3 pt-2 border-t border-border-subtle/60">
+                          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-surface-muted text-text-secondary border border-border-subtle uppercase tracking-wider shrink-0">
+                            {member.user?.role || 'MEMBER'}
+                          </span>
 
-                        {canManageProject && !isOwner && (
-                          <Button
-                            variant="danger"
-                            size="sm"
-                            onClick={() =>
-                              handleRemoveMember(
-                                member.userId,
-                                member.user?.name || member.userId
-                              )
-                            }
-                            disabled={removeMemberMutation.isPending}
-                            title="Remove member from project"
-                          >
-                            Remove
-                          </Button>
-                        )}
+                          {canManageProject && !isOwner && (
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              onClick={() =>
+                                handleRemoveMember(
+                                  member.userId,
+                                  member.user?.name || member.userId
+                                )
+                              }
+                              disabled={removeMemberMutation.isPending}
+                              title="Remove member from project"
+                              className="px-3 py-1 text-xs shrink-0"
+                            >
+                              Remove
+                            </Button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   );
