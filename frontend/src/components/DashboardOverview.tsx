@@ -12,7 +12,6 @@ import { TaskStatus, TaskPriority } from '../lib/api/types';
 import { StatusPill } from './StatusPill';
 import { PriorityBadge } from './PriorityBadge';
 import { Avatar } from './Avatar';
-import { AvatarStack } from './AvatarStack';
 import { Button, EmptyState, LoadingState } from './index';
 
 
@@ -379,120 +378,6 @@ export function DashboardOverview() {
               </div>
             </div>
           </div>
-
-          {/* 5. Team Performance Card List (PM & Admin Only) */}
-          {isPmOrAdmin && (
-            <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/80 backdrop-blur-xl space-y-5">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-semibold mb-1">
-                    <span>👑 Manager / Admin View</span>
-                  </div>
-                  <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                    <span>👥</span>
-                    <span>Team Performance</span>
-                  </h2>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    Completed and overdue tasks across your team
-                  </p>
-                </div>
-                <div className="flex items-center gap-3">
-                  {teamPerformance.length > 0 && (
-                    <AvatarStack
-                      members={teamPerformance.map((m) => ({
-                        id: m.userId,
-                        name: m.name,
-                        email: m.email,
-                      }))}
-                      max={5}
-                      size="sm"
-                    />
-                  )}
-                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    {teamPerformance.length} Active Members
-                  </span>
-                </div>
-              </div>
-
-              {teamPerformance.length === 0 ? (
-                <EmptyState
-                  icon="👥"
-                  title="No Team Members"
-                  description="No team members found on active projects."
-                />
-              ) : (
-                <div className="space-y-3">
-                  {teamPerformance.map((member) => {
-                    const hasOverdue = member.overdueTasks > 0;
-                    return (
-                      <div
-                        key={member.userId}
-                        className={`p-4 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${hasOverdue
-                          ? 'bg-red-950/20 border-red-500/40 hover:border-red-500/60 shadow-lg shadow-red-500/5'
-                          : 'bg-slate-950/70 border-slate-800/80 hover:border-slate-700'
-                          }`}
-                      >
-                        {/* Left: Avatar + Name + Email */}
-                        <div className="flex items-center gap-3.5">
-                          <Avatar
-                            name={member.name}
-                            size="md"
-                            title={member.email || member.name}
-                          />
-                          <div>
-                            <h4 className="text-base font-bold text-white flex items-center gap-2">
-                              <span>{member.name}</span>
-                              {hasOverdue && (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-[#FDE7E9] text-[#D2465B] dark:bg-red-500/20 dark:text-red-300 border border-[#D2465B]/30 dark:border-red-500/40">
-                                  <span>⚠️ Overdue Tasks</span>
-                                </span>
-                              )}
-                            </h4>
-                            <p className="text-xs text-slate-400 mt-0.5 font-mono">
-                              {member.email}
-                            </p>
-                          </div>
-                        </div>
-
-                        {/* Right: Completed Task Count + Overdue Task Count Badges */}
-                        <div className="flex items-center gap-4 sm:justify-end">
-                          {/* Completed Tasks */}
-                          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800/80">
-                            <span className="text-xs font-semibold text-slate-400">
-                              Completed:
-                            </span>
-                            <span className="text-sm font-extrabold text-emerald-400">
-                              {member.completedTasks}
-                            </span>
-                          </div>
-
-                          {/* Overdue Tasks (HIGH/red tone if > 0) */}
-                          <div
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border ${hasOverdue
-                              ? 'bg-[#FDE7E9] text-[#D2465B] dark:bg-red-500/20 dark:text-red-300 border-[#D2465B]/30 dark:border-red-500/40 font-extrabold animate-pulse'
-                              : 'bg-slate-900/80 border-slate-800/80 text-slate-400'
-                              }`}
-                          >
-                            <span className="text-xs font-semibold">
-                              Overdue:
-                            </span>
-                            <span
-                              className={`text-sm font-extrabold ${hasOverdue
-                                ? 'text-[#D2465B] dark:text-red-300'
-                                : 'text-slate-400'
-                                }`}
-                            >
-                              {member.overdueTasks}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
         </div>
 
         {/* RIGHT-HAND PANEL (Right Column): Upcoming Deadlines matching "Meetings Schedule" card pattern */}
@@ -527,33 +412,35 @@ export function DashboardOverview() {
                   <Link
                     key={task.id}
                     href={`/projects/${task.projectId}`}
-                    className="block p-4 rounded-xl bg-slate-950/80 border border-slate-800/80 hover:border-slate-700 hover:bg-slate-950 transition-all group space-y-2.5 shadow-md"
+                    className="block p-4 rounded-xl bg-slate-950/80 border border-slate-800/80 hover:border-slate-700 hover:bg-slate-950 transition-all group space-y-2.5 shadow-md overflow-hidden min-w-0"
                   >
                     {/* Top Row: Due date/time in a colored accent + PriorityBadge */}
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-bold text-indigo-400 flex items-center gap-1.5">
+                    <div className="flex items-center justify-between gap-2 min-w-0">
+                      <span className="text-xs font-bold text-indigo-400 flex items-center gap-1.5 min-w-0 truncate">
                         <span>📅</span>
-                        <span>{formatDate(task.dueDate)}</span>
+                        <span className="truncate">{formatDate(task.dueDate)}</span>
                       </span>
-                      <PriorityBadge priority={task.priority} />
+                      <div className="shrink-0">
+                        <PriorityBadge priority={task.priority} />
+                      </div>
                     </div>
 
                     {/* Middle Row: Bold Title + Project Name Subtitle */}
-                    <div>
-                      <h4 className="text-sm font-extrabold text-white group-hover:text-indigo-300 transition-colors line-clamp-1">
+                    <div className="min-w-0">
+                      <h4 className="text-sm font-extrabold text-white group-hover:text-indigo-300 transition-colors truncate">
                         {task.title}
                       </h4>
-                      <p className="text-xs text-slate-400 mt-0.5">
+                      <p className="text-xs text-slate-400 mt-0.5 truncate">
                         {task.projectName}
                       </p>
                     </div>
 
                     {/* Bottom Row: Assignee single avatar matching Meetings Schedule card pattern exactly */}
-                    <div className="flex items-center justify-between pt-1 border-t border-slate-800/60">
-                      <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                    <div className="flex items-center justify-between pt-1 border-t border-slate-800/60 min-w-0 gap-2">
+                      <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider shrink-0">
                         Assignee
                       </span>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 min-w-0 truncate">
                         {task.assignee ? (
                           <>
                             <Avatar
@@ -561,12 +448,12 @@ export function DashboardOverview() {
                               size="xs"
                               title={task.assignee.name}
                             />
-                            <span className="text-xs font-semibold text-slate-300">
+                            <span className="text-xs font-semibold text-slate-300 truncate">
                               {task.assignee.name}
                             </span>
                           </>
                         ) : (
-                          <span className="text-xs text-slate-500 italic">
+                          <span className="text-xs text-slate-500 italic truncate">
                             Unassigned
                           </span>
                         )}
@@ -579,6 +466,109 @@ export function DashboardOverview() {
           </div>
         </div>
       </div>
+
+      {/* 5. Team Performance Card List (PM & Admin Only) - Symmetrical Full-Width Section */}
+      {isPmOrAdmin && (
+        <div className="w-full p-6 rounded-2xl bg-slate-900/40 border border-slate-800/80 backdrop-blur-xl space-y-5">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-xs font-semibold mb-1">
+                <span>👑 Manager / Admin View</span>
+              </div>
+              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                <span>👥</span>
+                <span>Team Performance</span>
+              </h2>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Completed and overdue tasks across your team
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                {teamPerformance.length} Active Members
+              </span>
+            </div>
+          </div>
+
+          {teamPerformance.length === 0 ? (
+            <EmptyState
+              icon="👥"
+              title="No Team Members"
+              description="No team members found on active projects."
+            />
+          ) : (
+            <div className="space-y-3">
+              {teamPerformance.map((member) => {
+                const hasOverdue = member.overdueTasks > 0;
+                return (
+                  <div
+                    key={member.userId}
+                    className={`p-4 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${hasOverdue
+                      ? 'bg-red-950/20 border-red-500/40 hover:border-red-500/60 shadow-lg shadow-red-500/5'
+                      : 'bg-slate-950/70 border-slate-800/80 hover:border-slate-700'
+                      }`}
+                  >
+                    {/* Left: Avatar + Name + Email */}
+                    <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                      <Avatar
+                        name={member.name}
+                        size="md"
+                        title={member.email || member.name}
+                      />
+                      <div className="min-w-0 flex-1">
+                        <h4 className="text-base font-bold text-white flex items-center gap-2 flex-wrap">
+                          <span className="truncate">{member.name}</span>
+                          {hasOverdue && (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-[#FDE7E9] text-[#D2465B] dark:bg-red-500/20 dark:text-red-300 border border-[#D2465B]/30 dark:border-red-500/40 shrink-0">
+                              <span>⚠️ Overdue Tasks</span>
+                            </span>
+                          )}
+                        </h4>
+                        <p className="text-xs text-slate-400 mt-0.5 font-mono truncate">
+                          {member.email}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Right: Completed Task Count + Overdue Task Count Badges */}
+                    <div className="flex items-center gap-2 sm:gap-4 flex-wrap sm:flex-nowrap sm:justify-end shrink-0">
+                      {/* Completed Tasks */}
+                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800/80 shrink-0">
+                        <span className="text-xs font-semibold text-slate-400">
+                          Completed:
+                        </span>
+                        <span className="text-sm font-extrabold text-emerald-400">
+                          {member.completedTasks}
+                        </span>
+                      </div>
+
+                      {/* Overdue Tasks (HIGH/red tone if > 0) */}
+                      <div
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border shrink-0 ${hasOverdue
+                          ? 'bg-[#FDE7E9] text-[#D2465B] dark:bg-red-500/20 dark:text-red-300 border-[#D2465B]/30 dark:border-red-500/40 font-extrabold animate-pulse'
+                          : 'bg-slate-900/80 border-slate-800/80 text-slate-400'
+                          }`}
+                      >
+                        <span className="text-xs font-semibold">
+                          Overdue:
+                        </span>
+                        <span
+                          className={`text-sm font-extrabold ${hasOverdue
+                            ? 'text-[#D2465B] dark:text-red-300'
+                            : 'text-slate-400'
+                            }`}
+                        >
+                          {member.overdueTasks}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
