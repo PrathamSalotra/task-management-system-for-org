@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../../context/AuthContext';
 import { useCreateProject } from '../../hooks';
-import { Navbar } from '../../components/Navbar';
+import { AppShell } from '../../components/AppShell';
 import { DashboardOverview } from '../../components/DashboardOverview';
 
 export default function DashboardPage() {
@@ -46,11 +46,8 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0d14] text-white flex flex-col">
-      <Navbar />
-
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 md:px-10 py-6 md:py-10 space-y-8">
+    <AppShell>
+      <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 md:px-10 py-6 md:py-10 space-y-8">
         {/* Welcome Banner */}
         <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-indigo-900/30 via-purple-900/20 to-slate-900/40 border border-indigo-500/20 backdrop-blur-xl shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
@@ -66,11 +63,11 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center justify-start sm:justify-end gap-3 shrink-0 w-full md:w-auto">
+          <div className="flex items-center gap-3 self-start md:self-auto">
             <button
               onClick={handleCreateSampleProject}
               disabled={createProjectMutation.isPending}
-              className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-colors border border-slate-700 disabled:opacity-50"
+              className="px-4 py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold border border-slate-700 transition-colors disabled:opacity-50"
             >
               {createProjectMutation.isPending
                 ? 'Creating...'
@@ -87,7 +84,7 @@ export default function DashboardPage() {
 
         {/* Dashboard Analytics & Metrics */}
         <DashboardOverview />
-      </main>
-    </div>
+      </div>
+    </AppShell>
   );
 }

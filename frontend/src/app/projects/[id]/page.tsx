@@ -12,7 +12,7 @@ import {
   useRemoveProjectMember,
   useUsers,
 } from '../../../hooks';
-import { Navbar } from '../../../components/Navbar';
+import { AppShell } from '../../../components/AppShell';
 import { TaskBoard } from '../../../components/TaskBoard';
 import {
   formatDate,
@@ -118,21 +118,19 @@ export default function ProjectDetailPage() {
 
   if (projectLoading) {
     return (
-      <div className="min-h-screen bg-[#0a0d14] text-white flex flex-col">
-        <Navbar />
-        <main className="flex-1 max-w-5xl w-full mx-auto p-6 md:p-10 flex flex-col items-center justify-center gap-3">
+      <AppShell>
+        <div className="flex-1 max-w-5xl w-full mx-auto p-6 md:p-10 flex flex-col items-center justify-center gap-3">
           <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
           <p className="text-slate-400 text-sm">Loading project info...</p>
-        </main>
-      </div>
+        </div>
+      </AppShell>
     );
   }
 
   if (isError || !project) {
     return (
-      <div className="min-h-screen bg-[#0a0d14] text-white flex flex-col">
-        <Navbar />
-        <main className="flex-1 max-w-5xl w-full mx-auto p-6 md:p-10">
+      <AppShell>
+        <div className="flex-1 max-w-5xl w-full mx-auto p-6 md:p-10">
           <div className="p-8 rounded-2xl bg-red-500/10 border border-red-500/20 text-center space-y-4">
             <h2 className="text-xl font-bold text-red-300">Project Not Found</h2>
             <p className="text-slate-400 text-sm max-w-md mx-auto">
@@ -140,13 +138,13 @@ export default function ProjectDetailPage() {
             </p>
             <Link
               href="/projects"
-              className="inline-block px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold transition-colors border border-slate-700"
+              className="inline-block px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-colors"
             >
-              ← Return to Projects
+              Back to All Projects
             </Link>
           </div>
-        </main>
-      </div>
+        </div>
+      </AppShell>
     );
   }
 
@@ -159,10 +157,8 @@ export default function ProjectDetailPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#0a0d14] text-white flex flex-col">
-      <Navbar />
-
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 md:px-10 py-6 md:py-10 space-y-8">
+    <AppShell>
+      <div className="max-w-6xl w-full mx-auto px-4 sm:px-6 md:px-10 py-6 md:py-10 space-y-8">
         {/* Top Navigation & Status Toast */}
         <div className="flex items-center justify-between">
           <Link
@@ -424,7 +420,7 @@ export default function ProjectDetailPage() {
         <div className="pt-6 border-t border-slate-800/80">
           <TaskBoard project={project} canManageProject={canManageProject} />
         </div>
-      </main>
-    </div>
+      </div>
+    </AppShell>
   );
 }

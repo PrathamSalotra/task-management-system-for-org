@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import { useProjects, useCreateProject, useDeleteProject } from '../../hooks';
-import { Navbar } from '../../components/Navbar';
+import { AppShell } from '../../components/AppShell';
 import { formatDate, getStatusBadgeStyle } from '../../lib/utils';
 import { Project } from '../../lib/api/types';
 
@@ -134,10 +134,8 @@ export default function ProjectsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0a0d14] text-white flex flex-col">
-      <Navbar />
-
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 md:px-10 py-6 md:py-10 space-y-8">
+    <AppShell>
+      <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 md:px-10 py-6 md:py-10 space-y-8">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -397,7 +395,7 @@ export default function ProjectsPage() {
             </table>
           </div>
         )}
-      </main>
+      </div>
 
       {/* Create Project Modal */}
       {isCreateModalOpen && (
@@ -493,6 +491,6 @@ export default function ProjectsPage() {
           </div>
         </div>
       )}
-    </div>
+    </AppShell>
   );
 }
