@@ -501,7 +501,7 @@ export function DashboardOverview() {
 
         {/* RIGHT-HAND PANEL (Right Column): Upcoming Deadlines matching "Meetings Schedule" card pattern */}
         <div className="lg:col-span-1 space-y-4">
-          <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/80 backdrop-blur-xl space-y-5 lg:h-[740px] lg:flex lg:flex-col">
+          <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/80 backdrop-blur-xl space-y-5 lg:h-[716px] lg:flex lg:flex-col">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-bold text-white flex items-center gap-2">
