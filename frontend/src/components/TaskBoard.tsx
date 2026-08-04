@@ -10,12 +10,36 @@ import {
 } from '../hooks/useTasks';
 import {
   formatDate,
-  getTaskStatusBadgeStyle,
-  getPriorityBadgeStyle,
   getAvatarInitials,
 } from '../lib/utils';
 import { Project, Task, TaskStatus, TaskPriority } from '../lib/api/types';
 import { TaskDetailModal } from './TaskDetailModal';
+import { StatusPill } from './StatusPill';
+import { PriorityBadge } from './PriorityBadge';
+
+function getStatusBadgeClass(status: string) {
+  switch (status) {
+    case 'IN_PROGRESS':
+      return 'bg-status-in-progress-bg text-status-in-progress-text';
+    case 'COMPLETED':
+      return 'bg-status-completed-bg text-status-completed-text';
+    case 'TODO':
+    default:
+      return 'bg-status-todo-bg text-status-todo-text';
+  }
+}
+
+function getPriorityBadgeClass(priority: string) {
+  switch (priority) {
+    case 'HIGH':
+      return 'bg-priority-high-bg text-priority-high-text';
+    case 'MEDIUM':
+      return 'bg-priority-medium-bg text-priority-medium-text';
+    case 'LOW':
+    default:
+      return 'bg-priority-low-bg text-priority-low-text';
+  }
+}
 
 interface TaskBoardProps {
   project: Project;
@@ -289,7 +313,6 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {columns.map((col) => {
             const colTasks = tasks.filter((t) => t.status === col.key);
-            const statusStyle = getTaskStatusBadgeStyle(col.key);
 
             return (
               <div
@@ -305,7 +328,9 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                     </span>
                   </div>
                   <span
-                    className={`px-2 py-0.5 rounded-full text-xs font-bold border ${statusStyle.bg} ${statusStyle.text} ${statusStyle.border}`}
+                    className={`px-2 py-0.5 rounded-pill text-xs font-semibold ${getStatusBadgeClass(
+                      col.key
+                    )}`}
                   >
                     {colTasks.length}
                   </span>
@@ -319,9 +344,6 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                     </div>
                   ) : (
                     colTasks.map((task) => {
-                      const priorityStyle = getPriorityBadgeStyle(
-                        task.priority
-                      );
                       const isAssignee = task.assigneeId === user?.id;
                       const canChangeStatus = canEditDetails || isAssignee;
 
@@ -345,18 +367,16 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                                   )
                                 }
                                 disabled={updateTaskMutation.isPending}
-                                className={`text-[10px] font-bold uppercase rounded-lg px-2 py-0.5 border ${priorityStyle.bg} ${priorityStyle.text} ${priorityStyle.border} bg-slate-950 focus:outline-none cursor-pointer`}
+                                className={`text-[10px] font-semibold uppercase rounded-pill px-2.5 py-1 border-none ${getPriorityBadgeClass(
+                                  task.priority
+                                )} focus:outline-none cursor-pointer`}
                               >
                                 <option value="LOW">Low</option>
                                 <option value="MEDIUM">Med</option>
                                 <option value="HIGH">High</option>
                               </select>
                             ) : (
-                              <span
-                                className={`text-[10px] font-bold uppercase rounded-lg px-2 py-0.5 border ${priorityStyle.bg} ${priorityStyle.text} ${priorityStyle.border}`}
-                              >
-                                {priorityStyle.label}
-                              </span>
+                              <PriorityBadge priority={task.priority} />
                             )}
                           </div>
 
@@ -417,7 +437,9 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                                   handleStatusChange(task.id, e.target.value)
                                 }
                                 disabled={updateTaskMutation.isPending}
-                                className="bg-slate-950 border border-slate-800 hover:border-indigo-500/40 rounded-lg px-2.5 py-1 text-xs text-white font-semibold focus:outline-none transition-colors cursor-pointer"
+                                className={`rounded-pill px-2.5 py-1 text-xs font-semibold border-none ${getStatusBadgeClass(
+                                  task.status
+                                )} focus:outline-none cursor-pointer`}
                               >
                                 <option value="TODO">To Do</option>
                                 <option value="IN_PROGRESS">In Progress</option>
@@ -425,10 +447,10 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                               </select>
                             ) : (
                               <span
-                                className="text-[11px] text-slate-500 italic cursor-not-allowed"
+                                className="inline-flex items-center gap-1 cursor-not-allowed text-xs"
                                 title="Only the assigned member or PM can update status"
                               >
-                                🔒 {getTaskStatusBadgeStyle(task.status).label}
+                                🔒 <StatusPill status={task.status} />
                               </span>
                             )}
                           </div>
@@ -478,7 +500,6 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
             </thead>
             <tbody className="divide-y divide-slate-800/60 text-sm">
               {tasks.map((task) => {
-                const priorityStyle = getPriorityBadgeStyle(task.priority);
                 const isAssignee = task.assigneeId === user?.id;
                 const canChangeStatus = canEditDetails || isAssignee;
 
@@ -552,18 +573,16 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                             handlePriorityChange(task.id, e.target.value)
                           }
                           disabled={updateTaskMutation.isPending}
-                          className={`text-xs font-bold uppercase rounded-lg px-2.5 py-1 border ${priorityStyle.bg} ${priorityStyle.text} ${priorityStyle.border} bg-slate-950 focus:outline-none`}
+                          className={`text-xs font-semibold uppercase rounded-pill px-2.5 py-1 border-none ${getPriorityBadgeClass(
+                            task.priority
+                          )} focus:outline-none cursor-pointer`}
                         >
                           <option value="LOW">Low</option>
                           <option value="MEDIUM">Medium</option>
                           <option value="HIGH">High</option>
                         </select>
                       ) : (
-                        <span
-                          className={`text-xs font-bold uppercase rounded-lg px-2.5 py-1 border ${priorityStyle.bg} ${priorityStyle.text} ${priorityStyle.border}`}
-                        >
-                          {priorityStyle.label}
-                        </span>
+                        <PriorityBadge priority={task.priority} />
                       )}
                     </td>
 
@@ -576,7 +595,9 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                             handleStatusChange(task.id, e.target.value)
                           }
                           disabled={updateTaskMutation.isPending}
-                          className="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1 text-xs text-white font-semibold focus:outline-none cursor-pointer"
+                          className={`rounded-pill px-2.5 py-1 text-xs font-semibold border-none ${getStatusBadgeClass(
+                            task.status
+                          )} focus:outline-none cursor-pointer`}
                         >
                           <option value="TODO">To Do</option>
                           <option value="IN_PROGRESS">In Progress</option>
@@ -584,10 +605,10 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                         </select>
                       ) : (
                         <span
-                          className="text-xs text-slate-500 italic"
+                          className="inline-flex items-center gap-1 cursor-not-allowed text-xs"
                           title="Only the assigned member or PM can update status"
                         >
-                          🔒 {getTaskStatusBadgeStyle(task.status).label}
+                          🔒 <StatusPill status={task.status} />
                         </span>
                       )}
                     </td>

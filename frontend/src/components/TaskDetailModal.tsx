@@ -12,11 +12,11 @@ import {
 import {
   formatDate,
   formatFileSize,
-  getTaskStatusBadgeStyle,
-  getPriorityBadgeStyle,
   getAvatarInitials,
 } from '../lib/utils';
 import { Task } from '../lib/api/types';
+import { StatusPill } from './StatusPill';
+import { PriorityBadge } from './PriorityBadge';
 
 interface TaskDetailModalProps {
   task: Task;
@@ -63,9 +63,6 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
 
   const comments = Array.isArray(commentsData) ? commentsData : [];
   const attachments = Array.isArray(attachmentsData) ? attachmentsData : [];
-
-  const statusStyle = getTaskStatusBadgeStyle(task.status);
-  const priorityStyle = getPriorityBadgeStyle(task.priority);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -176,16 +173,8 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
 
           {/* Badges Row */}
           <div className="flex flex-wrap items-center gap-2 pt-1">
-            <span
-              className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${statusStyle.bg} ${statusStyle.text} ${statusStyle.border}`}
-            >
-              {statusStyle.label}
-            </span>
-            <span
-              className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${priorityStyle.bg} ${priorityStyle.text} ${priorityStyle.border}`}
-            >
-              {priorityStyle.label} Priority
-            </span>
+            <StatusPill status={task.status} />
+            <PriorityBadge priority={task.priority} />
 
             {/* Assignee Pill */}
             <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-800/80 border border-slate-700/60 text-xs text-slate-300">

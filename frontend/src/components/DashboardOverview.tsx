@@ -6,11 +6,11 @@ import { useAuth } from '../context/AuthContext';
 import { useDashboardOverview } from '../hooks/useDashboard';
 import {
   formatDate,
-  getTaskStatusBadgeStyle,
-  getPriorityBadgeStyle,
   getAvatarInitials,
 } from '../lib/utils';
 import { TaskStatus, TaskPriority } from '../lib/api/types';
+import { StatusPill } from './StatusPill';
+import { PriorityBadge } from './PriorityBadge';
 
 export function DashboardOverview() {
   const { user } = useAuth();
@@ -253,26 +253,23 @@ export function DashboardOverview() {
 
             {/* Stat List */}
             <div className="grid grid-cols-3 gap-3">
-              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1">
-                <div className="flex items-center gap-1.5 text-xs text-slate-400">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-                  <span>Completed</span>
+              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1.5">
+                <div>
+                  <StatusPill status="COMPLETED" />
                 </div>
                 <p className="text-xl font-bold text-white">{completedCount}</p>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1">
-                <div className="flex items-center gap-1.5 text-xs text-slate-400">
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                  <span>In Progress</span>
+              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1.5">
+                <div>
+                  <StatusPill status="IN_PROGRESS" />
                 </div>
                 <p className="text-xl font-bold text-white">{inProgressCount}</p>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1">
-                <div className="flex items-center gap-1.5 text-xs text-slate-400">
-                  <span className="w-2.5 h-2.5 rounded-full bg-slate-500" />
-                  <span>Todo</span>
+              <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1.5">
+                <div>
+                  <StatusPill status="TODO" />
                 </div>
                 <p className="text-xl font-bold text-white">{todoCount}</p>
               </div>
@@ -294,27 +291,27 @@ export function DashboardOverview() {
 
           <div className="grid grid-cols-3 gap-3">
             <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-2">
-              <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-red-500/10 text-red-400 border border-red-500/20">
-                HIGH PRIORITY
-              </span>
+              <div>
+                <PriorityBadge priority="HIGH" />
+              </div>
               <p className="text-2xl font-extrabold text-white">
                 {highPriorityCount}
               </p>
             </div>
 
             <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-2">
-              <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                MEDIUM
-              </span>
+              <div>
+                <PriorityBadge priority="MEDIUM" />
+              </div>
               <p className="text-2xl font-extrabold text-white">
                 {mediumPriorityCount}
               </p>
             </div>
 
             <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-2">
-              <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                LOW
-              </span>
+              <div>
+                <PriorityBadge priority="LOW" />
+              </div>
               <p className="text-2xl font-extrabold text-white">
                 {lowPriorityCount}
               </p>
@@ -386,8 +383,6 @@ export function DashboardOverview() {
               </thead>
               <tbody className="divide-y divide-slate-800/60 text-sm">
                 {upcomingDeadlines.map((task) => {
-                  const statusStyle = getTaskStatusBadgeStyle(task.status);
-                  const priorityStyle = getPriorityBadgeStyle(task.priority);
                   return (
                     <tr
                       key={task.id}
@@ -410,18 +405,10 @@ export function DashboardOverview() {
                         {formatDate(task.dueDate)}
                       </td>
                       <td className="py-3.5 px-4">
-                        <span
-                          className={`text-[10px] font-bold uppercase rounded-md px-2 py-0.5 border ${priorityStyle.bg} ${priorityStyle.text} ${priorityStyle.border}`}
-                        >
-                          {priorityStyle.label}
-                        </span>
+                        <PriorityBadge priority={task.priority} />
                       </td>
                       <td className="py-3.5 px-4">
-                        <span
-                          className={`text-xs font-semibold px-2.5 py-0.5 rounded-full border ${statusStyle.bg} ${statusStyle.text} ${statusStyle.border}`}
-                        >
-                          {statusStyle.label}
-                        </span>
+                        <StatusPill status={task.status} />
                       </td>
                       <td className="py-3.5 px-4 text-xs text-slate-300">
                         {task.assignee ? (
