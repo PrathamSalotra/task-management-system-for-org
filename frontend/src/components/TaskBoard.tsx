@@ -518,7 +518,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                                     )
                                   }
                                   disabled={updateTaskMutation.isPending}
-                                  className="bg-surface text-text-primary text-xs rounded-lg px-1.5 py-0.5 border border-border-subtle focus:outline-none focus:border-accent max-w-[110px] truncate"
+                                  className="bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 font-semibold text-xs rounded-lg px-2 py-0.5 border border-indigo-500/30 focus:outline-none focus:border-accent max-w-[120px] truncate cursor-pointer transition-all"
                                 >
                                   <option value="">Unassigned</option>
                                   {memberAssignees.map((m) => (
@@ -528,7 +528,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                                   ))}
                                 </select>
                               ) : (
-                                <span className="text-text-primary font-medium truncate max-w-[100px]">
+                                <span className="bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 font-semibold text-xs px-2 py-0.5 rounded-lg border border-indigo-500/20 truncate max-w-[120px]">
                                   {task.assignee?.name || 'Unassigned'}
                                 </span>
                               )}
@@ -574,7 +574,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                           <div className="flex items-center gap-1.5 mt-2">
                             <button
                               onClick={() => setSelectedTaskForDetail(task)}
-                              className="flex-1 py-1.5 px-3 rounded-lg bg-surface hover:bg-surface-muted border border-border-subtle hover:border-indigo-300 text-text-primary hover:text-accent text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
+                              className="flex-1 py-1.5 px-3 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 hover:border-indigo-500/50 text-indigo-600 dark:text-indigo-300 text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
                             >
                               <span>💬</span>
                               <span>Discussion & Files</span>
@@ -714,7 +714,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                                     )
                                   }
                                   disabled={updateTaskMutation.isPending}
-                                  className="bg-surface-muted text-text-primary text-xs rounded-lg px-2.5 py-1 border border-border-subtle focus:outline-none focus:border-accent cursor-pointer"
+                                  className="bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 font-semibold text-xs rounded-lg px-2.5 py-1 border border-indigo-500/30 focus:outline-none focus:border-accent cursor-pointer transition-all"
                                 >
                                   <option value="">Unassigned</option>
                                   {memberAssignees.map((m) => (
@@ -724,7 +724,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                                   ))}
                                 </select>
                               ) : (
-                                <span className="text-text-primary text-xs font-medium px-2 py-1 bg-surface-muted rounded-lg border border-border-subtle">
+                                <span className="bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 text-xs font-semibold px-2.5 py-1 rounded-lg border border-indigo-500/20">
                                   {task.assignee?.name || 'Unassigned'}
                                 </span>
                               )}
@@ -764,7 +764,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                                 onClick={() =>
                                   setSelectedTaskForDetail(task)
                                 }
-                                className="px-2.5 py-1 rounded-lg bg-surface-muted hover:bg-surface border border-border-subtle hover:border-indigo-300 text-text-primary text-xs font-semibold flex items-center gap-1.5 transition-all"
+                                className="px-3 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 hover:border-indigo-500/50 text-indigo-600 dark:text-indigo-300 text-xs font-bold flex items-center gap-1.5 transition-all"
                                 title="Discussion & Files"
                               >
                                 <span>💬</span>

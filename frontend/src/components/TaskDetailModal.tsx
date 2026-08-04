@@ -171,8 +171,9 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
               )}
               <button
                 onClick={onClose}
-                className="w-8 h-8 rounded-full bg-surface hover:bg-surface-muted text-text-secondary hover:text-text-primary flex items-center justify-center transition-colors font-bold"
+                className="w-8 h-8 rounded-full bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-500 hover:text-red-600 dark:text-red-400 flex items-center justify-center transition-all font-bold text-sm shadow-sm"
                 aria-label="Close modal"
+                title="Close"
               >
                 ✕
               </button>
@@ -185,13 +186,13 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
             <PriorityBadge priority={task.priority} />
 
             {/* Assignee Pill */}
-            <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface border border-border-subtle text-xs text-text-primary">
-              <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400">👤</span>
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-xs font-bold text-indigo-600 dark:text-indigo-300 shadow-sm">
+              <span className="text-[11px]">👤</span>
               <span>{task.assignee?.name || 'Unassigned'}</span>
             </div>
 
             {/* Due Date Pill */}
-            <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface border border-border-subtle text-xs text-text-secondary">
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-xs font-bold text-purple-600 dark:text-purple-300 shadow-sm">
               <span>📅</span>
               <span>Due: {formatDate(task.dueDate)}</span>
             </div>
@@ -215,7 +216,7 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
             }`}
           >
             <span>💬 Discussion</span>
-            <span className="px-1.5 py-0.5 rounded-full bg-surface text-[10px]">
+            <span className="px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-extrabold text-[10px] border border-indigo-500/20">
               {comments.length}
             </span>
           </button>
@@ -228,7 +229,7 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
             }`}
           >
             <span>📎 Attachments</span>
-            <span className="px-1.5 py-0.5 rounded-full bg-surface text-[10px]">
+            <span className="px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-extrabold text-[10px] border border-indigo-500/20">
               {attachments.length}
             </span>
           </button>
@@ -369,9 +370,10 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
                         href={getAttachmentUrl(file.fileUrl)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-3 py-1.5 rounded-lg bg-surface hover:bg-surface-muted text-accent font-semibold text-xs transition-colors shrink-0 border border-border-subtle"
+                        className="px-3.5 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 hover:border-indigo-500/50 text-indigo-600 dark:text-indigo-300 font-bold text-xs transition-all shrink-0 flex items-center gap-1.5 shadow-sm"
                       >
-                        Download
+                        <span>📥</span>
+                        <span>Download</span>
                       </a>
                     </div>
                   ))
