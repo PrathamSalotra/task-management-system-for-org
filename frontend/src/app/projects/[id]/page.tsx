@@ -235,7 +235,7 @@ export default function ProjectDetailPage() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 border-t border-slate-800/80">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-slate-800/80">
             <div className="p-4 rounded-2xl bg-slate-950/50 border border-slate-800/80">
               <span className="block text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1">
                 Start Date
@@ -264,6 +264,27 @@ export default function ProjectDetailPage() {
                 </span>
               </div>
             </div>
+
+            <div className="p-4 rounded-2xl bg-slate-950/50 border border-slate-800/80">
+              <span className="block text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1">
+                Team ({project.members?.length || 0})
+              </span>
+              <div className="flex items-center gap-2 pt-1">
+                {project.members && project.members.length > 0 ? (
+                  <AvatarStack
+                    members={project.members.map((m) => ({
+                      id: m.userId,
+                      name: m.user?.name || `User (${m.userId.substring(0, 8)})`,
+                      email: m.user?.email,
+                    }))}
+                    max={4}
+                    size="sm"
+                  />
+                ) : (
+                  <span className="text-xs text-slate-500 italic">No members</span>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -278,18 +299,6 @@ export default function ProjectDetailPage() {
                   {project.members?.length || 0}
                 </span>
               </h2>
-
-              {project.members && project.members.length > 0 && (
-                <AvatarStack
-                  members={project.members.map((m) => ({
-                    id: m.userId,
-                    name: m.user?.name || `User (${m.userId.substring(0, 8)})`,
-                    email: m.user?.email,
-                  }))}
-                  max={5}
-                  size="sm"
-                />
-              )}
             </div>
 
             <div className="space-y-3">
