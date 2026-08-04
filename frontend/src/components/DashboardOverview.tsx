@@ -218,9 +218,9 @@ export function DashboardOverview() {
           </div>
 
           {/* Task Stat Charts Grid (Status & Priority Breakdowns) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
             {/* Status Distribution */}
-            <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/80 backdrop-blur-xl space-y-5">
+            <div className="p-5 sm:p-6 rounded-2xl bg-slate-900/40 border border-slate-800/80 backdrop-blur-xl space-y-5">
               <div className="flex items-center justify-between">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
                   <span>📈</span>
@@ -264,33 +264,48 @@ export function DashboardOverview() {
                 </div>
 
                 {/* Stat List */}
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1.5">
-                    <div>
-                      <StatusPill status="COMPLETED" />
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                  <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-2 min-w-0 overflow-hidden">
+                    <div className="flex justify-center w-full">
+                      <StatusPill
+                        status="COMPLETED"
+                        className="text-[10px] sm:text-xs px-2 py-0.5 max-w-full"
+                      />
                     </div>
-                    <p className="text-xl font-bold text-white">{completedCount}</p>
+                    <p className="text-xl sm:text-2xl font-extrabold text-white text-center">
+                      {completedCount}
+                    </p>
                   </div>
 
-                  <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1.5">
-                    <div>
-                      <StatusPill status="IN_PROGRESS" />
+                  <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-2 min-w-0 overflow-hidden">
+                    <div className="flex justify-center w-full">
+                      <StatusPill
+                        status="IN_PROGRESS"
+                        className="text-[10px] sm:text-xs px-2 py-0.5 max-w-full"
+                      />
                     </div>
-                    <p className="text-xl font-bold text-white">{inProgressCount}</p>
+                    <p className="text-xl sm:text-2xl font-extrabold text-white text-center">
+                      {inProgressCount}
+                    </p>
                   </div>
 
-                  <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1.5">
-                    <div>
-                      <StatusPill status="TODO" />
+                  <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-2 min-w-0 overflow-hidden">
+                    <div className="flex justify-center w-full">
+                      <StatusPill
+                        status="TODO"
+                        className="text-[10px] sm:text-xs px-2 py-0.5 max-w-full"
+                      />
                     </div>
-                    <p className="text-xl font-bold text-white">{todoCount}</p>
+                    <p className="text-xl sm:text-2xl font-extrabold text-white text-center">
+                      {todoCount}
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Priority Breakdown */}
-            <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/80 backdrop-blur-xl space-y-5">
+            <div className="p-5 sm:p-6 rounded-2xl bg-slate-900/40 border border-slate-800/80 backdrop-blur-xl space-y-5">
               <div className="flex items-center justify-between">
                 <h3 className="text-base font-bold text-white flex items-center gap-2">
                   <span>🎯</span>
@@ -301,30 +316,39 @@ export function DashboardOverview() {
                 </span>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
-                <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-2">
-                  <div>
-                    <PriorityBadge priority="HIGH" />
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-2 min-w-0 overflow-hidden">
+                  <div className="flex justify-center w-full">
+                    <PriorityBadge
+                      priority="HIGH"
+                      className="text-[10px] sm:text-xs px-2 py-0.5 max-w-full"
+                    />
                   </div>
-                  <p className="text-2xl font-extrabold text-white">
+                  <p className="text-xl sm:text-2xl font-extrabold text-white text-center">
                     {highPriorityCount}
                   </p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-2">
-                  <div>
-                    <PriorityBadge priority="MEDIUM" />
+                <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-2 min-w-0 overflow-hidden">
+                  <div className="flex justify-center w-full">
+                    <PriorityBadge
+                      priority="MEDIUM"
+                      className="text-[10px] sm:text-xs px-2 py-0.5 max-w-full"
+                    />
                   </div>
-                  <p className="text-2xl font-extrabold text-white">
+                  <p className="text-xl sm:text-2xl font-extrabold text-white text-center">
                     {mediumPriorityCount}
                   </p>
                 </div>
 
-                <div className="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-2">
-                  <div>
-                    <PriorityBadge priority="LOW" />
+                <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-2 min-w-0 overflow-hidden">
+                  <div className="flex justify-center w-full">
+                    <PriorityBadge
+                      priority="LOW"
+                      className="text-[10px] sm:text-xs px-2 py-0.5 max-w-full"
+                    />
                   </div>
-                  <p className="text-2xl font-extrabold text-white">
+                  <p className="text-xl sm:text-2xl font-extrabold text-white text-center">
                     {lowPriorityCount}
                   </p>
                 </div>
