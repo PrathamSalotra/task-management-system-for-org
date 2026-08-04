@@ -173,7 +173,7 @@ export function DashboardOverview() {
                 description="No active projects found in your workspace."
               />
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[304px] overflow-y-auto pr-1 scroll-smooth">
                 {projectProgress.map((proj) => {
                   const pct = Math.round(
                     proj.completionPercentage ?? proj.percentage ?? 0
@@ -524,7 +524,7 @@ export function DashboardOverview() {
                 description="No upcoming task deadlines found. You are all caught up!"
               />
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-3 max-h-[296px] overflow-y-auto pr-1 scroll-smooth">
                 {upcomingDeadlines.map((task) => (
                   <Link
                     key={task.id}

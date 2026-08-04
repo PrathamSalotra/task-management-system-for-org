@@ -78,6 +78,7 @@ const mockProject: Project = {
     name: 'Alice PM',
     email: 'alice@example.com',
     role: 'PROJECT_MANAGER',
+    createdAt: '2026-08-01T00:00:00.000Z',
   },
   members: [
     {
@@ -89,8 +90,9 @@ const mockProject: Project = {
         name: 'Bob Member',
         email: 'bob@example.com',
         role: 'TEAM_MEMBER',
+        createdAt: '2026-08-01T00:00:00.000Z',
       },
-      createdAt: '2026-08-01T00:00:00.000Z',
+      joinedAt: '2026-08-01T00:00:00.000Z',
     },
   ],
   createdAt: '2026-08-01T00:00:00.000Z',
