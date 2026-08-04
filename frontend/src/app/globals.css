@@ -2,6 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Page & Surface Colors */
+  --canvas: #EEF0F5;
+  --surface: #FFFFFF;
+  --surface-muted: #F7F7FA;
+
+  /* Typography Colors */
+  --text-primary: #1B1B1F;
+  --text-secondary: #8A8A94;
+
+  /* Accent & Border Colors */
+  --accent: #4F46E5;
+  --accent-hover: #4338CA;
+  --border-subtle: #E7E7ED;
+
+  /* Status Pill Colors (background / text) */
+  --status-todo-bg: #E3EEFF;
+  --status-todo-text: #3B6DD8;
+  --status-in-progress-bg: #EDE7FE;
+  --status-in-progress-text: #7C5CE0;
+  --status-completed-bg: #DFF6E8;
+  --status-completed-text: #2FA766;
+
+  /* Priority Badge Colors (background / text) */
+  --priority-low-bg: #F0F0F3;
+  --priority-low-text: #6B6B75;
+  --priority-medium-bg: #FFF4DE;
+  --priority-medium-text: #B8862F;
+  --priority-high-bg: #FDE7E9;
+  --priority-high-text: #D2465B;
+
+  /* Shape & Shadow Tokens */
+  --radius-card: 1.25rem;
+  --radius-pill: 9999px;
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
 @layer base {
   body {
     @apply bg-[#0a0d14] text-slate-100 antialiased selection:bg-indigo-500 selection:text-white;
