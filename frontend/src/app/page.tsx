@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { Zap, Shield, BarChart3 } from 'lucide-react';
 
 export default function HomePage() {
   return (
@@ -49,7 +50,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 text-left">
           <div className="p-6 rounded-2xl bg-surface-card border border-border-subtle hover:border-indigo-300 transition-all duration-300 group shadow-sm">
             <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 mb-4 group-hover:scale-110 transition-transform">
-              ⚡
+              <Zap className="w-5 h-5" />
             </div>
             <h3 className="text-lg font-bold text-text-primary mb-2">Real-Time Boards</h3>
             <p className="text-sm text-text-secondary">
@@ -59,7 +60,7 @@ export default function HomePage() {
 
           <div className="p-6 rounded-2xl bg-surface-card border border-border-subtle hover:border-purple-300 transition-all duration-300 group shadow-sm">
             <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400 mb-4 group-hover:scale-110 transition-transform">
-              🔒
+              <Shield className="w-5 h-5" />
             </div>
             <h3 className="text-lg font-bold text-text-primary mb-2">Role-Based Access</h3>
             <p className="text-sm text-text-secondary">
@@ -69,7 +70,7 @@ export default function HomePage() {
 
           <div className="p-6 rounded-2xl bg-surface-card border border-border-subtle hover:border-pink-300 transition-all duration-300 group shadow-sm">
             <div className="w-10 h-10 rounded-xl bg-pink-500/10 flex items-center justify-center text-pink-600 dark:text-pink-400 mb-4 group-hover:scale-110 transition-transform">
-              📊
+              <BarChart3 className="w-5 h-5" />
             </div>
             <h3 className="text-lg font-bold text-text-primary mb-2">Live Analytics</h3>
             <p className="text-sm text-text-secondary">

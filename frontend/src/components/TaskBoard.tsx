@@ -25,6 +25,22 @@ import {
   EmptyState,
   LoadingState,
 } from './index';
+import {
+  Circle,
+  Clock,
+  CheckCircle2,
+  User,
+  Calendar,
+  MessageSquare,
+  Paperclip,
+  Trash2,
+  FolderKanban,
+  Lock,
+  FolderOpen,
+  Search,
+  ChevronRight,
+  ChevronDown,
+} from 'lucide-react';
 
 
 function getStatusBadgeClass(status: string) {
@@ -287,10 +303,10 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
     }
   };
 
-  const columns: { key: TaskStatus; label: string; icon: string }[] = [
-    { key: 'TODO', label: 'To Do', icon: '📋' },
-    { key: 'IN_PROGRESS', label: 'In Progress', icon: '⚡' },
-    { key: 'COMPLETED', label: 'Completed', icon: '✅' },
+  const columns: { key: TaskStatus; label: string; icon: React.ReactNode }[] = [
+    { key: 'TODO', label: 'To Do', icon: <Circle className="w-4 h-4 text-indigo-500" /> },
+    { key: 'IN_PROGRESS', label: 'In Progress', icon: <Clock className="w-4 h-4 text-amber-500" /> },
+    { key: 'COMPLETED', label: 'Completed', icon: <CheckCircle2 className="w-4 h-4 text-emerald-500" /> },
   ];
 
   return (
@@ -299,7 +315,8 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-black tracking-tight text-text-primary flex items-center gap-3">
-            <span>📌 Task Board</span>
+            <FolderKanban className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+            <span>Task Board</span>
             <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
               {tasks.length} Tasks
             </span>
@@ -417,7 +434,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
         </div>
       ) : tasks.length === 0 ? (
         <EmptyState
-          icon="📝"
+          icon={<FolderOpen className="w-6 h-6 text-indigo-500" />}
           title="No Tasks Found"
           description={
             search || priorityFilter
@@ -576,7 +593,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                               onClick={() => setSelectedTaskForDetail(task)}
                               className="flex-1 py-1.5 px-3 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 hover:border-indigo-500/50 text-indigo-600 dark:text-indigo-300 text-xs font-bold flex items-center justify-center gap-1.5 transition-all"
                             >
-                              <span>💬</span>
+                              <span><MessageSquare className="w-3.5 h-3.5" /></span>
                               <span>Discussion & Files</span>
                             </button>
 
@@ -587,7 +604,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                                 className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-500 dark:text-red-400 text-xs font-bold transition-colors shrink-0"
                                 title="Permanently Delete Task"
                               >
-                                🗑️
+                                <Trash2 className="w-4 h-4" />
                               </button>
                             )}
                           </div>
@@ -605,7 +622,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
         <div className="space-y-6">
           {sortedDateGroups.length === 0 ? (
             <EmptyState
-              icon="🔍"
+              icon={<Search className="w-6 h-6 text-indigo-500" />}
               title="No Matching Tasks"
               description="No tasks found matching your filters."
             />
@@ -626,8 +643,8 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                     className="w-full flex items-center justify-between py-2.5 px-4 bg-surface-card hover:bg-surface border border-border-subtle rounded-xl transition-all cursor-pointer text-left shadow-sm"
                   >
                     <div className="flex items-center gap-2.5">
-                      <span className="text-xs text-text-secondary font-bold">
-                        {isCollapsed ? '▶' : '▼'}
+                      <span className="text-text-secondary">
+                        {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                       </span>
                       <span className="text-xs font-bold uppercase tracking-wider text-text-primary">
                         {group.label}
@@ -755,7 +772,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                                   className="inline-flex items-center gap-1 cursor-not-allowed text-xs"
                                   title="Only the assigned member or PM can update status"
                                 >
-                                  🔒 <StatusPill status={task.status} />
+                                  <Lock className="w-3.5 h-3.5 shrink-0 text-text-secondary inline" /> <StatusPill status={task.status} />
                                 </span>
                               )}
 
@@ -767,7 +784,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                                 className="px-3 py-1 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 hover:border-indigo-500/50 text-indigo-600 dark:text-indigo-300 text-xs font-bold flex items-center gap-1.5 transition-all"
                                 title="Discussion & Files"
                               >
-                                <span>💬</span>
+                                <span><MessageSquare className="w-3.5 h-3.5" /></span>
                                 <span>
                                   {task._count?.comments || 0}{' '}
                                   {task._count?.comments === 1
@@ -784,7 +801,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                                   className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-500 dark:text-red-400 text-xs font-bold transition-colors shrink-0"
                                   title="Permanently Delete Task"
                                 >
-                                  🗑️
+                                  <Trash2 className="w-4 h-4" />
                                 </button>
                               )}
                             </div>

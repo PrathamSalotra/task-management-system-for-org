@@ -25,6 +25,17 @@ import {
   EmptyState,
   LoadingState,
 } from './index';
+import {
+  User,
+  Calendar,
+  MessageSquare,
+  Paperclip,
+  Download,
+  Trash2,
+  FileText,
+  ImageIcon,
+  Archive,
+} from 'lucide-react';
 
 interface TaskDetailModalProps {
   task: Task;
@@ -132,15 +143,17 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
   };
 
   const getFileIcon = (mimeType?: string, fileName?: string) => {
-    if (mimeType?.startsWith('image/')) return '🖼️';
-    if (mimeType?.includes('pdf') || fileName?.endsWith('.pdf')) return '📕';
+    if (mimeType?.startsWith('image/'))
+      return <ImageIcon className="w-5 h-5 text-indigo-500 shrink-0" />;
+    if (mimeType?.includes('pdf') || fileName?.endsWith('.pdf'))
+      return <FileText className="w-5 h-5 text-rose-500 shrink-0" />;
     if (
       mimeType?.includes('zip') ||
       mimeType?.includes('compressed') ||
       fileName?.endsWith('.zip')
     )
-      return '📦';
-    return '📄';
+      return <Archive className="w-5 h-5 text-amber-500 shrink-0" />;
+    return <FileText className="w-5 h-5 text-indigo-500 shrink-0" />;
   };
 
   return (
@@ -166,7 +179,7 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
                   isLoading={deleteTaskMutation.isPending}
                   title="Permanently Delete Task"
                 >
-                  🗑️ Delete Task
+                  <Trash2 className="w-4 h-4 inline mr-1" /> Delete Task
                 </Button>
               )}
               <button
@@ -187,13 +200,13 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
 
             {/* Assignee Pill */}
             <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-xs font-bold text-indigo-600 dark:text-indigo-300 shadow-sm">
-              <span className="text-[11px]">👤</span>
+              <User className="w-3.5 h-3.5" />
               <span>{task.assignee?.name || 'Unassigned'}</span>
             </div>
 
             {/* Due Date Pill */}
             <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-xs font-bold text-purple-600 dark:text-purple-300 shadow-sm">
-              <span>📅</span>
+              <Calendar className="w-3.5 h-3.5" />
               <span>Due: {formatDate(task.dueDate)}</span>
             </div>
           </div>
@@ -215,7 +228,8 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
                 : 'border-transparent text-text-secondary hover:text-text-primary'
             }`}
           >
-            <span>💬 Discussion</span>
+            <MessageSquare className="w-4 h-4" />
+            <span>Discussion</span>
             <span className="px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-extrabold text-[10px] border border-indigo-500/20">
               {comments.length}
             </span>
@@ -228,7 +242,8 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
                 : 'border-transparent text-text-secondary hover:text-text-primary'
             }`}
           >
-            <span>📎 Attachments</span>
+            <Paperclip className="w-4 h-4" />
+            <span>Attachments</span>
             <span className="px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-extrabold text-[10px] border border-indigo-500/20">
               {attachments.length}
             </span>
@@ -257,7 +272,7 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
                   </div>
                 ) : comments.length === 0 ? (
                   <EmptyState
-                    icon="💬"
+                    icon={<MessageSquare className="w-6 h-6 text-indigo-500" />}
                     title="No comments yet"
                     description="Be the first to start the discussion below."
                   />
@@ -336,7 +351,7 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
                   </div>
                 ) : attachments.length === 0 ? (
                   <EmptyState
-                    icon="📎"
+                    icon={<Paperclip className="w-6 h-6 text-indigo-500" />}
                     title="No files attached yet"
                     description="Upload specifications, screenshots, or code logs below."
                   />
@@ -372,7 +387,7 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
                         rel="noopener noreferrer"
                         className="px-3.5 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 hover:border-indigo-500/50 text-indigo-600 dark:text-indigo-300 font-bold text-xs transition-all shrink-0 flex items-center gap-1.5 shadow-sm"
                       >
-                        <span>📥</span>
+                        <span><Download className="w-3.5 h-3.5" /></span>
                         <span>Download</span>
                       </a>
                     </div>

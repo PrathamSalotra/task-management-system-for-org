@@ -15,6 +15,12 @@ import {
   EmptyState,
   LoadingState,
 } from '../../components';
+import {
+  FolderKanban,
+  Trash2,
+  ArrowRight,
+  FolderOpen,
+} from 'lucide-react';
 
 
 export default function ProjectsPage() {
@@ -52,6 +58,17 @@ export default function ProjectsPage() {
       router.push('/login');
     }
   }, [authLoading, isAuthenticated, router]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setViewMode('grid');
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const canManageProjects =
     user?.role === 'ADMIN' || user?.role === 'PROJECT_MANAGER';
@@ -141,7 +158,8 @@ export default function ProjectsPage() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-xs font-semibold mb-2">
-              <span>🚀 Projects Workspace</span>
+              <FolderKanban className="w-3.5 h-3.5" />
+              <span>Projects Workspace</span>
             </div>
             <h1 className="text-3xl font-extrabold tracking-tight text-text-primary">
               Project Directory
@@ -163,10 +181,10 @@ export default function ProjectsPage() {
         </div>
 
         {/* Filter and View Controls Bar */}
-        <div className="p-4 rounded-2xl bg-surface-card border border-border-subtle shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full md:w-auto">
+        <div className="p-4 rounded-2xl bg-surface-card border border-border-subtle shadow-sm flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-3 w-full xl:w-auto flex-1">
             {/* Search Input */}
-            <div className="relative w-full sm:w-72">
+            <div className="relative w-full sm:w-72 shrink-0">
               <input
                 type="text"
                 placeholder="Search projects..."
@@ -177,7 +195,7 @@ export default function ProjectsPage() {
             </div>
 
             {/* Status Pill Selectors */}
-            <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
+            <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
               {statuses.map((status) => {
                 const active = selectedStatus === status.value;
                 return (
@@ -197,8 +215,8 @@ export default function ProjectsPage() {
             </div>
           </div>
 
-          {/* View Mode Switcher */}
-          <div className="flex items-center gap-1 bg-surface-muted p-1 rounded-xl border border-border-subtle self-end md:self-auto">
+          {/* View Mode Switcher (Hidden on mobile <768px, defaults to grid view) */}
+          <div className="hidden md:flex items-center gap-1 bg-surface-muted p-1 rounded-xl border border-border-subtle shrink-0">
             <button
               onClick={() => setViewMode('grid')}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
@@ -231,7 +249,7 @@ export default function ProjectsPage() {
           </div>
         ) : projects.length === 0 ? (
           <EmptyState
-            icon="📂"
+            icon={<FolderOpen className="w-6 h-6 text-indigo-500" />}
             title="No Projects Found"
             description={
               search || selectedStatus
@@ -295,7 +313,7 @@ export default function ProjectsPage() {
                         className="flex-1 py-2.5 rounded-xl bg-surface-muted hover:bg-surface text-text-primary hover:text-accent text-xs font-semibold transition-all border border-border-subtle hover:border-indigo-300 flex items-center justify-center gap-1.5"
                       >
                         <span>View Project & Team</span>
-                        <span>→</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
                       </Link>
 
                       {canManageProjects && (
@@ -309,7 +327,7 @@ export default function ProjectsPage() {
                           title="Permanently Delete Project"
                           className="shrink-0"
                         >
-                          🗑️
+                          <Trash2 className="w-4 h-4" />
                         </Button>
                       )}
                     </div>
@@ -371,7 +389,7 @@ export default function ProjectsPage() {
                           className="px-3.5 py-1.5 rounded-xl bg-surface-muted hover:bg-surface text-text-primary hover:text-accent text-xs font-semibold transition-all border border-border-subtle hover:border-indigo-300 inline-flex items-center gap-1"
                         >
                           <span>Details</span>
-                          <span>→</span>
+                          <ArrowRight className="w-3.5 h-3.5" />
                         </Link>
                         {canManageProjects && (
                           <Button
@@ -383,7 +401,7 @@ export default function ProjectsPage() {
                             disabled={deleteProjectMutation.isPending}
                             title="Permanently Delete Project"
                           >
-                            🗑️ Delete
+                            <Trash2 className="w-4 h-4 inline mr-1" /> Delete
                           </Button>
                         )}
                       </td>

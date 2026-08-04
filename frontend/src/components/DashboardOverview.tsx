@@ -12,6 +12,17 @@ import { TaskStatus, TaskPriority } from '../lib/api/types';
 import { StatusPill } from './StatusPill';
 import { PriorityBadge } from './PriorityBadge';
 import { Avatar } from './Avatar';
+import {
+  Folder,
+  Target,
+  CheckCircle2,
+  Clock,
+  Calendar,
+  Users,
+  AlertTriangle,
+  FolderOpen,
+  CheckCircle,
+} from 'lucide-react';
 import { Button, EmptyState, LoadingState } from './index';
 
 
@@ -96,8 +107,8 @@ export function DashboardOverview() {
               {projectProgress.length}
             </p>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-xl text-indigo-600 dark:text-indigo-400">
-            📁
+          <div className="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+            <Folder className="w-6 h-6" />
           </div>
         </div>
 
@@ -110,8 +121,8 @@ export function DashboardOverview() {
               {overallPct}%
             </p>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-xl text-emerald-600 dark:text-emerald-400">
-            🎯
+          <div className="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+            <Target className="w-6 h-6" />
           </div>
         </div>
 
@@ -124,8 +135,8 @@ export function DashboardOverview() {
               {completionBreakdown.completed}
             </p>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-xl text-purple-600 dark:text-purple-400">
-            ✅
+          <div className="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-600 dark:text-purple-400">
+            <CheckCircle2 className="w-6 h-6" />
           </div>
         </div>
 
@@ -138,8 +149,8 @@ export function DashboardOverview() {
               {completionBreakdown.pending}
             </p>
           </div>
-          <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-xl text-amber-600 dark:text-amber-400">
-            ⏳
+          <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-600 dark:text-amber-400">
+            <Clock className="w-6 h-6" />
           </div>
         </div>
       </div>
@@ -167,7 +178,7 @@ export function DashboardOverview() {
 
             {projectProgress.length === 0 ? (
               <EmptyState
-                icon="📂"
+                icon={<FolderOpen className="w-6 h-6 text-indigo-500" />}
                 title="No Active Projects"
                 description="No active projects found in your workspace."
               />
@@ -386,7 +397,7 @@ export function DashboardOverview() {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-bold text-text-primary flex items-center gap-2">
-                  <span>⏰</span>
+                  <Clock className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                   <span>Upcoming Deadlines</span>
                 </h2>
                 <p className="text-xs text-text-secondary mt-0.5">
@@ -401,7 +412,7 @@ export function DashboardOverview() {
             {upcomingDeadlines.length === 0 ? (
               <div className="flex-1 flex items-center justify-center">
                 <EmptyState
-                  icon="🎉"
+                  icon={<CheckCircle className="w-6 h-6 text-emerald-500" />}
                   title="All Caught Up!"
                   description="No upcoming task deadlines found. You are all caught up!"
                 />
@@ -417,7 +428,7 @@ export function DashboardOverview() {
                     {/* Top Row: Due date/time in a colored accent + PriorityBadge */}
                     <div className="flex items-center justify-between gap-2 min-w-0">
                       <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5 min-w-0 truncate">
-                        <span>📅</span>
+                        <Calendar className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
                         <span className="truncate">{formatDate(task.dueDate)}</span>
                       </span>
                       <div className="shrink-0">
@@ -476,7 +487,7 @@ export function DashboardOverview() {
                 <span>👑 Manager / Admin View</span>
               </div>
               <h2 className="text-lg font-bold text-text-primary flex items-center gap-2">
-                <span>👥</span>
+                <Users className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                 <span>Team Performance</span>
               </h2>
               <p className="text-xs text-text-secondary mt-0.5">
@@ -492,7 +503,7 @@ export function DashboardOverview() {
 
           {teamPerformance.length === 0 ? (
             <EmptyState
-              icon="👥"
+              icon={<Users className="w-6 h-6 text-indigo-500" />}
               title="No Team Members"
               description="No team members found on active projects."
             />
@@ -519,8 +530,9 @@ export function DashboardOverview() {
                         <h4 className="text-base font-bold text-text-primary flex items-center gap-2 flex-wrap">
                           <span className="truncate">{member.name}</span>
                           {hasOverdue && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-[#FDE7E9] text-[#D2465B] dark:bg-red-500/20 dark:text-red-300 border border-[#D2465B]/30 dark:border-red-500/40 shrink-0">
-                              <span>⚠️ Overdue Tasks</span>
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-[#FDE7E9] text-[#D2465B] dark:bg-red-500/20 dark:text-red-300 border border-[#D2465B]/30 dark:border-red-500/40 shrink-0">
+                              <AlertTriangle className="w-3 h-3 shrink-0" />
+                              <span>Overdue Tasks</span>
                             </span>
                           )}
                         </h4>

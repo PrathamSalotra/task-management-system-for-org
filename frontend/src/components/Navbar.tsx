@@ -4,6 +4,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../context/AuthContext';
+import {
+  LayoutDashboard,
+  FolderKanban,
+  Menu,
+  LogOut,
+} from 'lucide-react';
 
 export function Navbar() {
   const { user, logout } = useAuth();
@@ -22,8 +28,16 @@ export function Navbar() {
   }, []);
 
   const navItems = [
-    { name: 'Dashboard', href: '/dashboard', icon: '📊' },
-    { name: 'Projects', href: '/projects', icon: '📁' },
+    {
+      name: 'Dashboard',
+      href: '/dashboard',
+      icon: <LayoutDashboard className="w-4 h-4" />,
+    },
+    {
+      name: 'Projects',
+      href: '/projects',
+      icon: <FolderKanban className="w-4 h-4" />,
+    },
   ];
 
   return (
@@ -55,7 +69,7 @@ export function Navbar() {
             </span>
           ) : null}
           <div className="w-7 h-7 rounded-lg bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-sm">
-            ☰
+            <Menu className="w-4 h-4" />
           </div>
         </button>
 
@@ -117,7 +131,7 @@ export function Navbar() {
                   }}
                   className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs font-bold border border-red-500/20 transition-all"
                 >
-                  <span>🚪</span>
+                  <LogOut className="w-3.5 h-3.5" />
                   <span>Sign Out</span>
                 </button>
               </div>

@@ -16,13 +16,17 @@ import { AppShell } from '../../../components/AppShell';
 import { TaskBoard } from '../../../components/TaskBoard';
 import {
   Avatar,
-  AvatarStack,
   Button,
   Input,
   Select,
   EmptyState,
   LoadingState,
 } from '../../../components';
+import {
+  Trash2,
+  AlertTriangle,
+  Users,
+} from 'lucide-react';
 
 import {
   formatDate,
@@ -131,7 +135,7 @@ export default function ProjectDetailPage() {
       <AppShell>
         <div className="flex-1 max-w-5xl w-full mx-auto p-6 md:p-10">
           <EmptyState
-            icon="❌"
+            icon={<AlertTriangle className="w-6 h-6 text-red-500" />}
             title="Project Not Found"
             description="We couldn’t load the details for this project. It may have been deleted or you may lack permissions."
             action={
@@ -219,7 +223,7 @@ export default function ProjectDetailPage() {
                     className="px-3.5 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-500 dark:text-red-400 text-xs font-bold border border-red-500/30 transition-all flex items-center gap-1.5 shadow-sm shrink-0"
                     title="Permanently Delete Project"
                   >
-                    <span>🗑️</span>
+                    <Trash2 className="w-4 h-4" />
                     <span>
                       {deleteProjectMutation.isPending
                         ? 'Deleting...'
@@ -231,7 +235,7 @@ export default function ProjectDetailPage() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-border-subtle">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-border-subtle">
             <div className="p-4 rounded-2xl bg-surface-muted border border-border-subtle">
               <span className="block text-xs uppercase tracking-wider text-text-secondary font-semibold mb-1">
                 Start Date
@@ -260,27 +264,6 @@ export default function ProjectDetailPage() {
                 </span>
               </div>
             </div>
-
-            <div className="p-4 rounded-2xl bg-surface-muted border border-border-subtle">
-              <span className="block text-xs uppercase tracking-wider text-text-secondary font-semibold mb-1">
-                Team ({project.members?.length || 0})
-              </span>
-              <div className="flex items-center gap-2 pt-1">
-                {project.members && project.members.length > 0 ? (
-                  <AvatarStack
-                    members={project.members.map((m) => ({
-                      id: m.userId,
-                      name: m.user?.name || `User (${m.userId.substring(0, 8)})`,
-                      email: m.user?.email,
-                    }))}
-                    max={4}
-                    size="sm"
-                  />
-                ) : (
-                  <span className="text-xs text-text-secondary italic">No members</span>
-                )}
-              </div>
-            </div>
           </div>
         </div>
 
@@ -290,7 +273,8 @@ export default function ProjectDetailPage() {
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-extrabold tracking-tight text-text-primary flex items-center gap-2">
-                <span>👥 Team Members</span>
+                <Users className="w-5 h-5 text-indigo-500 shrink-0" />
+                <span>Team Members</span>
                 <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
                   {project.members?.length || 0}
                 </span>
@@ -300,7 +284,7 @@ export default function ProjectDetailPage() {
             <div className="space-y-3">
               {!project.members || project.members.length === 0 ? (
                 <EmptyState
-                  icon="👥"
+                  icon={<Users className="w-6 h-6 text-indigo-500" />}
                   title="No Team Members"
                   description="No team members have been added to this project yet."
                 />
