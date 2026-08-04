@@ -354,7 +354,7 @@ export function DashboardOverview() {
             </div>
           </div>
 
-          {/* 5. Team Performance Table (PM & Admin Only) */}
+          {/* 5. Team Performance Card List (PM & Admin Only) */}
           {isPmOrAdmin && (
             <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/80 backdrop-blur-xl space-y-5">
               <div className="flex items-center justify-between">
@@ -364,10 +364,10 @@ export function DashboardOverview() {
                   </div>
                   <h2 className="text-lg font-bold text-white flex items-center gap-2">
                     <span>👥</span>
-                    <span>Team Performance Table</span>
+                    <span>Team Performance</span>
                   </h2>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    Completed vs pending and overdue tasks across your team
+                    Completed and overdue tasks across your team
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
@@ -395,67 +395,77 @@ export function DashboardOverview() {
                   </p>
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="border-b border-slate-800 text-xs font-semibold text-slate-400 uppercase">
-                        <th className="py-3 px-4">Team Member</th>
-                        <th className="py-3 px-4">Email Address</th>
-                        <th className="py-3 px-4 text-center">Completed Tasks</th>
-                        <th className="py-3 px-4 text-center">Overdue Tasks</th>
-                        <th className="py-3 px-4 text-right">Status Indicator</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-800/60 text-sm">
-                      {teamPerformance.map((member) => (
-                        <tr
-                          key={member.userId}
-                          className="hover:bg-slate-800/40 transition-colors"
-                        >
-                          <td className="py-3.5 px-4 font-semibold text-white">
-                            <div className="flex items-center gap-3">
-                              <Avatar name={member.name} size="sm" title={member.email || member.name} />
+                <div className="space-y-3">
+                  {teamPerformance.map((member) => {
+                    const hasOverdue = member.overdueTasks > 0;
+                    return (
+                      <div
+                        key={member.userId}
+                        className={`p-4 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+                          hasOverdue
+                            ? 'bg-red-950/20 border-red-500/40 hover:border-red-500/60 shadow-lg shadow-red-500/5'
+                            : 'bg-slate-950/70 border-slate-800/80 hover:border-slate-700'
+                        }`}
+                      >
+                        {/* Left: Avatar + Name + Email */}
+                        <div className="flex items-center gap-3.5">
+                          <Avatar
+                            name={member.name}
+                            size="md"
+                            title={member.email || member.name}
+                          />
+                          <div>
+                            <h4 className="text-base font-bold text-white flex items-center gap-2">
                               <span>{member.name}</span>
-                            </div>
-                          </td>
-                          <td className="py-3.5 px-4 text-xs text-slate-400 font-mono">
-                            {member.email}
-                          </td>
-                          <td className="py-3.5 px-4 text-center">
-                            <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                              {hasOverdue && (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-[#FDE7E9] text-[#D2465B] dark:bg-red-500/20 dark:text-red-300 border border-[#D2465B]/30 dark:border-red-500/40">
+                                  <span>⚠️ Overdue Tasks</span>
+                                </span>
+                              )}
+                            </h4>
+                            <p className="text-xs text-slate-400 mt-0.5 font-mono">
+                              {member.email}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Right: Completed Task Count + Overdue Task Count Badges */}
+                        <div className="flex items-center gap-4 sm:justify-end">
+                          {/* Completed Tasks */}
+                          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800/80">
+                            <span className="text-xs font-semibold text-slate-400">
+                              Completed:
+                            </span>
+                            <span className="text-sm font-extrabold text-emerald-400">
                               {member.completedTasks}
                             </span>
-                          </td>
-                          <td className="py-3.5 px-4 text-center">
-                            {member.overdueTasks > 0 ? (
-                              <span className="px-3 py-1 rounded-full text-xs font-bold bg-red-500/10 text-red-400 border border-red-500/20 animate-pulse">
-                                {member.overdueTasks} Overdue
-                              </span>
-                            ) : (
-                              <span className="px-3 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-400">
-                                0 Overdue
-                              </span>
-                            )}
-                          </td>
-                          <td className="py-3.5 px-4 text-right">
-                            {member.overdueTasks > 0 ? (
-                              <span className="text-xs font-semibold text-amber-400">
-                                Needs Attention
-                              </span>
-                            ) : member.completedTasks > 0 ? (
-                              <span className="text-xs font-semibold text-emerald-400">
-                                On Track
-                              </span>
-                            ) : (
-                              <span className="text-xs font-semibold text-slate-500">
-                                No Completions Yet
-                              </span>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                          </div>
+
+                          {/* Overdue Tasks (HIGH/red tone if > 0) */}
+                          <div
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border ${
+                              hasOverdue
+                                ? 'bg-[#FDE7E9] text-[#D2465B] dark:bg-red-500/20 dark:text-red-300 border-[#D2465B]/30 dark:border-red-500/40 font-extrabold animate-pulse'
+                                : 'bg-slate-900/80 border-slate-800/80 text-slate-400'
+                            }`}
+                          >
+                            <span className="text-xs font-semibold">
+                              Overdue:
+                            </span>
+                            <span
+                              className={`text-sm font-extrabold ${
+                                hasOverdue
+                                  ? 'text-[#D2465B] dark:text-red-300'
+                                  : 'text-slate-400'
+                              }`}
+                            >
+                              {member.overdueTasks}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
