@@ -11,6 +11,8 @@ import {
 import { TaskStatus, TaskPriority } from '../lib/api/types';
 import { StatusPill } from './StatusPill';
 import { PriorityBadge } from './PriorityBadge';
+import { Avatar } from './Avatar';
+import { AvatarStack } from './AvatarStack';
 
 export function DashboardOverview() {
   const { user } = useAuth();
@@ -413,9 +415,7 @@ export function DashboardOverview() {
                       <td className="py-3.5 px-4 text-xs text-slate-300">
                         {task.assignee ? (
                           <div className="flex items-center gap-2">
-                            <span className="w-6 h-6 rounded-full bg-indigo-600/30 border border-indigo-500/30 flex items-center justify-center text-[10px] font-bold text-indigo-300">
-                              {getAvatarInitials(task.assignee.name)}
-                            </span>
+                            <Avatar name={task.assignee.name} size="xs" />
                             <span>{task.assignee.name}</span>
                           </div>
                         ) : (
@@ -447,9 +447,22 @@ export function DashboardOverview() {
                 Completed vs pending and overdue tasks across your team
               </p>
             </div>
-            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              {teamPerformance.length} Active Members
-            </span>
+            <div className="flex items-center gap-3">
+              {teamPerformance.length > 0 && (
+                <AvatarStack
+                  members={teamPerformance.map((m) => ({
+                    id: m.userId,
+                    name: m.name,
+                    email: m.email,
+                  }))}
+                  max={5}
+                  size="sm"
+                />
+              )}
+              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                {teamPerformance.length} Active Members
+              </span>
+            </div>
           </div>
 
           {teamPerformance.length === 0 ? (
@@ -478,9 +491,7 @@ export function DashboardOverview() {
                     >
                       <td className="py-3.5 px-4 font-semibold text-white">
                         <div className="flex items-center gap-3">
-                          <span className="w-8 h-8 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-xs font-bold text-white shadow">
-                            {getAvatarInitials(member.name)}
-                          </span>
+                          <Avatar name={member.name} size="sm" title={member.email || member.name} />
                           <span>{member.name}</span>
                         </div>
                       </td>

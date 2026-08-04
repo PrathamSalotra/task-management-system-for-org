@@ -5,3 +5,5 @@ export * from './TaskBoard';
 export * from './TaskDetailModal';
 export * from './StatusPill';
 export * from './PriorityBadge';
+export * from './Avatar';
+export * from './AvatarStack';

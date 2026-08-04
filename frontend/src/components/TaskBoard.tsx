@@ -16,6 +16,7 @@ import { Project, Task, TaskStatus, TaskPriority } from '../lib/api/types';
 import { TaskDetailModal } from './TaskDetailModal';
 import { StatusPill } from './StatusPill';
 import { PriorityBadge } from './PriorityBadge';
+import { Avatar } from './Avatar';
 
 function getStatusBadgeClass(status: string) {
   switch (status) {
@@ -500,9 +501,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                           <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-800/80">
                             {/* Assignee Selector */}
                             <div className="flex items-center gap-1.5">
-                              <div className="w-6 h-6 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-[10px] font-bold text-indigo-300">
-                                {getAvatarInitials(task.assignee?.name)}
-                              </div>
+                              <Avatar name={task.assignee?.name} size="xs" />
                               {canEditDetails ? (
                                 <select
                                   value={task.assigneeId || ''}

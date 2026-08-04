@@ -14,10 +14,11 @@ import {
 } from '../../../hooks';
 import { AppShell } from '../../../components/AppShell';
 import { TaskBoard } from '../../../components/TaskBoard';
+import { Avatar } from '../../../components/Avatar';
+import { AvatarStack } from '../../../components/AvatarStack';
 import {
   formatDate,
   getStatusBadgeStyle,
-  getAvatarInitials,
 } from '../../../lib/utils';
 
 export default function ProjectDetailPage() {
@@ -277,6 +278,18 @@ export default function ProjectDetailPage() {
                   {project.members?.length || 0}
                 </span>
               </h2>
+
+              {project.members && project.members.length > 0 && (
+                <AvatarStack
+                  members={project.members.map((m) => ({
+                    id: m.userId,
+                    name: m.user?.name || `User (${m.userId.substring(0, 8)})`,
+                    email: m.user?.email,
+                  }))}
+                  max={5}
+                  size="sm"
+                />
+              )}
             </div>
 
             <div className="space-y-3">
@@ -289,7 +302,6 @@ export default function ProjectDetailPage() {
               ) : (
                 project.members.map((member) => {
                   const isOwner = member.userId === project.ownerId;
-                  const initials = getAvatarInitials(member.user?.name);
 
                   return (
                     <div
@@ -297,9 +309,11 @@ export default function ProjectDetailPage() {
                       className="p-4 rounded-2xl bg-slate-900/50 border border-slate-800/80 flex items-center justify-between gap-4 hover:border-slate-700 transition-colors"
                     >
                       <div className="flex items-center gap-3.5">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300 font-bold text-sm">
-                          {initials}
-                        </div>
+                        <Avatar
+                          name={member.user?.name || `User (${member.userId.substring(0, 8)})`}
+                          size="md"
+                          title={member.user?.email || member.user?.name}
+                        />
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-bold text-white text-sm">

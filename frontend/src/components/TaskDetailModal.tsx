@@ -17,6 +17,7 @@ import {
 import { Task } from '../lib/api/types';
 import { StatusPill } from './StatusPill';
 import { PriorityBadge } from './PriorityBadge';
+import { Avatar } from './Avatar';
 
 interface TaskDetailModalProps {
   task: Task;
@@ -267,9 +268,7 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-xs font-bold text-indigo-300">
-                            {getAvatarInitials(c.author?.name)}
-                          </div>
+                          <Avatar name={c.author?.name} size="sm" />
                           <div>
                             <span className="text-xs font-bold text-white block">
                               {c.author?.name || 'Anonymous User'}
