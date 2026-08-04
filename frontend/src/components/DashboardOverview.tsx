@@ -369,11 +369,10 @@ export function DashboardOverview() {
                   <div
                     className="h-full bg-red-500 transition-all duration-500"
                     style={{
-                      width: `${
-                        totalTasksCount > 0
+                      width: `${totalTasksCount > 0
                           ? (highPriorityCount / totalTasksCount) * 100
                           : 0
-                      }%`,
+                        }%`,
                     }}
                   />
                 </div>
@@ -428,11 +427,10 @@ export function DashboardOverview() {
                     return (
                       <div
                         key={member.userId}
-                        className={`p-4 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
-                          hasOverdue
+                        className={`p-4 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${hasOverdue
                             ? 'bg-red-950/20 border-red-500/40 hover:border-red-500/60 shadow-lg shadow-red-500/5'
                             : 'bg-slate-950/70 border-slate-800/80 hover:border-slate-700'
-                        }`}
+                          }`}
                       >
                         {/* Left: Avatar + Name + Email */}
                         <div className="flex items-center gap-3.5">
@@ -470,21 +468,19 @@ export function DashboardOverview() {
 
                           {/* Overdue Tasks (HIGH/red tone if > 0) */}
                           <div
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border ${
-                              hasOverdue
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border ${hasOverdue
                                 ? 'bg-[#FDE7E9] text-[#D2465B] dark:bg-red-500/20 dark:text-red-300 border-[#D2465B]/30 dark:border-red-500/40 font-extrabold animate-pulse'
                                 : 'bg-slate-900/80 border-slate-800/80 text-slate-400'
-                            }`}
+                              }`}
                           >
                             <span className="text-xs font-semibold">
                               Overdue:
                             </span>
                             <span
-                              className={`text-sm font-extrabold ${
-                                hasOverdue
+                              className={`text-sm font-extrabold ${hasOverdue
                                   ? 'text-[#D2465B] dark:text-red-300'
                                   : 'text-slate-400'
-                              }`}
+                                }`}
                             >
                               {member.overdueTasks}
                             </span>
@@ -501,7 +497,7 @@ export function DashboardOverview() {
 
         {/* RIGHT-HAND PANEL (Right Column): Upcoming Deadlines matching "Meetings Schedule" card pattern */}
         <div className="lg:col-span-1 space-y-4">
-          <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/80 backdrop-blur-xl space-y-5 lg:h-[716px] lg:flex lg:flex-col">
+          <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/80 backdrop-blur-xl space-y-5 lg:h-[714px] lg:flex lg:flex-col">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-bold text-white flex items-center gap-2">
