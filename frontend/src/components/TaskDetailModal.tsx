@@ -145,15 +145,15 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      <div className="bg-surface-card border border-border-subtle rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
         {/* Modal Header */}
-        <div className="p-6 border-b border-slate-800/80 space-y-3 bg-slate-950/60">
+        <div className="p-6 border-b border-border-subtle space-y-3 bg-surface-muted">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h3 className="text-lg font-black text-white leading-tight">
+              <h3 className="text-lg font-black text-text-primary leading-tight">
                 {task.title}
               </h3>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-text-secondary mt-1">
                 ID: {task.id.substring(0, 8)}...
               </p>
             </div>
@@ -171,7 +171,7 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
               )}
               <button
                 onClick={onClose}
-                className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-colors font-bold"
+                className="w-8 h-8 rounded-full bg-surface hover:bg-surface-muted text-text-secondary hover:text-text-primary flex items-center justify-center transition-colors font-bold"
                 aria-label="Close modal"
               >
                 ✕
@@ -185,37 +185,37 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
             <PriorityBadge priority={task.priority} />
 
             {/* Assignee Pill */}
-            <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-800/80 border border-slate-700/60 text-xs text-slate-300">
-              <span className="text-[10px] font-bold text-indigo-400">👤</span>
+            <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface border border-border-subtle text-xs text-text-primary">
+              <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400">👤</span>
               <span>{task.assignee?.name || 'Unassigned'}</span>
             </div>
 
             {/* Due Date Pill */}
-            <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-800/80 border border-slate-700/60 text-xs text-slate-400">
+            <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface border border-border-subtle text-xs text-text-secondary">
               <span>📅</span>
               <span>Due: {formatDate(task.dueDate)}</span>
             </div>
           </div>
 
           {task.description && (
-            <div className="p-3 rounded-xl bg-slate-900/60 border border-slate-800 text-xs text-slate-300">
+            <div className="p-3 rounded-xl bg-surface-card border border-border-subtle text-xs text-text-primary">
               {task.description}
             </div>
           )}
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex items-center border-b border-slate-800 bg-slate-950/40 px-4 sm:px-6 overflow-x-auto">
+        <div className="flex items-center border-b border-border-subtle bg-surface-muted px-4 sm:px-6 overflow-x-auto">
           <button
             onClick={() => setActiveTab('comments')}
             className={`py-3 px-4 min-h-[44px] text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
               activeTab === 'comments'
-                ? 'border-indigo-500 text-indigo-400'
-                : 'border-transparent text-slate-400 hover:text-white'
+                ? 'border-accent text-accent'
+                : 'border-transparent text-text-secondary hover:text-text-primary'
             }`}
           >
             <span>💬 Discussion</span>
-            <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-[10px]">
+            <span className="px-1.5 py-0.5 rounded-full bg-surface text-[10px]">
               {comments.length}
             </span>
           </button>
@@ -223,12 +223,12 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
             onClick={() => setActiveTab('attachments')}
             className={`py-3 px-4 min-h-[44px] text-xs font-bold border-b-2 transition-all flex items-center gap-2 ${
               activeTab === 'attachments'
-                ? 'border-indigo-500 text-indigo-400'
-                : 'border-transparent text-slate-400 hover:text-white'
+                ? 'border-accent text-accent'
+                : 'border-transparent text-text-secondary hover:text-text-primary'
             }`}
           >
             <span>📎 Attachments</span>
-            <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-[10px]">
+            <span className="px-1.5 py-0.5 rounded-full bg-surface text-[10px]">
               {attachments.length}
             </span>
           </button>
@@ -264,25 +264,25 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
                   comments.map((c) => (
                     <div
                       key={c.id}
-                      className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800/80 space-y-2"
+                      className="p-4 rounded-2xl bg-surface-muted border border-border-subtle space-y-2"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Avatar name={c.author?.name} size="sm" />
                           <div>
-                            <span className="text-xs font-bold text-white block">
+                            <span className="text-xs font-bold text-text-primary block">
                               {c.author?.name || 'Anonymous User'}
                             </span>
-                            <span className="text-[10px] text-slate-500 block">
+                            <span className="text-[10px] text-text-secondary block">
                               {c.author?.role || 'MEMBER'}
                             </span>
                           </div>
                         </div>
-                        <span className="text-[10px] text-slate-500">
+                        <span className="text-[10px] text-text-secondary">
                           {formatDate(c.createdAt)}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-300 whitespace-pre-wrap leading-relaxed pl-9">
+                      <p className="text-xs text-text-primary whitespace-pre-wrap leading-relaxed pl-9">
                         {c.content}
                       </p>
                     </div>
@@ -293,10 +293,10 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
               {/* Add Comment Form */}
               <form
                 onSubmit={handlePostComment}
-                className="pt-4 border-t border-slate-800 space-y-3"
+                className="pt-4 border-t border-border-subtle space-y-3"
               >
                 {commentError && (
-                  <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+                  <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 dark:text-red-400 text-xs">
                     {commentError}
                   </div>
                 )}
@@ -330,7 +330,7 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
                 {isAttachmentsLoading ? (
                   <LoadingState message="Loading attached files..." className="py-8" />
                 ) : isAttachmentsError ? (
-                  <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-300 text-xs">
+                  <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 dark:text-red-300 text-xs">
                     Failed to load attachments for this task.
                   </div>
                 ) : attachments.length === 0 ? (
@@ -343,17 +343,17 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
                   attachments.map((file) => (
                     <div
                       key={file.id}
-                      className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800/80 flex items-center justify-between gap-4 hover:border-slate-700 transition-colors"
+                      className="p-3.5 rounded-xl bg-surface-muted border border-border-subtle flex items-center justify-between gap-4 hover:border-indigo-300 transition-colors"
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <span className="text-xl">
                           {getFileIcon(file.mimeType, file.fileName)}
                         </span>
                         <div className="min-w-0">
-                          <p className="text-xs font-bold text-white truncate">
+                          <p className="text-xs font-bold text-text-primary truncate">
                             {file.fileName}
                           </p>
-                          <p className="text-[10px] text-slate-500">
+                          <p className="text-[10px] text-text-secondary">
                             {formatFileSize(
                               file.fileSize ?? (file as any).fileSizeBytes
                             )}{' '}
@@ -369,7 +369,7 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
                         href={getAttachmentUrl(file.fileUrl)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-indigo-400 font-semibold text-xs transition-colors shrink-0"
+                        className="px-3 py-1.5 rounded-lg bg-surface hover:bg-surface-muted text-accent font-semibold text-xs transition-colors shrink-0 border border-border-subtle"
                       >
                         Download
                       </a>
@@ -381,7 +381,7 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
               {/* Upload Attachment Box */}
               <form
                 onSubmit={handleFileUpload}
-                className="p-4 rounded-2xl bg-slate-950/60 border border-dashed border-slate-700/80 space-y-3"
+                className="p-4 rounded-2xl bg-surface-muted border border-dashed border-border-subtle space-y-3"
               >
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
                   <input
@@ -391,7 +391,7 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
                       setSelectedFile(e.target.files ? e.target.files[0] : null)
                     }
                     disabled={uploadAttachmentMutation.isPending}
-                    className="text-xs text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-500/20 file:text-indigo-300 hover:file:bg-indigo-500/30 cursor-pointer"
+                    className="text-xs text-text-primary file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-500/10 file:text-indigo-600 hover:file:bg-indigo-500/20 cursor-pointer"
                   />
                   <Button
                     type="submit"
@@ -407,7 +407,7 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
                   </Button>
                 </div>
                 {uploadError && (
-                  <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+                  <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 dark:text-red-400 text-xs">
                     {uploadError}
                   </div>
                 )}

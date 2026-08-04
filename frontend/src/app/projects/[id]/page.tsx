@@ -160,25 +160,25 @@ export default function ProjectDetailPage() {
         <div className="flex items-center justify-between">
           <Link
             href="/projects"
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-900/60 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold border border-slate-800 transition-all"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface-muted hover:bg-surface text-text-primary text-xs font-semibold border border-border-subtle transition-all shadow-sm"
           >
             <span>←</span>
             <span>Back to Projects</span>
           </Link>
 
           {statusMessage && (
-            <div className="px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold animate-fadeIn">
+            <div className="px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-300 text-xs font-semibold animate-fadeIn">
               ✓ {statusMessage}
             </div>
           )}
         </div>
 
         {/* Project Overview Card */}
-        <div className="p-8 rounded-3xl bg-gradient-to-br from-slate-900/80 via-slate-900/40 to-slate-900/20 border border-slate-800/80 backdrop-blur-xl shadow-2xl space-y-6">
+        <div className="p-8 rounded-3xl bg-surface-card border border-border-subtle shadow-sm space-y-6">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
             <div className="space-y-2">
               <div className="flex items-center gap-3">
-                <span className="text-xs uppercase font-extrabold tracking-wider text-indigo-400">
+                <span className="text-xs uppercase font-extrabold tracking-wider text-indigo-600 dark:text-indigo-400">
                   Project Workspace
                 </span>
                 <span
@@ -187,10 +187,10 @@ export default function ProjectDetailPage() {
                   {badge.label}
                 </span>
               </div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tight">
+              <h1 className="text-3xl md:text-4xl font-black tracking-tight text-text-primary">
                 {project.name}
               </h1>
-              <p className="text-slate-400 text-sm max-w-3xl leading-relaxed">
+              <p className="text-text-secondary text-sm max-w-3xl leading-relaxed">
                 {project.description || 'No project description provided.'}
               </p>
             </div>
@@ -198,7 +198,7 @@ export default function ProjectDetailPage() {
             {/* PM Status Changer & Delete Project */}
             {canManageProject && (
               <div className="flex flex-col items-start md:items-end gap-1.5 shrink-0">
-                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                <label className="text-xs font-semibold text-text-secondary uppercase tracking-wider">
                   Project Actions
                 </label>
                 <div className="flex items-center gap-2">
@@ -206,7 +206,7 @@ export default function ProjectDetailPage() {
                     value={project.status}
                     onChange={(e) => handleStatusChange(e.target.value)}
                     disabled={updateProjectMutation.isPending}
-                    className="bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white font-semibold focus:outline-none focus:border-indigo-500 transition-colors cursor-pointer"
+                    className="bg-surface-muted border border-border-subtle rounded-xl px-4 py-2 text-sm text-text-primary font-semibold focus:outline-none focus:border-accent transition-colors cursor-pointer"
                   >
                     <option value="ACTIVE">Active</option>
                     <option value="COMPLETED">Completed</option>
@@ -216,7 +216,7 @@ export default function ProjectDetailPage() {
                   <button
                     onClick={handleDeleteProject}
                     disabled={deleteProjectMutation.isPending}
-                    className="px-3.5 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 text-xs font-bold border border-red-500/30 transition-all flex items-center gap-1.5 shadow-sm shrink-0"
+                    className="px-3.5 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-500 dark:text-red-400 text-xs font-bold border border-red-500/30 transition-all flex items-center gap-1.5 shadow-sm shrink-0"
                     title="Permanently Delete Project"
                   >
                     <span>🗑️</span>
@@ -231,38 +231,38 @@ export default function ProjectDetailPage() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-slate-800/80">
-            <div className="p-4 rounded-2xl bg-slate-950/50 border border-slate-800/80">
-              <span className="block text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-border-subtle">
+            <div className="p-4 rounded-2xl bg-surface-muted border border-border-subtle">
+              <span className="block text-xs uppercase tracking-wider text-text-secondary font-semibold mb-1">
                 Start Date
               </span>
-              <span className="text-base font-bold text-white">
+              <span className="text-base font-bold text-text-primary">
                 {formatDate(project.startDate)}
               </span>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-950/50 border border-slate-800/80">
-              <span className="block text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1">
+            <div className="p-4 rounded-2xl bg-surface-muted border border-border-subtle">
+              <span className="block text-xs uppercase tracking-wider text-text-secondary font-semibold mb-1">
                 Deadline
               </span>
-              <span className="text-base font-bold text-white">
+              <span className="text-base font-bold text-text-primary">
                 {formatDate(project.deadline)}
               </span>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-950/50 border border-slate-800/80">
-              <span className="block text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1">
+            <div className="p-4 rounded-2xl bg-surface-muted border border-border-subtle">
+              <span className="block text-xs uppercase tracking-wider text-text-secondary font-semibold mb-1">
                 Project Manager
               </span>
               <div className="flex items-center gap-2">
-                <span className="text-base font-bold text-indigo-400">
+                <span className="text-base font-bold text-indigo-600 dark:text-indigo-400">
                   {project.owner?.name || 'Assigned Owner'}
                 </span>
               </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-950/50 border border-slate-800/80">
-              <span className="block text-xs uppercase tracking-wider text-slate-500 font-semibold mb-1">
+            <div className="p-4 rounded-2xl bg-surface-muted border border-border-subtle">
+              <span className="block text-xs uppercase tracking-wider text-text-secondary font-semibold mb-1">
                 Team ({project.members?.length || 0})
               </span>
               <div className="flex items-center gap-2 pt-1">
@@ -277,7 +277,7 @@ export default function ProjectDetailPage() {
                     size="sm"
                   />
                 ) : (
-                  <span className="text-xs text-slate-500 italic">No members</span>
+                  <span className="text-xs text-text-secondary italic">No members</span>
                 )}
               </div>
             </div>
@@ -289,9 +289,9 @@ export default function ProjectDetailPage() {
           {/* Members List (Left 2 Columns) */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-extrabold tracking-tight flex items-center gap-2">
+              <h2 className="text-xl font-extrabold tracking-tight text-text-primary flex items-center gap-2">
                 <span>👥 Team Members</span>
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
                   {project.members?.length || 0}
                 </span>
               </h2>
@@ -311,7 +311,7 @@ export default function ProjectDetailPage() {
                   return (
                     <div
                       key={member.id || member.userId}
-                      className="p-4 rounded-2xl bg-slate-900/50 border border-slate-800/80 flex items-center justify-between gap-4 hover:border-slate-700 transition-colors"
+                      className="p-4 rounded-2xl bg-surface-card border border-border-subtle shadow-sm flex items-center justify-between gap-4 hover:border-indigo-300 transition-colors"
                     >
                       <div className="flex items-center gap-3.5">
                         <Avatar
@@ -321,23 +321,23 @@ export default function ProjectDetailPage() {
                         />
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-white text-sm">
+                            <span className="font-bold text-text-primary text-sm">
                               {member.user?.name || `User (${member.userId.substring(0, 8)})`}
                             </span>
                             {isOwner && (
-                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase">
+                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/30 uppercase">
                                 Owner / PM
                               </span>
                             )}
                           </div>
-                          <span className="text-xs text-slate-400">
+                          <span className="text-xs text-text-secondary">
                             {member.user?.email || 'Member'}
                           </span>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-3">
-                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-950 text-slate-300 border border-slate-800 uppercase tracking-wider">
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-surface-muted text-text-secondary border border-border-subtle uppercase tracking-wider">
                           {member.user?.role || 'MEMBER'}
                         </span>
 
@@ -368,19 +368,19 @@ export default function ProjectDetailPage() {
           {/* Add Team Member Card (Right 1 Column) */}
           <div className="space-y-6">
             {canManageProject ? (
-              <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl space-y-4">
-                <div className="border-b border-slate-800 pb-3">
-                  <h3 className="font-bold text-white text-base">
+              <div className="p-6 rounded-2xl bg-surface-card border border-border-subtle shadow-sm space-y-4">
+                <div className="border-b border-border-subtle pb-3">
+                  <h3 className="font-bold text-text-primary text-base">
                     + Add Team Member
                   </h3>
-                  <p className="text-slate-400 text-xs mt-0.5">
+                  <p className="text-text-secondary text-xs mt-0.5">
                     Select a user from your workspace to invite to this project.
                   </p>
                 </div>
 
                 <form onSubmit={handleAddMember} className="space-y-4">
                   {memberError && (
-                    <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-300 text-xs">
+                    <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 dark:text-red-300 text-xs">
                       {memberError}
                     </div>
                   )}
@@ -399,7 +399,7 @@ export default function ProjectDetailPage() {
                   </Select>
 
                   {availableUsers.length === 0 && (
-                    <p className="text-xs text-slate-500 italic">
+                    <p className="text-xs text-text-secondary italic">
                       All existing users in the workspace are already project members.
                     </p>
                   )}
@@ -418,12 +418,12 @@ export default function ProjectDetailPage() {
                 </form>
               </div>
             ) : (
-              <div className="p-6 rounded-2xl bg-slate-900/40 border border-slate-800/80 text-center space-y-2">
+              <div className="p-6 rounded-2xl bg-surface-card border border-border-subtle shadow-sm text-center space-y-2">
                 <span className="text-xl">🔒</span>
-                <h4 className="text-sm font-bold text-white">
+                <h4 className="text-sm font-bold text-text-primary">
                   Member Management Restricted
                 </h4>
-                <p className="text-slate-400 text-xs">
+                <p className="text-text-secondary text-xs">
                   Only Project Managers and Admins can add or remove team members.
                 </p>
               </div>
@@ -432,7 +432,7 @@ export default function ProjectDetailPage() {
         </div>
 
         {/* Task Board Section */}
-        <div className="pt-6 border-t border-slate-800/80">
+        <div className="pt-6 border-t border-border-subtle">
           <TaskBoard project={project} canManageProject={canManageProject} />
         </div>
       </div>

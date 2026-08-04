@@ -140,13 +140,13 @@ export default function ProjectsPage() {
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold mb-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-xs font-semibold mb-2">
               <span>🚀 Projects Workspace</span>
             </div>
-            <h1 className="text-3xl font-extrabold tracking-tight">
+            <h1 className="text-3xl font-extrabold tracking-tight text-text-primary">
               Project Directory
             </h1>
-            <p className="text-slate-400 text-sm mt-1">
+            <p className="text-text-secondary text-sm mt-1">
               Manage timelines, status, and collaborate with your team across projects.
             </p>
           </div>
@@ -163,7 +163,7 @@ export default function ProjectsPage() {
         </div>
 
         {/* Filter and View Controls Bar */}
-        <div className="p-4 rounded-2xl bg-slate-900/50 border border-slate-800/80 backdrop-blur-xl flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="p-4 rounded-2xl bg-surface-card border border-border-subtle shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full md:w-auto">
             {/* Search Input */}
             <div className="relative w-full sm:w-72">
@@ -172,7 +172,7 @@ export default function ProjectsPage() {
                 placeholder="Search projects..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+                className="w-full bg-surface-muted border border-border-subtle rounded-xl px-4 py-2 text-sm text-text-primary placeholder-text-secondary focus:outline-none focus:border-accent transition-colors"
               />
             </div>
 
@@ -186,8 +186,8 @@ export default function ProjectsPage() {
                     onClick={() => setSelectedStatus(status.value)}
                     className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                       active
-                        ? 'bg-indigo-500 text-white shadow-md shadow-indigo-500/20'
-                        : 'bg-slate-950/60 text-slate-400 hover:text-white border border-slate-800'
+                        ? 'bg-accent text-white shadow-sm'
+                        : 'bg-surface-muted text-text-secondary hover:text-text-primary border border-border-subtle'
                     }`}
                   >
                     {status.label}
@@ -198,13 +198,13 @@ export default function ProjectsPage() {
           </div>
 
           {/* View Mode Switcher */}
-          <div className="flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800 self-end md:self-auto">
+          <div className="flex items-center gap-1 bg-surface-muted p-1 rounded-xl border border-border-subtle self-end md:self-auto">
             <button
               onClick={() => setViewMode('grid')}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 viewMode === 'grid'
-                  ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-semibold'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 font-semibold'
+                  : 'text-text-secondary hover:text-text-primary'
               }`}
             >
               Grid View
@@ -213,8 +213,8 @@ export default function ProjectsPage() {
               onClick={() => setViewMode('table')}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 viewMode === 'table'
-                  ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-semibold'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 font-semibold'
+                  : 'text-text-secondary hover:text-text-primary'
               }`}
             >
               Table View
@@ -247,13 +247,13 @@ export default function ProjectsPage() {
               return (
                 <div
                   key={project.id}
-                  className="group flex flex-col justify-between p-6 rounded-2xl bg-slate-900/40 border border-slate-800/80 hover:border-indigo-500/40 hover:bg-slate-900/60 transition-all hover:shadow-2xl hover:shadow-indigo-500/10 space-y-4"
+                  className="group flex flex-col justify-between p-6 rounded-2xl bg-surface-card border border-border-subtle hover:border-indigo-300 hover:bg-surface transition-all shadow-sm space-y-4"
                 >
                   <div className="space-y-3">
                     <div className="flex items-start justify-between gap-3">
                       <Link
                         href={`/projects/${project.id}`}
-                        className="text-lg font-bold text-white group-hover:text-indigo-400 transition-colors line-clamp-1"
+                        className="text-lg font-bold text-text-primary group-hover:text-accent transition-colors line-clamp-1"
                       >
                         {project.name}
                       </Link>
@@ -264,15 +264,15 @@ export default function ProjectsPage() {
                       </span>
                     </div>
 
-                    <p className="text-slate-400 text-sm line-clamp-2">
+                    <p className="text-text-secondary text-sm line-clamp-2">
                       {project.description || 'No project description provided.'}
                     </p>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-800/80 space-y-3">
-                    <div className="flex items-center justify-between text-xs text-slate-400">
+                  <div className="pt-4 border-t border-border-subtle space-y-3">
+                    <div className="flex items-center justify-between text-xs text-text-secondary">
                       <div>
-                        <span className="block text-slate-500 uppercase tracking-wider font-semibold text-[10px]">
+                        <span className="block text-text-secondary uppercase tracking-wider font-semibold text-[10px]">
                           Timeline
                         </span>
                         <span>
@@ -280,10 +280,10 @@ export default function ProjectsPage() {
                         </span>
                       </div>
                       <div className="text-right">
-                        <span className="block text-slate-500 uppercase tracking-wider font-semibold text-[10px]">
+                        <span className="block text-text-secondary uppercase tracking-wider font-semibold text-[10px]">
                           Manager
                         </span>
-                        <span className="text-slate-300 font-medium">
+                        <span className="text-text-primary font-medium">
                           {project.owner?.name || 'Assigned PM'}
                         </span>
                       </div>
@@ -292,7 +292,7 @@ export default function ProjectsPage() {
                     <div className="flex items-center gap-2 mt-2">
                       <Link
                         href={`/projects/${project.id}`}
-                        className="flex-1 py-2.5 rounded-xl bg-slate-800/80 hover:bg-indigo-500/10 text-slate-300 hover:text-indigo-400 text-xs font-semibold transition-all border border-slate-700/80 hover:border-indigo-500/30 flex items-center justify-center gap-1.5 group-hover:border-indigo-500/30"
+                        className="flex-1 py-2.5 rounded-xl bg-surface-muted hover:bg-surface text-text-primary hover:text-accent text-xs font-semibold transition-all border border-border-subtle hover:border-indigo-300 flex items-center justify-center gap-1.5"
                       >
                         <span>View Project & Team</span>
                         <span>→</span>
@@ -320,10 +320,10 @@ export default function ProjectsPage() {
           </div>
         ) : (
           /* Table View */
-          <div className="overflow-x-auto rounded-2xl border border-slate-800/80 bg-slate-900/40 backdrop-blur-xl">
+          <div className="overflow-x-auto rounded-2xl border border-border-subtle bg-surface-card shadow-sm">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-800 text-slate-400 text-xs uppercase tracking-wider bg-slate-950/60">
+                <tr className="border-b border-border-subtle text-text-secondary text-xs uppercase tracking-wider bg-surface-muted">
                   <th className="px-6 py-4 font-semibold">Project Name</th>
                   <th className="px-6 py-4 font-semibold">Status</th>
                   <th className="px-6 py-4 font-semibold">Timeline</th>
@@ -331,23 +331,23 @@ export default function ProjectsPage() {
                   <th className="px-6 py-4 font-semibold text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 text-sm">
+              <tbody className="divide-y divide-border-subtle text-sm">
                 {projects.map((project) => {
                   const badge = getStatusBadgeStyle(project.status);
                   return (
                     <tr
                       key={project.id}
-                      className="hover:bg-slate-800/40 transition-colors"
+                      className="hover:bg-surface-muted transition-colors"
                     >
                       <td className="px-6 py-4">
                         <Link
                           href={`/projects/${project.id}`}
-                          className="font-bold text-white hover:text-indigo-400 transition-colors block"
+                          className="font-bold text-text-primary hover:text-accent transition-colors block"
                         >
                           {project.name}
                         </Link>
                         {project.description && (
-                          <span className="text-xs text-slate-500 block truncate max-w-sm mt-0.5">
+                          <span className="text-xs text-text-secondary block truncate max-w-sm mt-0.5">
                             {project.description}
                           </span>
                         )}
@@ -359,16 +359,16 @@ export default function ProjectsPage() {
                           {badge.label}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-slate-300">
+                      <td className="px-6 py-4 whitespace-nowrap text-xs text-text-primary">
                         {formatDate(project.startDate)} — {formatDate(project.deadline)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-slate-300 font-medium">
+                      <td className="px-6 py-4 whitespace-nowrap text-xs text-text-primary font-medium">
                         {project.owner?.name || 'Assigned PM'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right space-x-2">
                         <Link
                           href={`/projects/${project.id}`}
-                          className="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-indigo-500/10 text-slate-300 hover:text-indigo-400 text-xs font-semibold transition-all border border-slate-700 hover:border-indigo-500/30 inline-flex items-center gap-1"
+                          className="px-3.5 py-1.5 rounded-xl bg-surface-muted hover:bg-surface text-text-primary hover:text-accent text-xs font-semibold transition-all border border-border-subtle hover:border-indigo-300 inline-flex items-center gap-1"
                         >
                           <span>Details</span>
                           <span>→</span>
@@ -399,12 +399,12 @@ export default function ProjectsPage() {
       {/* Create Project Modal */}
       {isCreateModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 space-y-6 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <h3 className="text-lg font-bold text-white">Create New Project</h3>
+          <div className="bg-surface-card border border-border-subtle rounded-2xl max-w-lg w-full p-6 space-y-6 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-border-subtle pb-4">
+              <h3 className="text-lg font-bold text-text-primary">Create New Project</h3>
               <button
                 onClick={() => setIsCreateModalOpen(false)}
-                className="text-slate-400 hover:text-white text-lg font-bold"
+                className="text-text-secondary hover:text-text-primary text-lg font-bold"
               >
                 ✕
               </button>

@@ -298,20 +298,20 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
       {/* Task Board Header & Controls */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-black tracking-tight text-white flex items-center gap-3">
+          <h2 className="text-2xl font-black tracking-tight text-text-primary flex items-center gap-3">
             <span>📌 Task Board</span>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
               {tasks.length} Tasks
             </span>
           </h2>
-          <p className="text-slate-400 text-xs mt-0.5">
+          <p className="text-text-secondary text-xs mt-0.5">
             Manage tasks across statuses. Team members can update status only for tasks assigned to them.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           {toastMessage && (
-            <div className="px-3.5 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-semibold animate-fadeIn">
+            <div className="px-3.5 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-300 text-xs font-semibold animate-fadeIn">
               ✓ {toastMessage}
             </div>
           )}
@@ -329,7 +329,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
       </div>
 
       {/* Status Filter Tabs (Step UI.5) */}
-      <div className="flex items-center gap-4 sm:gap-8 border-b border-slate-800/80 overflow-x-auto">
+      <div className="flex items-center gap-4 sm:gap-8 border-b border-border-subtle overflow-x-auto">
         {statusTabs.map((tab) => {
           const isActive = statusFilter === tab.key;
           return (
@@ -339,16 +339,16 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
               onClick={() => setStatusFilter(tab.key)}
               className={`py-3 min-h-[44px] text-xs font-semibold flex items-center gap-2 border-b-2 transition-all cursor-pointer whitespace-nowrap ${
                 isActive
-                  ? 'border-indigo-500 text-white font-bold'
-                  : 'border-transparent text-slate-400 hover:text-slate-200'
+                  ? 'border-accent text-text-primary font-bold'
+                  : 'border-transparent text-text-secondary hover:text-text-primary'
               }`}
             >
               <span>{tab.label}</span>
               <span
                 className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                   isActive
-                    ? 'bg-indigo-500/20 text-indigo-400'
-                    : 'bg-slate-800 text-slate-400'
+                    ? 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400'
+                    : 'bg-surface-muted text-text-secondary'
                 }`}
               >
                 {tab.count}
@@ -359,7 +359,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
       </div>
 
       {/* Filter and View Switcher Bar */}
-      <div className="p-3.5 rounded-2xl bg-slate-900/40 border border-slate-800/80 backdrop-blur-xl flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div className="p-3.5 rounded-2xl bg-surface-card border border-border-subtle shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-2 w-full sm:w-auto">
           {/* Search */}
           <input
@@ -367,14 +367,14 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
             placeholder="Search tasks..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full sm:w-60 bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+            className="w-full sm:w-60 bg-surface-muted border border-border-subtle rounded-xl px-3.5 py-1.5 text-xs text-text-primary placeholder-text-secondary focus:outline-none focus:border-accent"
           />
 
           {/* Priority Filter */}
           <select
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
-            className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-indigo-500"
+            className="bg-surface-muted border border-border-subtle rounded-xl px-3 py-1.5 text-xs text-text-primary focus:outline-none focus:border-accent"
           >
             <option value="">All Priorities</option>
             <option value="LOW">Low</option>
@@ -384,13 +384,13 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
         </div>
 
         {/* View Toggle */}
-        <div className="flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800 self-end sm:self-auto">
+        <div className="flex items-center gap-1 bg-surface-muted p-1 rounded-xl border border-border-subtle self-end sm:self-auto">
           <button
             onClick={() => setViewMode('kanban')}
             className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
               viewMode === 'kanban'
-                ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-semibold'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 font-semibold'
+                : 'text-text-secondary hover:text-text-primary'
             }`}
           >
             Kanban Board
@@ -399,8 +399,8 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
             onClick={() => setViewMode('list')}
             className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
               viewMode === 'list'
-                ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-semibold'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 font-semibold'
+                : 'text-text-secondary hover:text-text-primary'
             }`}
           >
             List View
@@ -434,13 +434,13 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
             return (
               <div
                 key={col.key}
-                className="flex flex-col rounded-2xl bg-slate-900/30 border border-slate-800/80 p-4 space-y-4"
+                className="flex flex-col rounded-2xl bg-surface-card border border-border-subtle p-4 space-y-4 shadow-sm"
               >
                 {/* Column Header */}
-                <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
+                <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
                   <div className="flex items-center gap-2">
                     <span>{col.icon}</span>
-                    <span className="font-bold text-sm text-white">
+                    <span className="font-bold text-sm text-text-primary">
                       {col.label}
                     </span>
                   </div>
@@ -456,7 +456,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                 {/* Task Cards Container */}
                 <div className="space-y-3 min-h-[200px]">
                   {colTasks.length === 0 ? (
-                    <div className="p-8 rounded-xl border border-dashed border-slate-800 text-center text-xs text-slate-500">
+                    <div className="p-8 rounded-xl border border-dashed border-border-subtle text-center text-xs text-text-secondary">
                       No tasks in {col.label}
                     </div>
                   ) : (
@@ -467,10 +467,10 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                       return (
                         <div
                           key={task.id}
-                          className="group p-4 rounded-xl bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition-all shadow-md space-y-3"
+                          className="group p-4 rounded-xl bg-surface-muted border border-border-subtle hover:border-indigo-300 transition-all shadow-sm space-y-3"
                         >
                           <div className="flex items-start justify-between gap-2">
-                            <h4 className="font-bold text-sm text-white leading-tight">
+                            <h4 className="font-bold text-sm text-text-primary leading-tight">
                               {task.title}
                             </h4>
                             {/* Priority Control */}
@@ -498,13 +498,13 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                           </div>
 
                           {task.description && (
-                            <p className="text-xs text-slate-400 line-clamp-2">
+                            <p className="text-xs text-text-secondary line-clamp-2">
                               {task.description}
                             </p>
                           )}
 
                           {/* Assignee & Due Date Row */}
-                          <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-800/80">
+                          <div className="flex items-center justify-between text-xs pt-2 border-t border-border-subtle">
                             {/* Assignee Selector */}
                             <div className="flex items-center gap-1.5">
                               <Avatar name={task.assignee?.name} size="xs" />
@@ -518,7 +518,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                                     )
                                   }
                                   disabled={updateTaskMutation.isPending}
-                                  className="bg-slate-950 text-slate-300 text-xs rounded-lg px-1.5 py-0.5 border border-slate-800 focus:outline-none focus:border-indigo-500 max-w-[110px] truncate"
+                                  className="bg-surface text-text-primary text-xs rounded-lg px-1.5 py-0.5 border border-border-subtle focus:outline-none focus:border-accent max-w-[110px] truncate"
                                 >
                                   <option value="">Unassigned</option>
                                   {memberAssignees.map((m) => (
@@ -528,21 +528,21 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                                   ))}
                                 </select>
                               ) : (
-                                <span className="text-slate-300 font-medium truncate max-w-[100px]">
+                                <span className="text-text-primary font-medium truncate max-w-[100px]">
                                   {task.assignee?.name || 'Unassigned'}
                                 </span>
                               )}
                             </div>
 
                             {/* Due Date */}
-                            <span className="text-slate-500 text-[11px]">
+                            <span className="text-text-secondary text-[11px]">
                               {formatDate(task.dueDate)}
                             </span>
                           </div>
 
                           {/* Status Change Control Box */}
-                          <div className="pt-2 flex items-center justify-between border-t border-slate-800/60">
-                            <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+                          <div className="pt-2 flex items-center justify-between border-t border-border-subtle">
+                            <span className="text-[10px] font-semibold uppercase tracking-wider text-text-secondary">
                               Status
                             </span>
                             {canChangeStatus ? (
@@ -574,7 +574,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                           <div className="flex items-center gap-1.5 mt-2">
                             <button
                               onClick={() => setSelectedTaskForDetail(task)}
-                              className="flex-1 py-1.5 px-3 rounded-lg bg-slate-950/80 hover:bg-indigo-500/10 border border-slate-800 hover:border-indigo-500/40 text-indigo-400 hover:text-indigo-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
+                              className="flex-1 py-1.5 px-3 rounded-lg bg-surface hover:bg-surface-muted border border-border-subtle hover:border-indigo-300 text-text-primary hover:text-accent text-xs font-semibold flex items-center justify-center gap-1.5 transition-all"
                             >
                               <span>💬</span>
                               <span>Discussion & Files</span>
@@ -584,7 +584,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                               <button
                                 onClick={() => handleDeleteTask(task)}
                                 disabled={deleteTaskMutation.isPending}
-                                className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-xs font-bold transition-colors shrink-0"
+                                className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-500 dark:text-red-400 text-xs font-bold transition-colors shrink-0"
                                 title="Permanently Delete Task"
                               >
                                 🗑️
@@ -623,20 +623,20 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                         [group.key]: !prev[group.key],
                       }))
                     }
-                    className="w-full flex items-center justify-between py-2.5 px-4 bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800/80 rounded-xl transition-all cursor-pointer text-left backdrop-blur-xl"
+                    className="w-full flex items-center justify-between py-2.5 px-4 bg-surface-card hover:bg-surface border border-border-subtle rounded-xl transition-all cursor-pointer text-left shadow-sm"
                   >
                     <div className="flex items-center gap-2.5">
-                      <span className="text-xs text-slate-400 font-bold">
+                      <span className="text-xs text-text-secondary font-bold">
                         {isCollapsed ? '▶' : '▼'}
                       </span>
-                      <span className="text-xs font-bold uppercase tracking-wider text-white">
+                      <span className="text-xs font-bold uppercase tracking-wider text-text-primary">
                         {group.label}
                       </span>
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-300">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-surface-muted text-text-secondary">
                         {group.tasks.length}
                       </span>
                     </div>
-                    <span className="text-xs text-slate-500 font-medium">
+                    <span className="text-xs text-text-secondary font-medium">
                       {isCollapsed ? 'Show tasks' : 'Hide tasks'}
                     </span>
                   </button>
@@ -651,7 +651,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                         return (
                           <div
                             key={task.id}
-                            className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl bg-slate-900/40 border border-slate-800/80 hover:bg-slate-800/50 transition-all backdrop-blur-xl"
+                            className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl bg-surface-card border border-border-subtle hover:bg-surface-muted transition-all shadow-sm"
                           >
                             {/* Left: Rounded Checkbox + Bold Title + Subtitle */}
                             <div className="flex items-start md:items-center gap-3.5 min-w-0 flex-1">
@@ -659,14 +659,14 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                                 type="checkbox"
                                 checked={task.status === 'COMPLETED'}
                                 readOnly
-                                className="mt-1 md:mt-0 w-4 h-4 rounded text-indigo-600 bg-slate-950 border-slate-700 cursor-default focus:ring-0"
+                                className="mt-1 md:mt-0 w-4 h-4 rounded text-accent bg-surface-muted border-border-subtle cursor-default focus:ring-0"
                                 title="Task completion status (read-only)"
                               />
                               <div className="min-w-0 flex-1">
-                                <span className="font-bold text-white text-sm block truncate">
+                                <span className="font-bold text-text-primary text-sm block truncate">
                                   {task.title}
                                 </span>
-                                <span className="text-xs text-slate-400 block truncate mt-0.5">
+                                <span className="text-xs text-text-secondary block truncate mt-0.5">
                                   {task.projectName ||
                                     (task.assignee
                                       ? task.assignee.name
@@ -714,7 +714,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                                     )
                                   }
                                   disabled={updateTaskMutation.isPending}
-                                  className="bg-slate-950 text-slate-300 text-xs rounded-lg px-2.5 py-1 border border-slate-800 focus:outline-none focus:border-indigo-500 cursor-pointer"
+                                  className="bg-surface-muted text-text-primary text-xs rounded-lg px-2.5 py-1 border border-border-subtle focus:outline-none focus:border-accent cursor-pointer"
                                 >
                                   <option value="">Unassigned</option>
                                   {memberAssignees.map((m) => (
@@ -724,7 +724,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                                   ))}
                                 </select>
                               ) : (
-                                <span className="text-slate-300 text-xs font-medium px-2 py-1 bg-slate-950/60 rounded-lg border border-slate-800/60">
+                                <span className="text-text-primary text-xs font-medium px-2 py-1 bg-surface-muted rounded-lg border border-border-subtle">
                                   {task.assignee?.name || 'Unassigned'}
                                 </span>
                               )}
@@ -764,7 +764,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                                 onClick={() =>
                                   setSelectedTaskForDetail(task)
                                 }
-                                className="px-2.5 py-1 rounded-lg bg-slate-950/80 hover:bg-indigo-500/10 border border-slate-800 hover:border-indigo-500/40 text-indigo-400 text-xs font-semibold flex items-center gap-1.5 transition-all"
+                                className="px-2.5 py-1 rounded-lg bg-surface-muted hover:bg-surface border border-border-subtle hover:border-indigo-300 text-text-primary text-xs font-semibold flex items-center gap-1.5 transition-all"
                                 title="Discussion & Files"
                               >
                                 <span>💬</span>
@@ -781,7 +781,7 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                                 <button
                                   onClick={() => handleDeleteTask(task)}
                                   disabled={deleteTaskMutation.isPending}
-                                  className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-xs font-bold transition-colors shrink-0"
+                                  className="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-500 dark:text-red-400 text-xs font-bold transition-colors shrink-0"
                                   title="Permanently Delete Task"
                                 >
                                   🗑️
@@ -803,12 +803,12 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
       {/* Create Task Modal */}
       {isCreateModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 space-y-6 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <h3 className="text-lg font-bold text-white">Create New Task</h3>
+          <div className="bg-surface-card border border-border-subtle rounded-2xl max-w-lg w-full p-6 space-y-6 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-border-subtle pb-4">
+              <h3 className="text-lg font-bold text-text-primary">Create New Task</h3>
               <button
                 onClick={() => setIsCreateModalOpen(false)}
-                className="text-slate-400 hover:text-white text-lg font-bold"
+                className="text-text-secondary hover:text-text-primary text-lg font-bold"
               >
                 ✕
               </button>

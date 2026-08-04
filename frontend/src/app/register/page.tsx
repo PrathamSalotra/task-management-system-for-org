@@ -86,7 +86,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Centered Surface Card */}
-        <div className="p-8 sm:p-10 rounded-[20px] bg-surface border border-border-subtle shadow-[0_8px_30px_rgb(0,0,0,0.06)] space-y-6 transition-all">
+        <div className="p-8 sm:p-10 rounded-[20px] bg-surface-card border border-border-subtle shadow-sm space-y-6 transition-all">
           {formError && (
             <div
               id="register-error-banner"
