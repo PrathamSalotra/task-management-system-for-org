@@ -13,6 +13,8 @@ import { StatusPill } from './StatusPill';
 import { PriorityBadge } from './PriorityBadge';
 import { Avatar } from './Avatar';
 import { AvatarStack } from './AvatarStack';
+import { Button, EmptyState, LoadingState } from './index';
+
 
 export function DashboardOverview() {
   const { user } = useAuth();
@@ -24,12 +26,10 @@ export function DashboardOverview() {
 
   if (isLoading) {
     return (
-      <div className="p-12 rounded-2xl bg-slate-900/40 border border-slate-800/80 backdrop-blur-xl flex flex-col items-center justify-center gap-4">
-        <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-        <p className="text-slate-400 text-sm font-medium">
-          Loading dashboard metrics and team performance...
-        </p>
-      </div>
+      <LoadingState
+        message="Loading dashboard metrics and team performance..."
+        className="p-12 rounded-2xl bg-surface border border-border-subtle"
+      />
     );
   }
 
@@ -41,12 +41,13 @@ export function DashboardOverview() {
             <span>⚠️</span>
             <span>Failed to load Dashboard Data</span>
           </div>
-          <button
+          <Button
+            variant="danger"
+            size="sm"
             onClick={() => refetch()}
-            className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-xs transition-colors"
           >
             Try Again
-          </button>
+          </Button>
         </div>
         <p className="text-sm text-red-400">
           {(error as Error)?.message || 'An unexpected error occurred while fetching metrics.'}
@@ -166,9 +167,11 @@ export function DashboardOverview() {
             </div>
 
             {projectProgress.length === 0 ? (
-              <div className="p-8 rounded-xl bg-slate-950/60 border border-slate-800/80 text-center">
-                <p className="text-slate-400 text-sm">No active projects found.</p>
-              </div>
+              <EmptyState
+                icon="📂"
+                title="No Active Projects"
+                description="No active projects found in your workspace."
+              />
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {projectProgress.map((proj) => {
@@ -389,11 +392,11 @@ export function DashboardOverview() {
               </div>
 
               {teamPerformance.length === 0 ? (
-                <div className="p-8 rounded-xl bg-slate-950/60 border border-slate-800/80 text-center">
-                  <p className="text-slate-400 text-sm">
-                    No team members found on active projects.
-                  </p>
-                </div>
+                <EmptyState
+                  icon="👥"
+                  title="No Team Members"
+                  description="No team members found on active projects."
+                />
               ) : (
                 <div className="space-y-3">
                   {teamPerformance.map((member) => {
@@ -491,11 +494,11 @@ export function DashboardOverview() {
             </div>
 
             {upcomingDeadlines.length === 0 ? (
-              <div className="p-8 rounded-xl bg-slate-950/60 border border-slate-800/80 text-center">
-                <p className="text-slate-400 text-sm">
-                  No upcoming task deadlines found. You are all caught up!
-                </p>
-              </div>
+              <EmptyState
+                icon="🎉"
+                title="All Caught Up!"
+                description="No upcoming task deadlines found. You are all caught up!"
+              />
             ) : (
               <div className="space-y-3">
                 {upcomingDeadlines.map((task) => (

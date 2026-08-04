@@ -14,8 +14,16 @@ import {
 } from '../../../hooks';
 import { AppShell } from '../../../components/AppShell';
 import { TaskBoard } from '../../../components/TaskBoard';
-import { Avatar } from '../../../components/Avatar';
-import { AvatarStack } from '../../../components/AvatarStack';
+import {
+  Avatar,
+  AvatarStack,
+  Button,
+  Input,
+  Select,
+  EmptyState,
+  LoadingState,
+} from '../../../components';
+
 import {
   formatDate,
   getStatusBadgeStyle,
@@ -107,23 +115,13 @@ export default function ProjectDetailPage() {
   };
 
   if (authLoading || !isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-[#0a0d14] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-slate-400 text-sm">Loading project details...</p>
-        </div>
-      </div>
-    );
+    return <LoadingState fullScreen message="Loading project details..." />;
   }
 
   if (projectLoading) {
     return (
       <AppShell>
-        <div className="flex-1 max-w-5xl w-full mx-auto p-6 md:p-10 flex flex-col items-center justify-center gap-3">
-          <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-slate-400 text-sm">Loading project info...</p>
-        </div>
+        <LoadingState message="Loading project info..." className="py-20" />
       </AppShell>
     );
   }
@@ -132,18 +130,16 @@ export default function ProjectDetailPage() {
     return (
       <AppShell>
         <div className="flex-1 max-w-5xl w-full mx-auto p-6 md:p-10">
-          <div className="p-8 rounded-2xl bg-red-500/10 border border-red-500/20 text-center space-y-4">
-            <h2 className="text-xl font-bold text-red-300">Project Not Found</h2>
-            <p className="text-slate-400 text-sm max-w-md mx-auto">
-              We couldn’t load the details for this project. It may have been deleted or you may lack permissions.
-            </p>
-            <Link
-              href="/projects"
-              className="inline-block px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-colors"
-            >
-              Back to All Projects
-            </Link>
-          </div>
+          <EmptyState
+            icon="❌"
+            title="Project Not Found"
+            description="We couldn’t load the details for this project. It may have been deleted or you may lack permissions."
+            action={
+              <Link href="/projects">
+                <Button variant="primary">Back to All Projects</Button>
+              </Link>
+            }
+          />
         </div>
       </AppShell>
     );
@@ -303,11 +299,11 @@ export default function ProjectDetailPage() {
 
             <div className="space-y-3">
               {!project.members || project.members.length === 0 ? (
-                <div className="p-8 rounded-2xl bg-slate-900/40 border border-slate-800/80 text-center">
-                  <p className="text-slate-400 text-sm">
-                    No team members have been added to this project yet.
-                  </p>
-                </div>
+                <EmptyState
+                  icon="👥"
+                  title="No Team Members"
+                  description="No team members have been added to this project yet."
+                />
               ) : (
                 project.members.map((member) => {
                   const isOwner = member.userId === project.ownerId;
@@ -346,7 +342,9 @@ export default function ProjectDetailPage() {
                         </span>
 
                         {canManageProject && !isOwner && (
-                          <button
+                          <Button
+                            variant="danger"
+                            size="sm"
                             onClick={() =>
                               handleRemoveMember(
                                 member.userId,
@@ -354,11 +352,10 @@ export default function ProjectDetailPage() {
                               )
                             }
                             disabled={removeMemberMutation.isPending}
-                            className="p-2 rounded-xl bg-slate-950 hover:bg-red-500/10 text-slate-400 hover:text-red-400 border border-slate-800 hover:border-red-500/30 transition-all text-xs font-semibold"
                             title="Remove member from project"
                           >
                             Remove
-                          </button>
+                          </Button>
                         )}
                       </div>
                     </div>
@@ -388,23 +385,18 @@ export default function ProjectDetailPage() {
                     </div>
                   )}
 
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-                      Available Workspace Users
-                    </label>
-                    <select
-                      value={selectedUserId}
-                      onChange={(e) => setSelectedUserId(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
-                    >
-                      <option value="">-- Select a User --</option>
-                      {availableUsers.map((u) => (
-                        <option key={u.id} value={u.id}>
-                          {u.name} ({u.email})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <Select
+                    label="Available Workspace Users"
+                    value={selectedUserId}
+                    onChange={(e) => setSelectedUserId(e.target.value)}
+                  >
+                    <option value="">-- Select a User --</option>
+                    {availableUsers.map((u) => (
+                      <option key={u.id} value={u.id}>
+                        {u.name} ({u.email})
+                      </option>
+                    ))}
+                  </Select>
 
                   {availableUsers.length === 0 && (
                     <p className="text-xs text-slate-500 italic">
@@ -412,17 +404,17 @@ export default function ProjectDetailPage() {
                     </p>
                   )}
 
-                  <button
+                  <Button
                     type="submit"
+                    variant="primary"
+                    className="w-full"
+                    isLoading={addMemberMutation.isPending}
                     disabled={
                       addMemberMutation.isPending || !selectedUserId
                     }
-                    className="w-full py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50 text-white font-semibold text-sm shadow-lg shadow-indigo-500/20 transition-all"
                   >
-                    {addMemberMutation.isPending
-                      ? 'Adding Member...'
-                      : 'Add Member to Project'}
-                  </button>
+                    Add Member to Project
+                  </Button>
                 </form>
               </div>
             ) : (

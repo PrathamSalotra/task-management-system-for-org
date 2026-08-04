@@ -18,6 +18,13 @@ import { Task } from '../lib/api/types';
 import { StatusPill } from './StatusPill';
 import { PriorityBadge } from './PriorityBadge';
 import { Avatar } from './Avatar';
+import {
+  Button,
+  Input,
+  TextArea,
+  EmptyState,
+  LoadingState,
+} from './index';
 
 interface TaskDetailModalProps {
   task: Task;
@@ -152,15 +159,15 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
             </div>
             <div className="flex items-center gap-2">
               {isPmOrAdmin && (
-                <button
+                <Button
+                  variant="danger"
+                  size="sm"
                   onClick={handleDeleteTask}
-                  disabled={deleteTaskMutation.isPending}
-                  className="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/30 text-xs font-bold transition-all flex items-center gap-1"
+                  isLoading={deleteTaskMutation.isPending}
                   title="Permanently Delete Task"
                 >
-                  <span>🗑️</span>
-                  <span>{deleteTaskMutation.isPending ? 'Deleting...' : 'Delete Task'}</span>
-                </button>
+                  🗑️ Delete Task
+                </Button>
               )}
               <button
                 onClick={onClose}
@@ -242,24 +249,17 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
               {/* Existing Comments List */}
               <div className="space-y-3">
                 {isCommentsLoading ? (
-                  <div className="py-8 flex flex-col items-center justify-center gap-2 text-xs text-slate-400">
-                    <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-                    <span>Loading comment thread...</span>
-                  </div>
+                  <LoadingState message="Loading comment thread..." className="py-8" />
                 ) : isCommentsError ? (
                   <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-300 text-xs">
                     Failed to load comments for this task.
                   </div>
                 ) : comments.length === 0 ? (
-                  <div className="p-8 rounded-2xl bg-slate-900/40 border border-slate-800/80 text-center space-y-1">
-                    <span className="text-xl">💬</span>
-                    <p className="text-xs font-bold text-white">
-                      No comments yet
-                    </p>
-                    <p className="text-slate-400 text-xs">
-                      Be the first to start the discussion below.
-                    </p>
-                  </div>
+                  <EmptyState
+                    icon="💬"
+                    title="No comments yet"
+                    description="Be the first to start the discussion below."
+                  />
                 ) : (
                   comments.map((c) => (
                     <div
@@ -300,26 +300,25 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
                     {commentError}
                   </div>
                 )}
-                <textarea
+                <TextArea
                   rows={3}
                   placeholder="Write your comment here..."
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
                   disabled={createCommentMutation.isPending}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
                 />
                 <div className="flex justify-end">
-                  <button
+                  <Button
                     type="submit"
+                    variant="primary"
+                    size="sm"
+                    isLoading={createCommentMutation.isPending}
                     disabled={
                       !commentText.trim() || createCommentMutation.isPending
                     }
-                    className="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50 text-white font-semibold text-xs shadow-lg shadow-indigo-500/20 transition-all"
                   >
-                    {createCommentMutation.isPending
-                      ? 'Posting Comment...'
-                      : 'Post Comment'}
-                  </button>
+                    Post Comment
+                  </Button>
                 </div>
               </form>
             </div>
@@ -329,24 +328,17 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
               {/* Existing Attachments List */}
               <div className="space-y-3">
                 {isAttachmentsLoading ? (
-                  <div className="py-8 flex flex-col items-center justify-center gap-2 text-xs text-slate-400">
-                    <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-                    <span>Loading attached files...</span>
-                  </div>
+                  <LoadingState message="Loading attached files..." className="py-8" />
                 ) : isAttachmentsError ? (
                   <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-300 text-xs">
                     Failed to load attachments for this task.
                   </div>
                 ) : attachments.length === 0 ? (
-                  <div className="p-8 rounded-2xl bg-slate-900/40 border border-slate-800/80 text-center space-y-1">
-                    <span className="text-xl">📎</span>
-                    <p className="text-xs font-bold text-white">
-                      No files attached yet
-                    </p>
-                    <p className="text-slate-400 text-xs">
-                      Upload specifications, screenshots, or code logs below.
-                    </p>
-                  </div>
+                  <EmptyState
+                    icon="📎"
+                    title="No files attached yet"
+                    description="Upload specifications, screenshots, or code logs below."
+                  />
                 ) : (
                   attachments.map((file) => (
                     <div
@@ -401,17 +393,18 @@ export function TaskDetailModal({ task, onClose }: TaskDetailModalProps) {
                     disabled={uploadAttachmentMutation.isPending}
                     className="text-xs text-slate-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-500/20 file:text-indigo-300 hover:file:bg-indigo-500/30 cursor-pointer"
                   />
-                  <button
+                  <Button
                     type="submit"
+                    variant="primary"
+                    size="sm"
+                    isLoading={uploadAttachmentMutation.isPending}
                     disabled={
                       !selectedFile || uploadAttachmentMutation.isPending
                     }
-                    className="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50 text-white font-semibold text-xs shadow-lg shadow-indigo-500/20 transition-all shrink-0"
+                    className="shrink-0"
                   >
-                    {uploadAttachmentMutation.isPending
-                      ? 'Uploading...'
-                      : 'Upload File'}
-                  </button>
+                    Upload File
+                  </Button>
                 </div>
                 {uploadError && (
                   <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs">

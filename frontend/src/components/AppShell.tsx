@@ -16,6 +16,8 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useProjects, useCreateProject } from '../hooks';
 import { Project, ProjectStatus } from '../lib/api/types';
+import { Button, Input, TextArea } from './index';
+
 
 function getProjectDotColor(status: ProjectStatus | string) {
   switch (status) {
@@ -271,13 +273,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {/* Sidebar Bottom: CTA Button & User Profile */}
           <div className="pt-4 border-t border-border-subtle space-y-4 shrink-0">
             {canManageProjects && (
-              <button
+              <Button
+                variant="primary"
                 onClick={() => setIsCreateModalOpen(true)}
-                className="w-full px-4 py-2.5 rounded-full bg-accent hover:bg-accent-hover text-white font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2 active:scale-[0.98]"
+                icon={<Plus className="w-4 h-4" />}
+                className="w-full"
               >
-                <Plus className="w-4 h-4" />
-                <span>New Project</span>
-              </button>
+                New Project
+              </Button>
             )}
 
             {user && (
@@ -329,75 +332,53 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </div>
               )}
 
-              <div>
-                <label className="block text-xs font-bold text-text-secondary uppercase mb-1">
-                  Project Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Q3 Mobile App Overhaul"
-                  className="w-full px-3.5 py-2 rounded-xl bg-canvas border border-border-subtle focus:border-accent focus:outline-none text-text-primary text-sm"
-                />
-              </div>
+              <Input
+                label="Project Name *"
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g. Q3 Mobile App Overhaul"
+              />
 
-              <div>
-                <label className="block text-xs font-bold text-text-secondary uppercase mb-1">
-                  Description
-                </label>
-                <textarea
-                  rows={3}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Summary of scope, key objectives, and deliverables..."
-                  className="w-full px-3.5 py-2 rounded-xl bg-canvas border border-border-subtle focus:border-accent focus:outline-none text-text-primary text-sm"
-                />
-              </div>
+              <TextArea
+                label="Description"
+                rows={3}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Summary of scope, key objectives, and deliverables..."
+              />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-text-secondary uppercase mb-1">
-                    Start Date
-                  </label>
-                  <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl bg-canvas border border-border-subtle focus:border-accent focus:outline-none text-text-primary text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-text-secondary uppercase mb-1">
-                    Deadline
-                  </label>
-                  <input
-                    type="date"
-                    value={deadline}
-                    onChange={(e) => setDeadline(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl bg-canvas border border-border-subtle focus:border-accent focus:outline-none text-text-primary text-sm"
-                  />
-                </div>
+                <Input
+                  label="Start Date"
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+                <Input
+                  label="Deadline"
+                  type="date"
+                  value={deadline}
+                  onChange={(e) => setDeadline(e.target.value)}
+                />
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-2">
-                <button
+                <Button
                   type="button"
+                  variant="secondary"
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-surface-muted hover:bg-border-subtle text-text-secondary hover:text-text-primary text-sm font-semibold transition-colors"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
-                  disabled={createProjectMutation.isPending}
-                  className="px-5 py-2 rounded-full bg-accent hover:bg-accent-hover disabled:opacity-50 text-white font-semibold text-sm shadow-md transition-all"
+                  variant="primary"
+                  isLoading={createProjectMutation.isPending}
                 >
-                  {createProjectMutation.isPending
-                    ? 'Creating...'
-                    : 'Create Project'}
-                </button>
+                  Create Project
+                </Button>
               </div>
             </form>
           </div>

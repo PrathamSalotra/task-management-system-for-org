@@ -17,6 +17,15 @@ import { TaskDetailModal } from './TaskDetailModal';
 import { StatusPill } from './StatusPill';
 import { PriorityBadge } from './PriorityBadge';
 import { Avatar } from './Avatar';
+import {
+  Button,
+  Input,
+  TextArea,
+  Select,
+  EmptyState,
+  LoadingState,
+} from './index';
+
 
 function getStatusBadgeClass(status: string) {
   switch (status) {
@@ -308,13 +317,13 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
           )}
 
           {canManageProject && (
-            <button
+            <Button
+              variant="primary"
+              size="sm"
               onClick={() => setIsCreateModalOpen(true)}
-              className="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold text-xs shadow-lg shadow-indigo-500/20 transition-all flex items-center gap-1.5"
             >
-              <span>+</span>
-              <span>New Task</span>
-            </button>
+              + New Task
+            </Button>
           )}
         </div>
       </div>
@@ -401,24 +410,21 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
 
       {/* Task Content */}
       {isLoading ? (
-        <div className="py-16 flex flex-col items-center justify-center gap-3">
-          <div className="w-8 h-8 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-slate-400 text-xs">Loading project tasks...</p>
-        </div>
+        <LoadingState message="Loading project tasks..." className="py-16" />
       ) : isError ? (
         <div className="p-6 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-300 text-xs text-center">
           Failed to load tasks for this project.
         </div>
       ) : tasks.length === 0 ? (
-        <div className="p-12 rounded-2xl bg-slate-900/30 border border-slate-800/60 text-center space-y-2">
-          <span className="text-2xl">📝</span>
-          <h3 className="text-base font-bold text-white">No Tasks Found</h3>
-          <p className="text-slate-400 text-xs max-w-md mx-auto">
-            {search || priorityFilter
+        <EmptyState
+          icon="📝"
+          title="No Tasks Found"
+          description={
+            search || priorityFilter
               ? 'No tasks matched your filter criteria.'
-              : 'There are no tasks created for this project yet.'}
-          </p>
-        </div>
+              : 'There are no tasks created for this project yet.'
+          }
+        />
       ) : viewMode === 'kanban' ? (
         /* Kanban Board Grid */
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -598,11 +604,11 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
         /* List View (Step UI.5 Restyle) */
         <div className="space-y-6">
           {sortedDateGroups.length === 0 ? (
-            <div className="p-12 text-center rounded-2xl bg-slate-900/40 border border-slate-800/80 backdrop-blur-xl">
-              <p className="text-slate-400 text-sm font-medium">
-                No tasks found matching your filters.
-              </p>
-            </div>
+            <EmptyState
+              icon="🔍"
+              title="No Matching Tasks"
+              description="No tasks found matching your filters."
+            />
           ) : (
             sortedDateGroups.map((group) => {
               const isCollapsed = Boolean(collapsedGroups[group.key]);
@@ -815,98 +821,71 @@ export function TaskBoard({ project, canManageProject }: TaskBoardProps) {
                 </div>
               )}
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-                  Task Title *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Implement OAuth2 token refresh"
-                  value={formTitle}
-                  onChange={(e) => setFormTitle(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500"
-                />
-              </div>
+              <Input
+                label="Task Title *"
+                type="text"
+                required
+                placeholder="e.g. Implement OAuth2 token refresh"
+                value={formTitle}
+                onChange={(e) => setFormTitle(e.target.value)}
+              />
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-                  Description
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="Provide any implementation notes or acceptance criteria..."
-                  value={formDescription}
-                  onChange={(e) => setFormDescription(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500"
-                />
-              </div>
+              <TextArea
+                label="Description"
+                rows={3}
+                placeholder="Provide any implementation notes or acceptance criteria..."
+                value={formDescription}
+                onChange={(e) => setFormDescription(e.target.value)}
+              />
 
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-                    Assignee *
-                  </label>
-                  <select
-                    required
-                    value={formAssigneeId}
-                    onChange={(e) => setFormAssigneeId(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500"
-                  >
-                    <option value="">-- Select Assignee --</option>
-                    {memberAssignees.map((m) => (
-                      <option key={m.id} value={m.id}>
-                        {m.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <Select
+                  label="Assignee *"
+                  required
+                  value={formAssigneeId}
+                  onChange={(e) => setFormAssigneeId(e.target.value)}
+                >
+                  <option value="">-- Select Assignee --</option>
+                  {memberAssignees.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.name}
+                    </option>
+                  ))}
+                </Select>
 
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-                    Priority
-                  </label>
-                  <select
-                    value={formPriority}
-                    onChange={(e) => setFormPriority(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500"
-                  >
-                    <option value="LOW">Low</option>
-                    <option value="MEDIUM">Medium</option>
-                    <option value="HIGH">High</option>
-                  </select>
-                </div>
+                <Select
+                  label="Priority"
+                  value={formPriority}
+                  onChange={(e) => setFormPriority(e.target.value)}
+                >
+                  <option value="LOW">Low</option>
+                  <option value="MEDIUM">Medium</option>
+                  <option value="HIGH">High</option>
+                </Select>
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-                  Due Date
-                </label>
-                <input
-                  type="date"
-                  value={formDueDate}
-                  onChange={(e) => setFormDueDate(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500"
-                />
-              </div>
+              <Input
+                label="Due Date"
+                type="date"
+                value={formDueDate}
+                onChange={(e) => setFormDueDate(e.target.value)}
+              />
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
-                <button
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-border-subtle">
+                <Button
                   type="button"
+                  variant="secondary"
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
-                  disabled={createTaskMutation.isPending}
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50 text-white font-semibold text-sm shadow-lg shadow-indigo-500/20 transition-all"
+                  variant="primary"
+                  isLoading={createTaskMutation.isPending}
                 >
-                  {createTaskMutation.isPending
-                    ? 'Creating...'
-                    : 'Create Task'}
-                </button>
+                  Create Task
+                </Button>
               </div>
             </form>
           </div>

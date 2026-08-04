@@ -8,6 +8,14 @@ import { useProjects, useCreateProject, useDeleteProject } from '../../hooks';
 import { AppShell } from '../../components/AppShell';
 import { formatDate, getStatusBadgeStyle } from '../../lib/utils';
 import { Project } from '../../lib/api/types';
+import {
+  Button,
+  Input,
+  TextArea,
+  EmptyState,
+  LoadingState,
+} from '../../components';
+
 
 export default function ProjectsPage() {
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
@@ -98,14 +106,7 @@ export default function ProjectsPage() {
   };
 
   if (authLoading || !isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-[#0a0d14] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-slate-400 text-sm">Loading projects workspace...</p>
-        </div>
-      </div>
-    );
+    return <LoadingState fullScreen message="Loading projects workspace..." />;
   }
 
   const rawProjects: Project[] =
@@ -151,13 +152,13 @@ export default function ProjectsPage() {
           </div>
 
           {canManageProjects && (
-            <button
+            <Button
+              variant="primary"
               onClick={() => setIsCreateModalOpen(true)}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold text-sm shadow-lg shadow-indigo-500/20 transition-all flex items-center gap-2 self-start md:self-auto"
+              className="self-start md:self-auto"
             >
-              <span>+</span>
-              <span>New Project</span>
-            </button>
+              + New Project
+            </Button>
           )}
         </div>
 
@@ -223,26 +224,21 @@ export default function ProjectsPage() {
 
         {/* Projects Content Area */}
         {projectsQuery.isLoading ? (
-          <div className="py-20 flex flex-col items-center justify-center gap-3">
-            <div className="w-8 h-8 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-            <p className="text-slate-500 text-sm">Loading projects...</p>
-          </div>
+          <LoadingState message="Loading projects..." className="py-20" />
         ) : projectsQuery.isError ? (
           <div className="p-6 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-300 text-sm text-center">
             Failed to load projects. Please try refreshing the page.
           </div>
         ) : projects.length === 0 ? (
-          <div className="p-12 rounded-2xl bg-slate-900/30 border border-slate-800/60 text-center space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mx-auto text-xl">
-              📂
-            </div>
-            <h3 className="text-lg font-bold">No Projects Found</h3>
-            <p className="text-slate-400 text-sm max-w-md mx-auto">
-              {search || selectedStatus
+          <EmptyState
+            icon="📂"
+            title="No Projects Found"
+            description={
+              search || selectedStatus
                 ? 'No projects matched your search or status filter. Try clearing your filters.'
-                : 'There are no projects in the workspace yet. Create one to get started!'}
-            </p>
-          </div>
+                : 'There are no projects in the workspace yet. Create one to get started!'
+            }
+          />
         ) : viewMode === 'grid' ? (
           /* Cards Grid View */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -303,16 +299,18 @@ export default function ProjectsPage() {
                       </Link>
 
                       {canManageProjects && (
-                        <button
+                        <Button
+                          variant="danger"
+                          size="sm"
                           onClick={(e) =>
                             handleDeleteProject(e, project.id, project.name)
                           }
                           disabled={deleteProjectMutation.isPending}
-                          className="px-3 py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/30 text-xs font-bold transition-all shrink-0"
                           title="Permanently Delete Project"
+                          className="shrink-0"
                         >
                           🗑️
-                        </button>
+                        </Button>
                       )}
                     </div>
                   </div>
@@ -376,16 +374,17 @@ export default function ProjectsPage() {
                           <span>→</span>
                         </Link>
                         {canManageProjects && (
-                          <button
+                          <Button
+                            variant="danger"
+                            size="sm"
                             onClick={(e) =>
                               handleDeleteProject(e, project.id, project.name)
                             }
                             disabled={deleteProjectMutation.isPending}
-                            className="px-2.5 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/30 text-xs font-bold transition-all inline-flex items-center gap-1"
                             title="Permanently Delete Project"
                           >
-                            <span>🗑️ Delete</span>
-                          </button>
+                            🗑️ Delete
+                          </Button>
                         )}
                       </td>
                     </tr>
@@ -418,74 +417,54 @@ export default function ProjectsPage() {
                 </div>
               )}
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-                  Project Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Next-Gen Dashboard Refactor"
-                  value={formName}
-                  onChange={(e) => setFormName(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
-                />
-              </div>
+              <Input
+                label="Project Name *"
+                type="text"
+                required
+                placeholder="e.g. Next-Gen Dashboard Refactor"
+                value={formName}
+                onChange={(e) => setFormName(e.target.value)}
+              />
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-                  Description
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="Outline the objectives and scope of this project..."
-                  value={formDescription}
-                  onChange={(e) => setFormDescription(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
-                />
-              </div>
+              <TextArea
+                label="Description"
+                rows={3}
+                placeholder="Outline the objectives and scope of this project..."
+                value={formDescription}
+                onChange={(e) => setFormDescription(e.target.value)}
+              />
 
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-                    Start Date
-                  </label>
-                  <input
-                    type="date"
-                    value={formStartDate}
-                    onChange={(e) => setFormStartDate(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-                    Deadline *
-                  </label>
-                  <input
-                    type="date"
-                    required
-                    value={formDeadline}
-                    onChange={(e) => setFormDeadline(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
-                  />
-                </div>
+                <Input
+                  label="Start Date"
+                  type="date"
+                  value={formStartDate}
+                  onChange={(e) => setFormStartDate(e.target.value)}
+                />
+                <Input
+                  label="Deadline *"
+                  type="date"
+                  required
+                  value={formDeadline}
+                  onChange={(e) => setFormDeadline(e.target.value)}
+                />
               </div>
 
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
-                <button
+              <div className="flex items-center justify-end gap-3 pt-4 border-t border-border-subtle">
+                <Button
                   type="button"
+                  variant="secondary"
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
-                  disabled={createProjectMutation.isPending}
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50 text-white font-semibold text-sm shadow-lg shadow-indigo-500/20 transition-all"
+                  variant="primary"
+                  isLoading={createProjectMutation.isPending}
                 >
-                  {createProjectMutation.isPending ? 'Creating...' : 'Create Project'}
-                </button>
+                  Create Project
+                </Button>
               </div>
             </form>
           </div>
