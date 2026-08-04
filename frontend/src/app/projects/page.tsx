@@ -247,7 +247,7 @@ export default function ProjectsPage() {
               return (
                 <div
                   key={project.id}
-                  className="group flex flex-col justify-between p-6 rounded-2xl bg-surface-card border border-border-subtle hover:border-indigo-300 hover:bg-surface transition-all shadow-sm space-y-4"
+                  className="group flex flex-col justify-between p-6 rounded-2xl bg-surface-card border border-border-subtle hover:border-indigo-300 hover:bg-indigo-50/30 hover:shadow-md transition-all shadow-sm space-y-4"
                 >
                   <div className="space-y-3">
                     <div className="flex items-start justify-between gap-3">

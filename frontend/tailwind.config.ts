@@ -9,8 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: '#0a0d14',
-        surface: '#121723',
+        background: 'var(--canvas)',
+        surface: 'var(--surface)',
         primary: {
           500: '#6366f1',
           600: '#4f46e5',

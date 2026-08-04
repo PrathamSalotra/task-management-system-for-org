@@ -181,7 +181,7 @@ export function DashboardOverview() {
                     <Link
                       key={proj.projectId}
                       href={`/projects/${proj.projectId}`}
-                      className="p-5 rounded-2xl bg-surface-muted border border-border-subtle hover:border-indigo-300 hover:bg-surface transition-all group space-y-4 flex flex-col justify-between shadow-sm"
+                      className="p-5 rounded-2xl bg-surface-muted border border-border-subtle hover:border-indigo-300 hover:bg-white hover:shadow-md transition-all group space-y-4 flex flex-col justify-between shadow-sm"
                     >
                       <div className="space-y-1">
                         <div className="flex items-center justify-between">
@@ -412,7 +412,7 @@ export function DashboardOverview() {
                   <Link
                     key={task.id}
                     href={`/projects/${task.projectId}`}
-                    className="block p-4 rounded-xl bg-surface-muted border border-border-subtle hover:border-indigo-300 hover:bg-surface transition-all group space-y-2.5 shadow-sm overflow-hidden min-w-0"
+                    className="block p-4 rounded-xl bg-surface-muted border border-border-subtle hover:border-indigo-300 hover:bg-white hover:shadow-md transition-all group space-y-2.5 shadow-sm overflow-hidden min-w-0"
                   >
                     {/* Top Row: Due date/time in a colored accent + PriorityBadge */}
                     <div className="flex items-center justify-between gap-2 min-w-0">
@@ -505,7 +505,7 @@ export function DashboardOverview() {
                     key={member.userId}
                     className={`p-4 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm ${hasOverdue
                       ? 'bg-red-50/80 border-red-300 hover:border-red-400'
-                      : 'bg-surface-muted border border-border-subtle hover:bg-surface'
+                      : 'bg-surface-muted border border-border-subtle hover:bg-white hover:border-indigo-300 hover:shadow-md'
                       }`}
                   >
                     {/* Left: Avatar + Name + Email */}
