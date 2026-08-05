@@ -133,3 +133,19 @@ export interface DashboardOverviewResult {
   completionBreakdown: CompletionBreakdown;
   teamPerformance?: TeamMemberPerformance[];
 }
+
+export interface AuditLog {
+  id: string;
+  userId: string;
+  action: string;
+  entityType: string;
+  entityId: string;
+  metadata?: any;
+  timestamp: string;
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+    role: Role;
+  };
+}

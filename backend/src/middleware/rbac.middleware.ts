@@ -59,6 +59,12 @@ export const permissionRules: PermissionRule[] = [
     path: '/test-auth',
     allowedRoles: [Role.PROJECT_MANAGER],
   },
+  // Audit Logs (Admin Only)
+  {
+    method: 'GET',
+    path: /^\/api\/v1\/audit-logs(?:\/.*)?$/,
+    allowedRoles: [Role.ADMIN],
+  },
   {
     method: 'GET',
     path: '/test-rbac',

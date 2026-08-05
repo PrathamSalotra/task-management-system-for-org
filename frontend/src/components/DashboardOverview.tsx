@@ -167,11 +167,9 @@ export function DashboardOverview() {
                   <span>📊</span>
                   <span>Project Progress Overview</span>
                 </h2>
-                <p className="text-xs text-text-secondary mt-0.5">
-                  Task completion progress across all active projects
-                </p>
+
               </div>
-              <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+              <span className="text-xs text-text-secondary font-semibold">
                 {projectProgress.length} Active
               </span>
             </div>
@@ -400,13 +398,8 @@ export function DashboardOverview() {
                   <Clock className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                   <span>Upcoming Deadlines</span>
                 </h2>
-                <p className="text-xs text-text-secondary mt-0.5">
-                  Tasks with near due dates
-                </p>
+
               </div>
-              <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
-                {upcomingDeadlines.length} Soon
-              </span>
             </div>
 
             {upcomingDeadlines.length === 0 ? (
@@ -490,12 +483,10 @@ export function DashboardOverview() {
                 <Users className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                 <span>Team Performance</span>
               </h2>
-              <p className="text-xs text-text-secondary mt-0.5">
-                Completed and overdue tasks across your team
-              </p>
+
             </div>
             <div className="flex items-center gap-3">
-              <span className="px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              <span className="text-xs text-text-secondary font-semibold">
                 {teamPerformance.length} Active Members
               </span>
             </div>
@@ -508,19 +499,19 @@ export function DashboardOverview() {
               description="No team members found on active projects."
             />
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-3 max-h-[340px] overflow-y-auto pr-1 scroll-smooth">
               {teamPerformance.map((member) => {
                 const hasOverdue = member.overdueTasks > 0;
                 return (
                   <div
                     key={member.userId}
-                    className={`p-4 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm ${hasOverdue
+                    className={`p-4 rounded-xl border transition-all flex flex-wrap items-center justify-between gap-4 shadow-sm ${hasOverdue
                       ? 'bg-red-50/80 border-red-300 hover:border-red-400'
                       : 'bg-surface-muted border border-border-subtle hover:bg-white hover:border-indigo-300 hover:shadow-md'
                       }`}
                   >
                     {/* Left: Avatar + Name + Email */}
-                    <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                    <div className="flex items-center gap-3.5 min-w-[240px] flex-1">
                       <Avatar
                         name={member.name}
                         size="md"
@@ -543,7 +534,7 @@ export function DashboardOverview() {
                     </div>
 
                     {/* Right: Completed Task Count + Overdue Task Count Badges */}
-                    <div className="flex items-center gap-2 sm:gap-4 flex-wrap sm:flex-nowrap sm:justify-end shrink-0">
+                    <div className="flex items-center gap-3 flex-wrap shrink-0">
                       {/* Completed Tasks */}
                       <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-surface border border-border-subtle shrink-0">
                         <span className="text-xs font-semibold text-text-secondary">

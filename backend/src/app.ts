@@ -8,6 +8,7 @@ import usersRoutes from './modules/users/users.routes';
 import projectsRoutes from './modules/projects/projects.routes';
 import tasksRoutes from './modules/tasks/tasks.routes';
 import dashboardRoutes from './modules/dashboard/dashboard.routes';
+import auditRoutes from './modules/audit/audit.routes';
 import swaggerUi from 'swagger-ui-express';
 import { getSwaggerSpec } from './config/swagger';
 
@@ -36,6 +37,7 @@ app.use('/api/v1/users', usersRoutes);
 app.use('/api/v1/projects', projectsRoutes);
 app.use('/api/v1/tasks', tasksRoutes);
 app.use('/api/v1/dashboard', dashboardRoutes);
+app.use('/api/v1/audit-logs', auditRoutes);
 
 /**
  * @openapi
