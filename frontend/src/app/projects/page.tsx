@@ -29,7 +29,6 @@ export default function ProjectsPage() {
 
   const [search, setSearch] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<string>('');
-  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // Form state for creating project
@@ -59,16 +58,6 @@ export default function ProjectsPage() {
     }
   }, [authLoading, isAuthenticated, router]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setViewMode('grid');
-      }
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const canManageProjects =
     user?.role === 'ADMIN' || user?.role === 'PROJECT_MANAGER';
@@ -214,30 +203,6 @@ export default function ProjectsPage() {
               })}
             </div>
           </div>
-
-          {/* View Mode Switcher (Hidden on mobile <768px, defaults to grid view) */}
-          <div className="hidden md:flex items-center gap-1 bg-surface-muted p-1 rounded-xl border border-border-subtle shrink-0">
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                viewMode === 'grid'
-                  ? 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 font-semibold'
-                  : 'text-text-secondary hover:text-text-primary'
-              }`}
-            >
-              Grid View
-            </button>
-            <button
-              onClick={() => setViewMode('table')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                viewMode === 'table'
-                  ? 'bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 font-semibold'
-                  : 'text-text-secondary hover:text-text-primary'
-              }`}
-            >
-              Table View
-            </button>
-          </div>
         </div>
 
         {/* Projects Content Area */}
@@ -257,7 +222,7 @@ export default function ProjectsPage() {
                 : 'There are no projects in the workspace yet. Create one to get started!'
             }
           />
-        ) : viewMode === 'grid' ? (
+        ) : (
           /* Cards Grid View */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {projects.map((project) => {
@@ -335,81 +300,6 @@ export default function ProjectsPage() {
                 </div>
               );
             })}
-          </div>
-        ) : (
-          /* Table View */
-          <div className="overflow-x-auto rounded-2xl border border-border-subtle bg-surface-card shadow-sm">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-border-subtle text-text-secondary text-xs uppercase tracking-wider bg-surface-muted">
-                  <th className="px-6 py-4 font-semibold">Project Name</th>
-                  <th className="px-6 py-4 font-semibold">Status</th>
-                  <th className="px-6 py-4 font-semibold">Timeline</th>
-                  <th className="px-6 py-4 font-semibold">Project Manager</th>
-                  <th className="px-6 py-4 font-semibold text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border-subtle text-sm">
-                {projects.map((project) => {
-                  const badge = getStatusBadgeStyle(project.status);
-                  return (
-                    <tr
-                      key={project.id}
-                      className="hover:bg-surface-muted transition-colors"
-                    >
-                      <td className="px-6 py-4">
-                        <Link
-                          href={`/projects/${project.id}`}
-                          className="font-bold text-text-primary hover:text-accent transition-colors block"
-                        >
-                          {project.name}
-                        </Link>
-                        {project.description && (
-                          <span className="text-xs text-text-secondary block truncate max-w-sm mt-0.5">
-                            {project.description}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`px-2.5 py-1 rounded-full text-xs font-bold border ${badge.bg} ${badge.text} ${badge.border} uppercase tracking-wider`}
-                        >
-                          {badge.label}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-text-primary">
-                        {formatDate(project.startDate)} — {formatDate(project.deadline)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-xs text-text-primary font-medium">
-                        {project.owner?.name || 'Assigned PM'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right space-x-2">
-                        <Link
-                          href={`/projects/${project.id}`}
-                          className="px-3.5 py-1.5 rounded-xl bg-surface-muted hover:bg-surface text-text-primary hover:text-accent text-xs font-semibold transition-all border border-border-subtle hover:border-indigo-300 inline-flex items-center gap-1"
-                        >
-                          <span>Details</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
-                        </Link>
-                        {canManageProjects && (
-                          <Button
-                            variant="danger"
-                            size="sm"
-                            onClick={(e) =>
-                              handleDeleteProject(e, project.id, project.name)
-                            }
-                            disabled={deleteProjectMutation.isPending}
-                            title="Permanently Delete Project"
-                          >
-                            <Trash2 className="w-4 h-4 inline mr-1" /> Delete
-                          </Button>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
           </div>
         )}
       </div>

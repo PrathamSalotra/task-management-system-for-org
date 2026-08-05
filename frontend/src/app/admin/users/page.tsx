@@ -4,8 +4,7 @@ import { useUsers } from '@/hooks';
 import { Avatar } from '@/components/Avatar';
 import { LoadingState } from '@/components/LoadingState';
 import { EmptyState } from '@/components/EmptyState';
-import { Users, Mail, Clock, Shield, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { Users, Mail, Clock, Shield } from 'lucide-react';
 
 export default function UsersPage() {
   const { data: users, isLoading, isError } = useUsers();
@@ -23,16 +22,7 @@ export default function UsersPage() {
   }
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-6 pt-6 sm:pt-8">
-      {/* Back to Dashboard Button */}
-      <Link 
-        href="/dashboard"
-        className="inline-flex items-center gap-2 text-sm font-semibold text-text-secondary hover:text-text-primary transition-colors w-fit"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Back to Dashboard
-      </Link>
-
+    <div className="max-w-7xl w-full mx-auto space-y-6 pt-6 sm:pt-8 px-4 sm:px-6 md:px-10">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-text-primary flex items-center gap-2">

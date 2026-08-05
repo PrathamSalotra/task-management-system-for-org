@@ -159,23 +159,15 @@ export default function ProjectDetailPage() {
 
   return (
     <AppShell>
-      <div className="max-w-6xl w-full mx-auto px-4 sm:px-6 md:px-10 py-6 md:py-10 space-y-8">
-        {/* Top Navigation & Status Toast */}
-        <div className="flex items-center justify-between">
-          <Link
-            href="/projects"
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface-muted hover:bg-surface text-text-primary text-xs font-semibold border border-border-subtle transition-all shadow-sm"
-          >
-            <span>←</span>
-            <span>Back to Projects</span>
-          </Link>
-
-          {statusMessage && (
+      <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 md:px-10 py-6 md:py-10 space-y-8">
+        {/* Status Toast */}
+        {statusMessage && (
+          <div className="flex justify-end">
             <div className="px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-300 text-xs font-semibold animate-fadeIn">
               ✓ {statusMessage}
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Project Overview Card */}
         <div className="p-8 rounded-3xl bg-surface-card border border-border-subtle shadow-sm space-y-6">

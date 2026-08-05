@@ -12,6 +12,7 @@ import {
   LogOut,
   Menu,
   X,
+  ArrowLeft,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useProjects, useCreateProject } from '../hooks';
@@ -36,6 +37,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  const isDashboard = pathname === '/dashboard';
+  const isProjectDirectory = pathname === '/projects';
+  const isProjectWorkspace = pathname.startsWith('/projects/') && pathname !== '/projects';
+  const showBackButton = !isDashboard;
 
   // Create project modal state
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -138,30 +144,32 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Floating Rounded Card Shell (with card radius & shadow from Section 3.4) */}
       <div className="flex-1 w-full max-w-[1600px] mx-auto bg-surface-card rounded-card shadow-card border border-border-subtle flex flex-col md:flex-row overflow-hidden">
         {/* Mobile Header Toggle for small viewports */}
-        <div className="md:hidden flex items-center justify-between p-4 border-b border-border-subtle bg-surface-card">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-accent text-white flex items-center justify-center font-bold text-sm">
-              AW
+        {isDashboard && (
+          <div className="md:hidden flex items-center justify-between p-4 border-b border-border-subtle bg-surface-card">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-accent text-white flex items-center justify-center font-bold text-sm shrink-0">
+                AW
+              </div>
+              <span className="font-bold text-lg text-text-primary truncate">
+                Agile Workspace
+              </span>
             </div>
-            <span className="font-bold text-lg text-text-primary">
-              Agile Workspace
-            </span>
+            <button
+              onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+              className="p-2.5 text-text-secondary hover:text-text-primary rounded-xl border border-border-subtle bg-surface-muted hover:bg-surface transition-colors flex items-center justify-center min-w-[44px] min-h-[44px]"
+              aria-label="Toggle Sidebar"
+            >
+              {isMobileSidebarOpen ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <Menu className="w-5 h-5" />
+              )}
+            </button>
           </div>
-          <button
-            onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-            className="p-2.5 text-text-secondary hover:text-text-primary rounded-xl border border-border-subtle bg-surface-muted hover:bg-surface transition-colors flex items-center justify-center min-w-[44px] min-h-[44px]"
-            aria-label="Toggle Sidebar"
-          >
-            {isMobileSidebarOpen ? (
-              <X className="w-5 h-5" />
-            ) : (
-              <Menu className="w-5 h-5" />
-            )}
-          </button>
-        </div>
+        )}
 
         {/* Mobile Drawer Backdrop Overlay */}
-        {isMobileSidebarOpen && (
+        {isDashboard && isMobileSidebarOpen && (
           <div
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden animate-fadeIn"
             onClick={() => setIsMobileSidebarOpen(false)}
@@ -170,21 +178,22 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         )}
 
         {/* Persistent Left Sidebar Region (Desktop) / Toggleable Drawer (Mobile) */}
-        <aside
-          className={`${
-            isMobileSidebarOpen
-              ? 'fixed inset-y-0 left-0 z-50 flex w-[280px] shadow-2xl animate-slideRight'
-              : 'hidden'
-          } md:static md:z-auto md:flex md:w-[270px] lg:w-[280px] shrink-0 md:border-r border-border-subtle bg-surface-card p-6 flex-col justify-between max-h-screen overflow-y-auto`}
-        >
+        {isDashboard && (
+          <aside
+            className={`${
+              isMobileSidebarOpen
+                ? 'fixed inset-y-0 left-0 z-50 flex w-[280px] shadow-2xl animate-slideRight'
+                : 'hidden'
+            } md:static md:z-auto md:flex md:w-[270px] lg:w-[280px] shrink-0 md:border-r border-border-subtle bg-surface-card p-6 flex-col justify-between`}
+          >
           <div className="space-y-6 overflow-y-auto pr-1">
             {/* Mobile-only Header with Close Button inside Drawer */}
             <div className="md:hidden flex items-center justify-between pb-4 border-b border-border-subtle">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-accent text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                <div className="w-8 h-8 rounded-xl bg-accent text-white flex items-center justify-center font-bold text-sm shadow-sm shrink-0">
                   AW
                 </div>
-                <span className="font-bold text-lg tracking-tight text-text-primary">
+                <span className="font-bold text-lg tracking-tight text-text-primary truncate">
                   Agile Workspace
                 </span>
               </div>
@@ -202,10 +211,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               href="/dashboard"
               className="hidden md:flex items-center gap-3 group focus:outline-none"
             >
-              <div className="w-9 h-9 rounded-xl bg-accent text-white flex items-center justify-center font-bold text-lg shadow-sm">
+              <div className="w-9 h-9 rounded-xl bg-accent text-white flex items-center justify-center font-bold text-lg shadow-sm shrink-0">
                 AW
               </div>
-              <span className="font-bold text-xl tracking-tight text-text-primary">
+              <span className="font-bold text-xl tracking-tight text-text-primary truncate">
                 Agile Workspace
               </span>
             </Link>
@@ -229,7 +238,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                     }`}
                   >
                     <Icon className="w-4 h-4 shrink-0" />
-                    <span>{item.name}</span>
+                    <span className="truncate">{item.name}</span>
                   </Link>
                 );
               })}
@@ -254,7 +263,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                         }`}
                       >
                         <Icon className="w-4 h-4 shrink-0" />
-                        <span>{item.name}</span>
+                        <span className="truncate">{item.name}</span>
                       </Link>
                     );
                   })}
@@ -334,10 +343,26 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </div>
             )}
           </div>
-        </aside>
+          </aside>
+        )}
 
         {/* Main Content Region */}
-        <main className="flex-1 flex flex-col min-w-0 bg-surface-card overflow-x-hidden overflow-y-auto">
+        <main className="flex-1 flex flex-col min-w-0 bg-surface-card overflow-x-hidden relative">
+          {showBackButton && (
+            <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 md:px-10 pt-6">
+              <button
+                onClick={() => {
+                  if (isProjectDirectory) router.push('/dashboard');
+                  else if (isProjectWorkspace) router.push('/projects');
+                  else router.back();
+                }}
+                className="px-4 py-2 rounded-xl bg-surface-muted hover:bg-surface border border-border-subtle text-text-primary text-xs font-semibold shadow-sm inline-flex items-center gap-2 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                {isProjectDirectory ? 'Back to Dashboard' : isProjectWorkspace ? 'Back to Projects' : 'Back'}
+              </button>
+            </div>
+          )}
           {children}
         </main>
       </div>

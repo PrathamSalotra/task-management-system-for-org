@@ -240,40 +240,9 @@ export function DashboardOverview() {
               </div>
 
               <div className="space-y-4">
-                {/* Horizontal Stacked Bar */}
-                <div className="w-full h-3.5 bg-border-subtle rounded-full overflow-hidden flex">
-                  {totalTasksCount > 0 ? (
-                    <>
-                      <div
-                        className="h-full bg-emerald-500 transition-all duration-500"
-                        style={{
-                          width: `${(completedCount / totalTasksCount) * 100}%`,
-                        }}
-                        title={`Completed: ${completedCount}`}
-                      />
-                      <div
-                        className="h-full bg-amber-500 transition-all duration-500"
-                        style={{
-                          width: `${(inProgressCount / totalTasksCount) * 100}%`,
-                        }}
-                        title={`In Progress: ${inProgressCount}`}
-                      />
-                      <div
-                        className="h-full bg-slate-400 transition-all duration-500"
-                        style={{
-                          width: `${(todoCount / totalTasksCount) * 100}%`,
-                        }}
-                        title={`Todo: ${todoCount}`}
-                      />
-                    </>
-                  ) : (
-                    <div className="w-full h-full bg-border-subtle" />
-                  )}
-                </div>
-
                 {/* Stat List */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                  <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden">
+                  <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden @container">
                     <div className="flex justify-center w-full">
                       <StatusPill
                         status="COMPLETED"
@@ -285,7 +254,7 @@ export function DashboardOverview() {
                     </p>
                   </div>
 
-                  <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden">
+                  <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden @container">
                     <div className="flex justify-center w-full">
                       <StatusPill
                         status="IN_PROGRESS"
@@ -297,7 +266,7 @@ export function DashboardOverview() {
                     </p>
                   </div>
 
-                  <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden">
+                  <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden @container">
                     <div className="flex justify-center w-full">
                       <StatusPill
                         status="TODO"
@@ -309,7 +278,50 @@ export function DashboardOverview() {
                     </p>
                   </div>
                 </div>
+
+                {/* Horizontal Stacked Bar */}
+                <div className="space-y-2 text-xs text-text-secondary">
+                  <div className="flex items-center justify-between">
+                    <span>Completion Ratio</span>
+                    <span className="font-bold text-emerald-500">
+                      {totalTasksCount > 0
+                        ? Math.round((completedCount / totalTasksCount) * 100)
+                        : 0}
+                      %
+                    </span>
+                  </div>
+                  <div className="w-full h-3.5 bg-border-subtle rounded-full overflow-hidden flex">
+                    {totalTasksCount > 0 ? (
+                      <>
+                        <div
+                          className="h-full bg-emerald-500 transition-all duration-500"
+                          style={{
+                            width: `${(completedCount / totalTasksCount) * 100}%`,
+                          }}
+                          title={`Completed: ${completedCount}`}
+                        />
+                        <div
+                          className="h-full bg-amber-500 transition-all duration-500"
+                          style={{
+                            width: `${(inProgressCount / totalTasksCount) * 100}%`,
+                          }}
+                          title={`In Progress: ${inProgressCount}`}
+                        />
+                        <div
+                          className="h-full bg-slate-400 transition-all duration-500"
+                          style={{
+                            width: `${(todoCount / totalTasksCount) * 100}%`,
+                          }}
+                          title={`Todo: ${todoCount}`}
+                        />
+                      </>
+                    ) : (
+                      <div className="w-full h-full bg-border-subtle" />
+                    )}
+                  </div>
+                </div>
               </div>
+
             </div>
 
             {/* Priority Breakdown */}
@@ -325,7 +337,7 @@ export function DashboardOverview() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden">
+                <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden @container">
                   <div className="flex justify-center w-full">
                     <PriorityBadge
                       priority="HIGH"
@@ -337,7 +349,7 @@ export function DashboardOverview() {
                   </p>
                 </div>
 
-                <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden">
+                <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden @container">
                   <div className="flex justify-center w-full">
                     <PriorityBadge
                       priority="MEDIUM"
@@ -349,7 +361,7 @@ export function DashboardOverview() {
                   </p>
                 </div>
 
-                <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden">
+                <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden @container">
                   <div className="flex justify-center w-full">
                     <PriorityBadge
                       priority="LOW"
@@ -391,7 +403,7 @@ export function DashboardOverview() {
 
         {/* RIGHT-HAND PANEL (Right Column): Upcoming Deadlines matching "Meetings Schedule" card pattern */}
         <div className="lg:col-span-1 space-y-4">
-          <div className="p-6 rounded-2xl bg-surface-card border border-border-subtle shadow-sm space-y-5 lg:h-[710px] lg:flex lg:flex-col">
+          <div className="p-6 rounded-2xl bg-surface-card border border-border-subtle shadow-sm space-y-5 lg:h-[668px] lg:flex lg:flex-col">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-bold text-text-primary flex items-center gap-2">

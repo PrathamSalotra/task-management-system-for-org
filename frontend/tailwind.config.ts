@@ -55,7 +55,7 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['var(--font-inter)', 'sans-serif'],
+        sans: ['var(--font-outfit)', 'sans-serif'],
       },
       borderRadius: {
         card: '1.25rem',
@@ -70,6 +70,8 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/container-queries'),
+  ],
 };
 export default config;
