@@ -9,6 +9,10 @@ RUN npm config set fetch-retries 5 && \
     npm ci --no-audit --no-fund
 
 COPY . .
+
+# Add dummy URL to prevent prisma.config.ts from crashing during the build phase
+ENV DATABASE_URL="postgresql://neondb_owner:npg_BvdaL3m6SPnf@ep-frosty-shape-ax4ry5wz-pooler.c-4.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+
 RUN npx prisma generate
 RUN npm run build
 
@@ -28,4 +32,5 @@ COPY --from=builder /app/src/generated ./src/generated
 
 EXPOSE 4000
 
-CMD ["sh", "-c", "npx prisma db push && node dist/app.js"]
+# Start the server directly (Schema sync is handled locally per Step 9.4.2)
+CMD ["node", "dist/app.js"]
