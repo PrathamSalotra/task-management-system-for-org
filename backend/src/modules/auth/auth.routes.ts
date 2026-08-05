@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { register, login, refresh, logout } from './auth.controller';
+import { authRateLimiter } from '../../middleware/rateLimit.middleware';
 
 const router = Router();
 
@@ -37,8 +38,10 @@ const router = Router();
  *               $ref: '#/components/schemas/User'
  *       400:
  *         description: Invalid input or email already in use
+ *       429:
+ *         description: Too many registration attempts — rate limit exceeded (10 per 15 min per IP)
  */
-router.post('/register', register);
+router.post('/register', authRateLimiter, register);
 
 /**
  * @openapi
@@ -74,8 +77,10 @@ router.post('/register', register);
  *                   type: string
  *       401:
  *         description: Invalid credentials
+ *       429:
+ *         description: Too many login attempts — rate limit exceeded (10 per 15 min per IP)
  */
-router.post('/login', login);
+router.post('/login', authRateLimiter, login);
 
 /**
  * @openapi
