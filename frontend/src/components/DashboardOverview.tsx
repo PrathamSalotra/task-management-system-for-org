@@ -242,37 +242,28 @@ export function DashboardOverview() {
               <div className="space-y-4">
                 {/* Stat List */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                  <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden @container">
-                    <div className="flex justify-center w-full">
-                      <StatusPill
-                        status="COMPLETED"
-                        className="text-[10px] sm:text-xs px-2 py-0.5 max-w-full"
-                      />
-                    </div>
+                  <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-status-completed-text truncate w-full">
+                      Completed
+                    </p>
                     <p className="text-xl sm:text-2xl font-extrabold text-text-primary text-center">
                       {completedCount}
                     </p>
                   </div>
 
-                  <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden @container">
-                    <div className="flex justify-center w-full">
-                      <StatusPill
-                        status="IN_PROGRESS"
-                        className="text-[10px] sm:text-xs px-2 py-0.5 max-w-full"
-                      />
-                    </div>
+                  <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-status-in-progress-text truncate w-full">
+                      In Progress
+                    </p>
                     <p className="text-xl sm:text-2xl font-extrabold text-text-primary text-center">
                       {inProgressCount}
                     </p>
                   </div>
 
-                  <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden @container">
-                    <div className="flex justify-center w-full">
-                      <StatusPill
-                        status="TODO"
-                        className="text-[10px] sm:text-xs px-2 py-0.5 max-w-full"
-                      />
-                    </div>
+                  <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden">
+                    <p className="text-[11px] font-bold uppercase tracking-wider text-status-todo-text truncate w-full">
+                      To Do
+                    </p>
                     <p className="text-xl sm:text-2xl font-extrabold text-text-primary text-center">
                       {todoCount}
                     </p>
@@ -337,37 +328,28 @@ export function DashboardOverview() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden @container">
-                  <div className="flex justify-center w-full">
-                    <PriorityBadge
-                      priority="HIGH"
-                      className="text-[10px] sm:text-xs px-2 py-0.5 max-w-full"
-                    />
-                  </div>
+                <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-priority-high-text truncate w-full">
+                    High
+                  </p>
                   <p className="text-xl sm:text-2xl font-extrabold text-text-primary text-center">
                     {highPriorityCount}
                   </p>
                 </div>
 
-                <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden @container">
-                  <div className="flex justify-center w-full">
-                    <PriorityBadge
-                      priority="MEDIUM"
-                      className="text-[10px] sm:text-xs px-2 py-0.5 max-w-full"
-                    />
-                  </div>
+                <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-priority-medium-text truncate w-full">
+                    Medium
+                  </p>
                   <p className="text-xl sm:text-2xl font-extrabold text-text-primary text-center">
                     {mediumPriorityCount}
                   </p>
                 </div>
 
-                <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden @container">
-                  <div className="flex justify-center w-full">
-                    <PriorityBadge
-                      priority="LOW"
-                      className="text-[10px] sm:text-xs px-2 py-0.5 max-w-full"
-                    />
-                  </div>
+                <div className="flex flex-col items-center justify-center text-center p-3 rounded-xl bg-surface-muted border border-border-subtle space-y-2 min-w-0 overflow-hidden">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-priority-low-text truncate w-full">
+                    Low
+                  </p>
                   <p className="text-xl sm:text-2xl font-extrabold text-text-primary text-center">
                     {lowPriorityCount}
                   </p>
