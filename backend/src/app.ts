@@ -17,12 +17,15 @@ const app = express();
 app.use(
   cors({
     origin: (origin, callback) => {
-      const allowed = [
+      const allowedExact = [
         process.env.FRONTEND_URL,
         'http://localhost:3000',
       ].filter(Boolean) as string[];
-      // Allow requests with no origin (curl, Postman, server-to-server)
-      if (!origin || allowed.includes(origin)) {
+
+      // Also allow any Vercel preview/production deployment
+      const isVercel = origin?.endsWith('.vercel.app') ?? false;
+
+      if (!origin || allowedExact.includes(origin) || isVercel) {
         callback(null, true);
       } else {
         callback(new Error(`CORS: origin '${origin}' not allowed`));
