@@ -15,7 +15,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-ARG NEXT_PUBLIC_API_URL=http://localhost:4000
+# Receive build argument from Render without defaulting to localhost
+ARG NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
 RUN npm run build
@@ -25,7 +26,6 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-# These two lines tell Next.js to bind to all network interfaces, fixing the 502 error
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
