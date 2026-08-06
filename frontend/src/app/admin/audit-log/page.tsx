@@ -4,7 +4,8 @@ import { useAuditLogs } from '@/hooks';
 import { Avatar } from '@/components/Avatar';
 import { LoadingState } from '@/components/LoadingState';
 import { EmptyState } from '@/components/EmptyState';
-import { FileText, Clock, Box, Info } from 'lucide-react';
+import { FileText, Clock, Box, Info, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 
 export default function AuditLogPage() {
   const { data: logs, isLoading, isError } = useAuditLogs();
@@ -23,6 +24,13 @@ export default function AuditLogPage() {
 
   return (
     <div className="max-w-7xl w-full mx-auto space-y-6 pt-6 sm:pt-8 px-4 sm:px-6 md:px-10">
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center gap-2 text-sm font-semibold text-text-secondary hover:text-text-primary transition-colors group"
+      >
+        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+        Back to Dashboard
+      </Link>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-black text-text-primary flex items-center gap-2">
